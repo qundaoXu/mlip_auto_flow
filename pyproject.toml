@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mlipeval"
+version = "0.1.0"
+description = "Tiered L0–L5 evaluation and uncertainty-driven active learning for machine-learning interatomic potentials"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["numpy", "ase", "pyyaml"]
+
+[project.optional-dependencies]
+al = ["mace-torch", "scikit-learn", "tqdm"]
+
+[project.scripts]
+mlipeval = "mlipeval_cli.eval_cli:main"
+alflow = "mlipeval_cli.al_cli:main"
+
+[tool.setuptools]
+packages = ["mlipeval_cli"]

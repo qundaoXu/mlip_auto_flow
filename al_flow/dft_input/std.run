@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH -J vasp
+#SBATCH -n 64
+#SBATCH -p hcpu64
+#SBATCH --error=%J.err
+#SBATCH --output=%J.out
+module load intel/2017u5
+echo -n "start time" > time
+date >> time
+mpirun -np 64 /data0/software/vasp/intel/vasp.5.4.4/bin/vasp_std
+scontrol show job $SLURM_JOBID
+echo -n "end time" >> time; date >> time
+cat time >> output
+exit

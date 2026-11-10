@@ -1,0 +1,39 @@
+!System Settings
+!num pro error
+   SYSTEM =  GST-database
+   ISTART =  0            (0-new 1-cont 2-samecut)
+   ICHARG =  2            (Non-self-consistent: GGA/LDA band structures)
+   LREAL  =  Auto         (Projection operators: automatic)ut
+   ENCUT  =  500          (Cut-off energy for plane wave basis set, in eV)
+   PREC   =  normal     (Precision level)
+   KSPACING= 0.2          (Number of k points)
+   NCORE = 16  
+   # NPAR   =  10            (Sort of cores)
+   ISYM   = -1            (Switch off symmetry,use 0 for MD,-1/0 for Lobster)
+   # ADDGRID= .FALSE.       (Increase grid; helps GGA convergence)
+   LSCALAPACK = .FALSE.
+
+!Electronic Relaxation
+   NELM   =  500          (Max electronic SCF steps)
+   NELMIN =  4            (Min electronic SCF steps)
+   EDIFF  =  1E-07        (SCF energy convergence; in eV)
+   ALGO   =  FAST       (electronic minimisation algorithm, Normal/Fast/Damped)
+   AMIN   =  0.01
+
+!Ionic Settings
+   NSW    =  0            (Max MD steps)
+   IBRION = -1            (Algorithm: 0-MD; 1-Quasi-New; 2-CG; -1-SCF)
+   ISIF   =  3            (Stress/relaxation: 2-Ions, 3-Shape/Ions/V, 4-Shape/Ions)
+   EDIFFG = -0.001        (Ionic convergence; eV/AA)
+   # IVDW   =  11           (11-DFT-D3;12-DFT-D3 with BJ damping;1|10-D2;13-D4)
+
+!DOS related Values
+   # NEDOS  =  3000         (Number of gridpoints on which the DOS)
+   ISMEAR =   0           (1,2:metal -5,0:sem/ins)
+   SIGMA  =   0.05        (Broadening in eV)
+
+!Write flags
+   LWAVE  = .FALSE.       (default:TRUE Write WAVECAR or not)
+   LCHARG = .FALSE.       (default:TRUE Write CHGCAR or not)
+   # LELF   = .TRUE.        (default:FALSE Write ELFCAR or not)
+   # LORBIT = 11            (0:simple, 1:ext, 2:COOP(PROOUT))
