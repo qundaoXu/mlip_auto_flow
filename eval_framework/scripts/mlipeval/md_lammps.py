@@ -50,16 +50,17 @@ from pathlib import Path
 import numpy as np
 from ase import Atoms
 
+from . import paths as _paths
 from .io_vasp import Trajectory
 from .md_runner import MDResult, MDSettings
 
 #: pair_coeff 里写的元素顺序，必须与 start.data 的 type 编号一致。
 SPECORDER = ["Ge", "Sb", "Te"]
 
-COMMON = Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/universal_MLIP/common")
-ADVANCESOFT_LMP = Path(
-    "/scratch/t0937929/MLIP_benchmark/MLIP_run/universal_MLIP/_build/advancesoft_build/lmp"
-)
+#: Shared LAMMPS helper scripts (``lammps.common_dir`` in the site config).
+COMMON = _paths.LAMMPS_COMMON
+#: LAMMPS executable (``lammps.executable`` / ``$MLIPEVAL_LMP``).
+ADVANCESOFT_LMP = _paths.LAMMPS_EXE
 
 IN_MD = """\
 # 由 mlipeval.md_lammps 生成——参数来自 MDSettings，勿手改

@@ -263,12 +263,12 @@ def main() -> int:
     json_name = f"ranking_{args.out_stem}.json" if args.out_stem else "ranking.json"
     md_name = (f"RANKING_REPORT_{args.out_stem}.md" if args.out_stem
                else "RANKING_REPORT.md")
-    out = paths.EVAL / "results" / json_name
+    out = paths.OUTPUT / "results" / json_name
     out.write_text(json.dumps(ranking.to_dict(), indent=2))
     print(f"\nwrote {out}")
 
     if args.markdown:
-        md = paths.EVAL / "results" / md_name
+        md = paths.OUTPUT / "results" / md_name
         md.write_text(markdown(ranking, present), encoding="utf-8")
         print(f"wrote {md}")
     return 0

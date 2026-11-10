@@ -22,9 +22,10 @@ sys.path.insert(0, str(HERE))
 
 import pandas as pd
 
+from mlipeval import paths
 from mlipeval.leakage import _screen_external
 
-TRAIN = Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder/train_sets")
+TRAIN = paths.AL_LADDER_TRAIN_SETS
 LADDER = [("al_gen0", "gen0"), ("al_gen3", "gen3"), ("al_gen4", "gen4"),
           ("al_gen6", "gen6"), ("al_gen7", "gen7"), ("al_gen8", "gen8"),
           ("al_gen9", "gen9"), ("al_prod", "prod_train")]

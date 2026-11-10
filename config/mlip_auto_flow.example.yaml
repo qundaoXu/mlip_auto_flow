@@ -1,0 +1,119 @@
+# mlip_auto_flow site configuration
+# ------------------------------------------------------------------------------
+# Copy to mlip_auto_flow.yaml (repo root or your working directory, or point
+# $MLIPEVAL_CONFIG at it) and fill in the values for your machine.
+#   mlipeval config --check      shows the resolved values and which paths exist
+#
+# Precedence: environment variable > this file > built-in default.
+# Relative paths resolve against paths.workspace. ${VAR} and ~ are expanded.
+# Every key is optional; leaving one out keeps the default shown here.
+# A .json file with the same structure works too.
+
+# ============================== evaluation (mlipeval) =========================
+paths:
+  # Root of the read-only reference tree and the model runs.       $MLIPEVAL_WORKSPACE
+  # Default: the parent directory of eval_framework/.
+  workspace: /path/to/MLIP_benchmark
+  # Where results/ and data/ (cache, harvested reference labels, per-model
+  # outputs) are written. Default: eval_framework/.                 $MLIPEVAL_OUTPUT
+  output: null
+
+  reference:                       # DFT / AIMD reference package (GST225)
+    gst_ref: GST225_ref            # legacy AIMD, cubic seeds, MP structures
+    phase1: phase1_vasp_inputs_20260828   # 208 phase-1 VASP tasks + task_manifest.csv
+
+  models:                          # where the built-in model entries live
+    universal: MLIP_run/universal_MLIP    # <key>/<checkpoint>, <key>/pair.in
+    specialised: MLIP_run/specialized
+    al_ladder: MLIP_run/specialized/al_ladder   # model/al_gen*.model, pair/al_gen*.in
+    gst_aging: ../myproject/1-GST225-aging       # 01-model/GST225_Aging_Model.model
+
+  training_sets:                   # only read by the leakage screens
+    gst_ace24: database/ACE_potential_and_training_dataset/GST-ACE-24_training_dataset.xyz
+    processed_ne: database/processed_NE_dataset.xyz
+    gst_aging: ../myproject/1-GST225-aging/dataset
+    al_ladder: MLIP_run/specialized/al_ladder/train_sets
+
+environment:
+  # conda installation; job scripts source <conda_root>/etc/profile.d/conda.sh.
+  # Default: derived from $CONDA_EXE, else <workspace>/../miniconda3.   $MLIPEVAL_CONDA_ROOT
+  conda_root: /path/to/miniconda3
+  conda_envs: null                 # default <conda_root>/envs          $MLIPEVAL_CONDA_ENVS
+  # One environment per backend: their dependencies conflict (e3nn, torch pins).
+  # A name is looked up under conda_envs; an absolute path is used as is.
+  backend_envs:
+    mace: mace
+    nequip: nequip
+    deepmd: deepmd
+    mattersim: gnnp
+    chgnet: gnnp
+
+lammps:                            # L3–L5 MD runs through LAMMPS
+  executable: MLIP_run/universal_MLIP/_build/advancesoft_build/lmp   # $MLIPEVAL_LMP
+  common_dir: MLIP_run/universal_MLIP/common                         # shared mliap helpers
+  al_ladder_export: MLIP_run/specialized/al_ladder/export_mliap.sh   # submit_al_ladder.py only
+
+scheduler:                         # used by `mlipeval submit` (PBS)
+  kind: pbs
+  project: null                    # "#PBS -P" code; omitted when null    $MLIPEVAL_PBS_PROJECT
+  queue: null                      # null lets PBS route the job          $MLIPEVAL_PBS_QUEUE
+  select: "1:ncpus=12:mpiprocs=1:ompthreads=12:mem=225gb:ngpus=1"
+  walltime: "12:00:00"             # default when a caller gives none
+  modules: [gcc/13.1.0, openmpi/gcc/64/4.1.8]   # module load ... in every job
+  # true: heavy drivers refuse to run outside a PBS job (login-node guard).
+  # Set false on a workstation without a batch system.
+  require_compute_node: true
+
+# Extra models, or overrides of built-in ones, keyed by model key.
+# Required: label, backend, checkpoint. group: universal | specialised.
+models: {}
+#  my_mace_gst:
+#    label: "MACE fine-tuned on my GST set"
+#    backend: mace                  # mace | nequip | deepmd | mattersim | chgnet
+#    checkpoint: /path/to/my_mace_gst.model
+#    load_path: null                # file the calculator opens, if not the checkpoint
+#    conda_env: mace                # default: environment.backend_envs[backend]
+#    dtype: float64
+#    native_protocol: "PBE, no dispersion"
+#    lammps_route: mliap            # mliap | deepmd | gnnp (needed for L3–L5)
+#    lammps_pair_in: /path/to/pair.in
+#    group: specialised
+
+# ============================== active learning (alflow) ======================
+alflow:
+  # Options of activate_learning_full_flow.py, read by `alflow run --config`.
+  run:
+    work_dir: .
+    data_path: data                       # must contain init_dataset.xyz
+    foundation_model: /path/to/mace-mpa-0-medium.model   # or $ALFLOW_FOUNDATION_MODEL
+    subset_size: 1000
+    train_ratio: 0.8
+    val_ratio: 0.1
+    seed: 42
+    n_comm: 4                             # committee size
+    comm_seed: [123, 234, 345, 456]
+    comm_epoch: 100
+    device: cuda
+    init_conf_path: data/small_cell_traj.xyz
+    md_temp: 300
+    md_steps: 5000
+    md_write_interval: 10
+    uncert_threshold: 0.9                 # on min–max normalised sigma (relative)
+    uncert_max_frames: 100
+    n_rounds: 3
+    keep_all_rounds: true
+    dft_root: dft_cal
+    dft_template_dir: dft_input           # INCAR, POTCAR, std.run
+    dft_template_files: [INCAR, POTCAR, std.run]
+    dft_poll_sec: 300
+    dft_timeout_hr: 24.0
+    merged_dft_name: dft_merged.extxyz
+
+  # Exported as environment variables before DFT jobs are prepared/submitted;
+  # al_flow/dft_input/std.run and submitjobs.sh read them.
+  dft:
+    partition: null                       # -> SBATCH_PARTITION
+    account: null                         # -> SBATCH_ACCOUNT
+    modules: null                         # -> VASP_MODULES, e.g. "intel/2017u5"
+    vasp_cmd: null                        # -> VASP_CMD, default "mpirun -np $SLURM_NTASKS vasp_std"
+    max_jobs: 30                          # -> ALFLOW_MAX_JOBS (parallel sbatch limit)

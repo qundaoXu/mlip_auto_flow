@@ -54,13 +54,68 @@ def _load_core(need_mace: bool):
     return mod
 
 
-# --------------------------------------------------------------------------- run
-def _yaml_to_flags(path: Path) -> list[str]:
-    import yaml
+# --------------------------------------------------------------------------- config
+#: alflow.dft key -> environment variable read by std.run / submitjobs.sh / sbatch
+DFT_ENV = {
+    "partition": "SBATCH_PARTITION",
+    "account": "SBATCH_ACCOUNT",
+    "modules": "VASP_MODULES",
+    "vasp_cmd": "VASP_CMD",
+    "max_jobs": "ALFLOW_MAX_JOBS",
+}
 
-    cfg = yaml.safe_load(path.read_text()) or {}
+
+def _read_config(path: str | None) -> dict:
+    """The ``alflow`` section of a combined mlip_auto_flow.yaml (or a flat file
+    whose keys are the run options, as in examples/alflow.yaml)."""
+    import os
+
+    if path is None:
+        path = os.environ.get("ALFLOW_CONFIG") or os.environ.get("MLIPEVAL_CONFIG")
+        if path is None:
+            for cand in (Path.cwd() / "mlip_auto_flow.yaml", _paths.RELEASE_ROOT / "mlip_auto_flow.yaml"):
+                if cand.exists():
+                    path = str(cand)
+                    break
+    if not path:
+        return {}
+    p = Path(os.path.expandvars(path)).expanduser()
+    if p.suffix.lower() == ".json":
+        data = json.loads(p.read_text()) or {}
+    else:
+        import yaml
+        data = yaml.safe_load(p.read_text()) or {}
+    if "alflow" in data:
+        return data["alflow"] or {}
+    return {"run": data} if not ({"run", "dft"} & set(data)) else data
+
+
+def _apply_dft_env(cfg: dict) -> dict:
+    """Export alflow.dft settings; variables already set in the shell win."""
+    import os
+
+    applied = {}
+    for key, env in DFT_ENV.items():
+        val = (cfg.get("dft") or {}).get(key)
+        if val is not None and not os.environ.get(env):
+            os.environ[env] = str(val)
+            applied[env] = str(val)
+    return applied
+
+
+def _run_option(cfg: dict, key: str):
+    import os
+
+    val = (cfg.get("run") or {}).get(key)
+    if key == "foundation_model":
+        val = val or os.environ.get("ALFLOW_FOUNDATION_MODEL")
+    return val
+
+
+# --------------------------------------------------------------------------- run
+def _options_to_flags(opts: dict) -> list[str]:
     flags: list[str] = []
-    for key, val in cfg.items():
+    for key, val in opts.items():
         flag = "--" + key
         if isinstance(val, bool):
             if val:
@@ -73,14 +128,27 @@ def _yaml_to_flags(path: Path) -> list[str]:
 
 
 def cmd_run(ns, extra) -> int:
-    flags = _yaml_to_flags(Path(ns.config)) if ns.config else []
-    cmd = [sys.executable, str(_paths.alflow_home() / CORE_NAME), *flags, *extra]
+    cfg = _read_config(ns.config)
+    _apply_dft_env(cfg)
+    opts = dict(cfg.get("run") or {})
+    home = _paths.alflow_home()
+    given = {a.split("=")[0] for a in extra if a.startswith("--")}
+    # the shell helpers ship with the scripts; use those unless told otherwise
+    for key, name in (("submitjobs", "submitjobs.sh"), ("outcar2xyz", "outcar2xyz.sh")):
+        if key not in opts and f"--{key}" not in given:
+            opts[key] = str(home / name)
+    flags = _options_to_flags(opts)
+    cmd = [sys.executable, str(home / CORE_NAME), *flags, *extra]
     print("+", " ".join(cmd[1:]), file=sys.stderr)
     return subprocess.call(cmd)
 
 
 # --------------------------------------------------------------------------- stages
 def cmd_train(ns, extra) -> int:
+    cfg = _read_config(ns.config)
+    ns.foundation_model = ns.foundation_model or _run_option(cfg, "foundation_model")
+    if not ns.foundation_model:
+        sys.exit("alflow train: give --foundation-model, alflow.run.foundation_model, or $ALFLOW_FOUNDATION_MODEL")
     core = _load_core(need_mace=True)
     cfgs = core.write_committee_configs(
         train_file=Path(ns.train), valid_file=Path(ns.valid), test_file=Path(ns.test),
@@ -107,12 +175,12 @@ def cmd_sample(ns, extra) -> int:
         traj = Path(ns.traj)
     else:
         core.run_ase_md(model_paths=models, init_conf_path=Path(ns.init_conf), md_temp=ns.temp,
-                        md_steps=ns.steps, traj_out=traj, interval=ns.interval)
+                        md_steps=ns.steps, traj_out=traj, interval=ns.interval, device=ns.device)
     n = core.select_uncertain_frames(
         model_paths=models, traj_in=traj,
         traj_out_with_uncert=out / "ase_traj_with_uncertainty.xyz",
         uncertain_out=out / "uncertain_frames.xyz",
-        threshold=ns.threshold, max_frames=ns.max_frames,
+        threshold=ns.threshold, max_frames=ns.max_frames, device=ns.device,
     )
     print(json.dumps({"trajectory": str(traj), "selected": n,
                       "frames": str(out / "uncertain_frames.xyz")}, indent=2))
@@ -120,6 +188,7 @@ def cmd_sample(ns, extra) -> int:
 
 
 def cmd_label(ns, extra) -> int:
+    _apply_dft_env(_read_config(ns.config))
     core = _load_core(need_mace=False)
     home = _paths.alflow_home()
     root = Path(ns.root)
@@ -169,17 +238,21 @@ def cmd_merge(ns, extra) -> int:
 # --------------------------------------------------------------------------- parser
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="alflow", description="Uncertainty-driven active learning for MLIPs (MACE committee + VASP)")
+    p.add_argument("--config", default=None,
+                   help="mlip_auto_flow.yaml (its alflow: section) or a flat YAML/JSON of run options; "
+                        "default: $ALFLOW_CONFIG, $MLIPEVAL_CONFIG, ./mlip_auto_flow.yaml")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     s = sub.add_parser("run", help="full AL loop; extra options go to activate_learning_full_flow.py")
-    s.add_argument("--config", default=None, help="YAML whose keys are the script's long options")
     s.set_defaults(fn=cmd_run)
+    s = sub.add_parser("config", help="show the alflow settings that would be used")
+    s.set_defaults(fn=cmd_config)
 
     s = sub.add_parser("train", help="write committee configs and fine-tune N MACE models")
     s.add_argument("--train", required=True)
     s.add_argument("--valid", required=True)
     s.add_argument("--test", required=True)
-    s.add_argument("--foundation-model", required=True)
+    s.add_argument("--foundation-model", default=None, help="default: alflow.run.foundation_model or $ALFLOW_FOUNDATION_MODEL")
     s.add_argument("--n-comm", type=int, default=4)
     s.add_argument("--seeds", type=int, nargs="+", default=[123, 234, 345, 456])
     s.add_argument("--epochs", type=int, default=100)
@@ -199,6 +272,7 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--threshold", type=float, default=0.9,
                    help="cut on min-max normalised sigma_E / sigma_F (0-1, relative to this trajectory)")
     s.add_argument("--max-frames", type=int, default=200)
+    s.add_argument("--device", default="cuda")
     s.add_argument("--out-dir", default="comm_traj")
     s.set_defaults(fn=cmd_sample)
 
@@ -227,12 +301,25 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--new", required=True)
     s.add_argument("--out", required=True)
     s.set_defaults(fn=cmd_merge)
+    # `alflow run --config X` as well as `alflow --config X run`
+    for sp in sub.choices.values():
+        sp.add_argument("--config", dest="sub_config", default=None, help=argparse.SUPPRESS)
     return p
+
+
+def cmd_config(ns, extra) -> int:
+    cfg = _read_config(ns.config)
+    env = {k: v for k, v in DFT_ENV.items()}
+    print(json.dumps({"alflow_home": str(_paths.alflow_home()),
+                      "run": cfg.get("run") or {},
+                      "dft_env": {env[k]: (cfg.get("dft") or {}).get(k) for k in env}}, indent=2, ensure_ascii=False))
+    return 0
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     ns, extra = parser.parse_known_args(argv)
+    ns.config = getattr(ns, "sub_config", None) or ns.config
     if extra and ns.cmd != "run":
         parser.error(f"unrecognized arguments: {' '.join(extra)}")
     if ns.cmd == "sample" and not (ns.traj or ns.init_conf):

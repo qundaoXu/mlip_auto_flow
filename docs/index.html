@@ -1,382 +1,538 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-lang="zh">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>mlip_auto_flow</title>
+<meta name="description" content="L0–L5 tiered evaluation and active learning for machine-learning interatomic potentials">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500&display=swap">
 <style>
-/* Layout: a journal-style project page — one reading column, figures mounted on white plates like printed figure pages, code in a mono console strip */
+/* Direction
+   Product   tells MLIP developers at which physical level a potential stops being right, and what data to add next
+   Character exact, restrained, sure of itself
+   World     a journal figure page and a lab notebook: ink on cool paper
+   Moments   the report card in the hero; the ranked list of nine potentials
+   Signature L0–L5 always appear as small mono keycaps */
 :root {
-  --bg: #f4f5f3;
-  --surface: #fdfdfc;
-  --plate: #ffffff;
-  --ink: #15181b;
-  --ink-2: #4a5057;
-  --muted: #7d838a;
-  --rule: #d9dcd8;
-  --grid: #e7e9e6;
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --raised: #eceff4;
+  --line: rgba(17, 24, 39, 0.08);
+  --text: #111827;
+  --text-2: #4b5565;
+  --muted: #6b7487;
   --accent: #3c5488;
-  --accent-2: #e64b35;
-  --code-bg: #1b1e22;
-  --code-ink: #e8e6df;
-  --code-muted: #8f959c;
-  --good: #1f8a3b; --bad: #c63a2c;
-  --seq: #3e4c80;
-  --f-display: "Noto Serif SC", "Songti SC", serif;
-  --f-body: "IBM Plex Sans", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
-  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --accent-soft: rgba(60, 84, 136, 0.12);
+  --bar: #c9d0dc;
+  --fail: #c2413b;
+  --fail-soft: rgba(194, 65, 59, 0.10);
+  --pass: #16a34a;
+  --plate: #ffffff;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --code-bg: #111827;
+  --code-text: #e5e9f0;
+  --code-muted: #8a93a6;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --sans: "IBM Plex Sans", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #101214; --surface: #181a1d; --plate: #f7f7f5; --ink: #eeede8; --ink-2: #c2c1b8; --muted: #8e8d87;
-  --rule: #2e3134; --grid: #26292c; --accent: #8ea3d6; --accent-2: #f07a66; --code-bg: #0b0c0e; --code-ink: #e8e6df; --code-muted: #8f959c;
-  --good: #4cc26a; --bad: #ef7466; --seq: #6f86c9; color-scheme: dark; } }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0d14; --card: #11141c; --raised: #1a1e28; --line: rgba(238, 240, 245, 0.08);
+    --text: #eef0f5; --text-2: #a3a9b8; --muted: #7a8296;
+    --accent: #8ea3d6; --accent-soft: rgba(142, 163, 214, 0.14); --bar: #2b3140;
+    --fail: #e5736e; --fail-soft: rgba(229, 115, 110, 0.12); --pass: #4cc38a;
+    --plate: #f7f8fa; --shadow: none; --code-bg: #07080d; color-scheme: dark;
+  }
+}
 :root[data-theme="dark"] {
-  --bg: #101214; --surface: #181a1d; --plate: #f7f7f5; --ink: #eeede8; --ink-2: #c2c1b8; --muted: #8e8d87;
-  --rule: #2e3134; --grid: #26292c; --accent: #8ea3d6; --accent-2: #f07a66; --code-bg: #0b0c0e; --code-ink: #e8e6df; --code-muted: #8f959c;
-  --good: #4cc26a; --bad: #ef7466; --seq: #6f86c9; color-scheme: dark; }
+  --bg: #0b0d14; --card: #11141c; --raised: #1a1e28; --line: rgba(238, 240, 245, 0.08);
+  --text: #eef0f5; --text-2: #a3a9b8; --muted: #7a8296;
+  --accent: #8ea3d6; --accent-soft: rgba(142, 163, 214, 0.14); --bar: #2b3140;
+  --fail: #e5736e; --fail-soft: rgba(229, 115, 110, 0.12); --pass: #4cc38a;
+  --plate: #f7f8fa; --shadow: none; --code-bg: #07080d; color-scheme: dark;
+}
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15.5px; line-height: 1.65; }
-.wrap { max-width: 1080px; margin: 0 auto; padding-block: 36px 72px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 56px; }
-h1, h2, h3 { margin: 0; text-wrap: balance; }
-h1 { font-family: var(--f-mono); font-weight: 500; font-size: clamp(36px, 6vw, 56px); letter-spacing: -0.02em; line-height: 1.05; }
-h2 { font-family: var(--f-display); font-size: 26px; font-weight: 700; }
-h3 { font-size: 16px; font-weight: 600; }
-p { margin: 0; }
-.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
-.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-.lede { font-size: 17.5px; color: var(--ink-2); max-width: 62ch; }
-.prose { color: var(--ink-2); max-width: 68ch; }
-.prose b, .prose strong { color: var(--ink); }
-section { display: grid; gap: 22px; min-width: 0; }
-.sec-head { display: grid; gap: 8px; border-top: 1px solid var(--ink); padding-top: 14px; }
-.sec-head .eyebrow { color: var(--accent); }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; overflow-x: clip; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 22px; -webkit-font-smoothing: antialiased; }
+html[data-lang="zh"] [lang="en"], html[data-lang="en"] [lang="zh"] { display: none !important; }
+a { color: inherit; }
+h1, h2, h3, p { margin: 0; }
+h1, h2 { text-wrap: balance; font-weight: 500; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); }
+
+/* keycap: the signature */
+.kc { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 20px; padding: 0 6px; border-radius: 4px; font-family: var(--mono); font-size: 12px; line-height: 16px; color: var(--text-2); background: var(--card); border: 1px solid var(--line); box-shadow: inset 0 -1px 0 var(--line); font-variant-numeric: tabular-nums; }
+
+/* nav */
+header.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in oklab, var(--bg) 92%, transparent); backdrop-filter: saturate(1.2) blur(8px); border-bottom: 1px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+.nav .wrap { height: 60px; display: flex; align-items: center; gap: 24px; }
+.logo { font-family: var(--mono); font-size: 16px; font-weight: 500; text-decoration: none; letter-spacing: 0; }
+.nav nav { display: flex; gap: 4px; margin-left: 12px; }
+.nav nav a { text-decoration: none; color: var(--text-2); font-size: 14px; padding: 6px 10px; border-radius: 8px; transition: color 150ms var(--ease), background-color 150ms var(--ease); }
+.nav nav a:hover { color: var(--text); background: var(--raised); }
+.nav .right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; padding: 2px; background: var(--card); }
+.lang button { font: inherit; font-size: 13px; line-height: 20px; border: 0; background: transparent; color: var(--muted); padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: color 150ms var(--ease), background-color 150ms var(--ease); }
+.lang button[aria-pressed="true"] { background: var(--raised); color: var(--text); }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 10px; font: inherit; font-size: 15px; font-weight: 500; text-decoration: none; cursor: pointer; transition: background-color 150ms var(--ease), color 150ms var(--ease), transform 120ms var(--ease); }
+.btn:active { transform: scale(0.98); }
+.btn.primary { background: var(--text); color: var(--bg); border: 0; }
+.btn.primary:hover { background: color-mix(in oklab, var(--text) 86%, var(--bg)); }
+.btn.secondary { background: var(--card); color: var(--text); border: 1px solid var(--line); }
+.btn.secondary:hover { background: var(--raised); }
+.btn.small { height: 34px; padding: 0 14px; font-size: 14px; border-radius: 8px; }
+.btn svg { width: 16px; height: 16px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (max-width: 860px) { .nav nav { display: none; } }
+@media (max-width: 560px) { .nav .btn { display: none; } .nav .wrap { gap: 12px; } }
 
 /* hero */
-.hero { display: grid; gap: 22px; padding-top: 8px; }
-.hero .tag { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--rule); border-radius: 3px; padding: 2px 8px; color: var(--ink-2); background: var(--surface); }
-.levels-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; background: var(--surface); }
-.levels-strip div { padding: 12px 12px 14px; border-left: 1px solid var(--rule); display: grid; gap: 2px; }
-.levels-strip div:first-child { border-left: 0; }
-.levels-strip b { font-family: var(--f-mono); font-size: 18px; font-weight: 500; color: var(--accent); }
-.levels-strip span { font-size: 13px; color: var(--ink-2); line-height: 1.35; }
-@media (max-width: 720px) { .levels-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } .levels-strip div:nth-child(4) { border-left: 0; } .levels-strip div:nth-child(n+4) { border-top: 1px solid var(--rule); } }
+.hero { padding-block: 96px 96px; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: center; }
+.hero h1 { font-size: 56px; line-height: 1.06; letter-spacing: -0.03em; }
+html[data-lang="zh"] .hero h1 { letter-spacing: 0; font-size: 52px; line-height: 1.14; }
+.hero .sub { margin-top: 20px; font-size: 18px; line-height: 28px; color: var(--text-2); max-width: 36rem; }
+.hero .actions { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 960px) { .hero .wrap { grid-template-columns: minmax(0, 1fr); gap: 48px; } .hero { padding-block: 56px 64px; } .hero h1 { font-size: 40px; } html[data-lang="zh"] .hero h1 { font-size: 38px; } }
 
-.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; }
-@media (max-width: 760px) { .two { grid-template-columns: minmax(0, 1fr); } }
-.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 18px 20px; display: grid; gap: 8px; align-content: start; min-width: 0; }
-.card .cmd { font-family: var(--f-mono); font-size: 13px; color: var(--accent); }
-.card ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 14.5px; display: grid; gap: 3px; }
+/* report card (hero moment) */
+.report { background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 24px; display: grid; gap: 20px; min-width: 0; }
+.report .head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.report .model { font-size: 16px; font-weight: 500; }
+.report .meta { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.report .score { text-align: right; }
+.report .score b { display: block; font-family: var(--mono); font-weight: 500; font-size: 32px; line-height: 1; font-variant-numeric: tabular-nums; }
+.report .score span { font-size: 13px; color: var(--muted); }
+.levels { display: grid; gap: 8px; }
+.lv { display: grid; grid-template-columns: 36px 112px minmax(0, 1fr) 44px; gap: 12px; align-items: center; height: 32px; padding: 0 8px; border-radius: 8px; }
+.lv .name { font-size: 13px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lv .track { height: 6px; border-radius: 3px; background: var(--raised); position: relative; overflow: hidden; }
+.lv .track i { position: absolute; inset: 0 auto 0 0; border-radius: 3px; background: var(--bar); }
+.lv .val { font-family: var(--mono); font-size: 13px; text-align: right; font-variant-numeric: tabular-nums; }
+.lv.fail { background: var(--fail-soft); }
+.lv.fail .track i { background: var(--fail); }
+.lv.fail .val, .lv.fail .name { color: var(--fail); }
+.lv.fail .kc { color: var(--fail); border-color: color-mix(in oklab, var(--fail) 35%, transparent); }
+.verdict { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 8px; font-size: 14px; }
+.verdict .row { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 12px; }
+.verdict .k { color: var(--muted); font-size: 13px; }
+.verdict .pairs { font-family: var(--mono); font-size: 13px; color: var(--text-2); }
+@media (max-width: 520px) { .lv { grid-template-columns: 32px minmax(0, 1fr) 40px; } .lv .name { display: none; } .report { padding: 16px; } }
 
-/* figures */
-figure { margin: 0; display: grid; gap: 10px; min-width: 0; }
-.plate { background: var(--plate); border-radius: 3px; padding: 14px; border: 1px solid var(--rule); }
+/* sections */
+section.block { padding-block: 80px; border-top: 1px solid var(--line); }
+.sec-head { display: grid; gap: 12px; max-width: 44rem; margin-bottom: 40px; }
+.sec-head h2 { font-size: 34px; line-height: 1.15; letter-spacing: -0.02em; }
+html[data-lang="zh"] .sec-head h2 { letter-spacing: 0; font-size: 32px; line-height: 1.25; }
+.sec-head p { font-size: 16px; line-height: 26px; color: var(--text-2); }
+@media (max-width: 720px) { section.block { padding-block: 56px; } .sec-head h2 { font-size: 26px; } html[data-lang="zh"] .sec-head h2 { font-size: 26px; } }
+
+/* ranking */
+.rank { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.rank-scroll { overflow-x: auto; }
+.rank table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 14px; }
+.rank th { text-align: left; font-weight: 400; color: var(--muted); font-size: 13px; padding: 12px 16px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.rank th.lvh { text-align: right; width: 56px; padding-left: 4px; padding-right: 16px; }
+.rank td { padding: 0 16px; height: 44px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.rank tr:last-child td { border-bottom: 0; }
+.rank tbody tr { transition: background-color 150ms var(--ease); }
+.rank tbody tr:hover { background: var(--raised); }
+.rank .pos { width: 40px; color: var(--muted); font-family: var(--mono); font-size: 13px; }
+.rank .who { width: 210px; }
+.rank .who small { display: block; font-size: 12px; line-height: 16px; color: var(--muted); }
+.rank .who b { font-weight: 500; }
+.rank .bar { display: flex; align-items: center; gap: 12px; min-width: 220px; }
+.rank .bar .track { flex: 1; height: 8px; border-radius: 4px; background: var(--raised); position: relative; }
+.rank .bar .track i { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: var(--bar); }
+.rank tr.lead .bar .track i { background: var(--accent); }
+.rank .bar .num { font-family: var(--mono); font-size: 14px; width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
+.rank td.lvv { text-align: right; font-family: var(--mono); font-size: 13px; color: var(--text-2); width: 56px; padding-left: 4px; font-variant-numeric: tabular-nums; }
+.rank td.lvv.low { color: var(--fail); }
+.rank td.gate { width: 104px; font-size: 13px; }
+.gate-ok { color: var(--muted); }
+.gate-no { color: var(--fail); }
+.rank-foot { display: flex; flex-wrap: wrap; gap: 8px 24px; padding: 12px 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.rank-foot span { display: inline-flex; align-items: center; gap: 8px; }
+.sw { width: 16px; height: 6px; border-radius: 3px; display: inline-block; }
+
+/* levels */
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+.tabs button { font: inherit; display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px 0 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--text-2); font-size: 14px; cursor: pointer; transition: background-color 150ms var(--ease), color 150ms var(--ease), border-color 150ms var(--ease); }
+.tabs button:hover { background: var(--raised); color: var(--text); }
+.tabs button[aria-selected="true"] { background: var(--raised); color: var(--text); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
+.tabs button[aria-selected="true"] .kc { color: var(--accent); }
+.level-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 32px; align-items: start; }
+@media (max-width: 960px) { .level-grid { grid-template-columns: minmax(0, 1fr); } }
+.plate { background: var(--plate); border-radius: 12px; border: 1px solid var(--line); padding: 16px; box-shadow: var(--shadow); }
 .plate img { display: block; width: 100%; height: auto; }
-figcaption { font-size: 13.5px; color: var(--ink-2); max-width: 90ch; }
-figcaption b { color: var(--ink); }
+.cap { margin-top: 12px; font-size: 13px; line-height: 20px; color: var(--muted); }
+.cap b { color: var(--text-2); font-weight: 500; }
+.side { display: grid; gap: 24px; }
+.side .q { font-size: 18px; line-height: 28px; }
+.facts { display: grid; gap: 20px; }
+.fact { display: grid; gap: 4px; padding-left: 16px; border-left: 1px solid var(--line); }
+.fact b { font-family: var(--mono); font-weight: 500; font-size: 24px; line-height: 32px; font-variant-numeric: tabular-nums; }
+.fact span { font-size: 14px; line-height: 22px; color: var(--text-2); }
 
-/* ranking table */
-.toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
-.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; background: var(--surface); }
-.seg button { font: inherit; font-size: 13px; background: transparent; border: 0; padding: 5px 12px; cursor: pointer; color: var(--ink-2); }
-.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-.seg button:focus-visible, .tabs button:focus-visible, .copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.tbl-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; }
-table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
-th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; padding: 8px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
-td { padding: 6px 10px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
-tr:last-child td { border-bottom: 0; }
-td.num, th.num { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
-td.hm { padding: 2px 2px; text-align: center; font-family: var(--f-mono); font-size: 12px; width: 50px; }
-td.hm span { display: block; padding: 4px 0; border-radius: 2px; }
-.sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 8px; vertical-align: 0; }
-.grp { font-size: 12px; color: var(--muted); }
-.gate { font-size: 12px; font-weight: 500; }
-.gate.ok { color: var(--good); } .gate.no { color: var(--bad); }
-.bar { display: flex; align-items: center; gap: 8px; }
-.bar i { display: block; height: 9px; border-radius: 0 2px 2px 0; }
-.note { font-size: 13px; color: var(--muted); max-width: 90ch; }
+/* AL */
+.loop { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 32px; }
+.step { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 12px; border-radius: 8px; background: var(--card); border: 1px solid var(--line); font-size: 14px; color: var(--text-2); }
+.step code { font-family: var(--mono); font-size: 13px; color: var(--text); }
+.step.eval { border-color: color-mix(in oklab, var(--accent) 40%, transparent); background: var(--accent-soft); }
+.arrow { color: var(--muted); width: 16px; height: 16px; flex: none; }
+.al-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 32px; align-items: start; }
+@media (max-width: 960px) { .al-grid { grid-template-columns: minmax(0, 1fr); } }
 
-/* level tabs */
-.tabs { display: flex; flex-wrap: wrap; gap: 2px; border-bottom: 1px solid var(--rule); }
-.tabs button { font: inherit; background: transparent; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 8px 14px; cursor: pointer; color: var(--ink-2); display: grid; text-align: left; gap: 0; }
-.tabs button b { font-family: var(--f-mono); font-weight: 500; font-size: 15px; }
-.tabs button span { font-size: 12px; color: var(--muted); }
-.tabs button[aria-selected="true"] { border-bottom-color: var(--accent); color: var(--ink); }
-.level-body { display: grid; gap: 16px; }
-.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-@media (max-width: 760px) { .facts { grid-template-columns: minmax(0, 1fr); } }
-.facts div { display: grid; gap: 4px; border-top: 2px solid var(--ink); padding-top: 8px; align-content: start; }
-.facts p { font-size: 14px; color: var(--ink-2); }
-.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 16px; font-size: 14px; }
-.kv dt { color: var(--muted); }
-.kv dd { margin: 0; color: var(--ink-2); overflow-wrap: anywhere; }
+/* quick start */
+.qs { display: grid; gap: 16px; }
+.qs .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; align-items: start; min-width: 0; }
+@media (max-width: 760px) { .qs .card { grid-template-columns: minmax(0, 1fr); gap: 12px; } }
+.qs .card h3 { font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.qs .card p { font-size: 14px; color: var(--text-2); }
+.code { position: relative; background: var(--code-bg); color: var(--code-text); border-radius: 10px; padding: 14px 72px 14px 16px; font-family: var(--mono); font-size: 12.5px; line-height: 20px; overflow-x: auto; white-space: pre; margin: 0; }
+.code .c { color: var(--code-muted); }
+.copy { position: absolute; top: 8px; right: 8px; font: inherit; font-size: 12px; line-height: 16px; padding: 4px 8px; border-radius: 6px; border: 0; background: rgba(255,255,255,0.08); color: var(--code-text); cursor: pointer; transition: background-color 150ms var(--ease); }
+.copy:hover { background: rgba(255,255,255,0.14); }
 
-/* code */
-pre.code { margin: 0; background: var(--code-bg); color: var(--code-ink); font-family: var(--f-mono); font-size: 13px; line-height: 1.6; padding: 14px 16px; border-radius: 4px; overflow-x: auto; }
-pre.code .c { color: var(--code-muted); }
-.code-box { position: relative; min-width: 0; }
-.copy { position: absolute; top: 8px; right: 8px; font: inherit; font-size: 12px; background: #2b2f35; color: var(--code-ink); border: 0; border-radius: 3px; padding: 3px 8px; cursor: pointer; }
-pre.mermaid { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 16px; margin: 0; overflow-x: auto; }
-footer { border-top: 1px solid var(--rule); padding-top: 14px; }
+footer { border-top: 1px solid var(--line); padding-block: 32px 48px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; font-size: 13px; color: var(--muted); }
+footer a { color: var(--text-2); text-decoration: none; }
+footer a:hover { color: var(--text); }
 
-a.chip { text-decoration: none; color: var(--accent); }
-footer a { color: var(--accent); }
+.rise { animation: rise 420ms var(--ease) both; }
+.rise.d1 { animation-delay: 60ms; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .rise { animation: none; } }
 </style>
 </head>
 <body>
-
-
-<div class="wrap">
-  <header class="hero">
-    <span class="eyebrow">Machine-learning interatomic potentials · evaluation + active learning</span>
-    <h1>mlip_auto_flow</h1>
-    <p class="lede">一套从数值一致性测到相变路径的势函数分级评估框架，加上一套不确定性驱动的主动学习脚本。评估告诉你势函数在哪一层物理性质上开始失效，主动学习据此去补数据。</p>
-    <div class="tag">
-      <span class="chip">GST225 参考包 · 208 个 DFT/AIMD 任务</span>
-      <span class="chip">17 个势函数已评估</span>
-      <span class="chip">CLI: mlipeval · alflow</span>
-      <a class="chip" href="https://github.com/qundaoXu/mlip_auto_flow">GitHub ↗</a>
-    </div>
-    <div class="levels-strip" aria-label="评估层级">
-      <div><b>L0</b><span>数值参考一致性</span></div>
-      <div><b>L1</b><span>势能面健全性（门控）</span></div>
-      <div><b>L2</b><span>静态平衡性质</span></div>
-      <div><b>L3</b><span>无序结构</span></div>
-      <div><b>L4</b><span>动力学与输运</span></div>
-      <div><b>L5</b><span>过程与相变路径</span></div>
-    </div>
-  </header>
-
-  <section>
-    <div class="two">
-      <div class="card">
-        <span class="eyebrow">Part 1</span>
-        <h3>评估框架</h3>
-        <p class="cmd">mlipeval run · rank · card · candidates</p>
-        <ul>
-          <li>同一参考、同一协议、同一套冻结后处理参数</li>
-          <li>每个数都是可回溯的 MetricResult：谁跟谁比、什么协议、错在哪个构型</li>
-          <li>参考散布可测时给 A/B/C/F 绝对判级，不可测时标 provisional</li>
-          <li>失败构型去重后导出，附建议的 DFT 协议</li>
-        </ul>
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top">mlip_auto_flow</a>
+    <nav aria-label="Sections">
+      <a href="#ranking"><span lang="zh">排名</span><span lang="en">Ranking</span></a>
+      <a href="#levels"><span lang="zh">六层诊断</span><span lang="en">Levels</span></a>
+      <a href="#al"><span lang="zh">主动学习</span><span lang="en">Active learning</span></a>
+      <a href="#start"><span lang="zh">快速开始</span><span lang="en">Get started</span></a>
+    </nav>
+    <div class="right">
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" id="lang-zh" aria-pressed="true">中文</button>
+        <button type="button" id="lang-en" aria-pressed="false">EN</button>
       </div>
-      <div class="card">
-        <span class="eyebrow">Part 2</span>
-        <h3>主动学习脚本</h3>
-        <p class="cmd">alflow train · sample · label · collect · merge</p>
-        <ul>
-          <li>MACE 委员会微调（默认从 MACE-MPA-0 出发）</li>
-          <li>委员会 MD，按 σ<sub>E</sub>、σ<sub>F,rms</sub>、σ<sub>F,max</sub> 选帧</li>
-          <li>VASP 输入生成、批量提交、等待、OUTCAR 合并</li>
-          <li>每个阶段可单独调用，输出 JSON，便于平台调度</li>
-        </ul>
+      <a class="btn secondary small" href="https://github.com/qundaoXu/mlip_auto_flow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- hero -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="rise">
+        <h1>
+          <span lang="zh">找到势函数开始失效的那一层</span>
+          <span lang="en">Find the level where a potential stops being right</span>
+        </h1>
+        <p class="sub">
+          <span lang="zh">从能量和力，一直测到无序结构、扩散和熔融–淬火路径。L0–L5 六层诊断给出失效位置，失败构型直接进入下一轮主动学习。</span>
+          <span lang="en">From energies and forces to disordered structure, diffusion and the melt–quench pathway. Six levels, L0 to L5, locate the failure, and the failing structures go straight into the next round of active learning.</span>
+        </p>
+        <div class="actions">
+          <a class="btn primary" href="#ranking"><span lang="zh">看 9 个势函数的排名</span><span lang="en">See how nine potentials rank</span></a>
+          <a class="btn secondary" href="#start"><span lang="zh">快速开始</span><span lang="en">Get started</span></a>
+        </div>
       </div>
+
+      <article class="report rise d1" aria-label="Report card">
+        <div class="head">
+          <div>
+            <div class="model">MACE-spec-GST-NE</div>
+            <div class="meta"><span lang="zh">GST225 · 专用势 · 第 2 / 9 名</span><span lang="en">GST225 · specialised · rank 2 of 9</span></div>
+          </div>
+          <div class="score"><b>82.1</b><span lang="zh">总分</span><span lang="en">overall</span></div>
+        </div>
+        <div class="levels" id="hero-levels"></div>
+        <div class="verdict">
+          <div class="row"><span class="k"><span lang="zh">L1 门控</span><span lang="en">L1 gate</span></span><span class="gate-no"><span lang="zh">未通过：6 条二体曲线中 6 条</span><span lang="en">Closed: 6 of 6 pair curves</span></span></div>
+          <div class="row"><span class="k"><span lang="zh">失败元素对</span><span lang="en">Failing pairs</span></span><span class="pairs">Ge–Ge · Ge–Sb · Ge–Te · Sb–Sb · Sb–Te · Te–Te</span></div>
+          <div class="row"><span class="k"><span lang="zh">下一轮补算</span><span lang="en">Label next</span></span><span><span lang="zh">二体扫描、压缩胞、高温离群帧</span><span lang="en">Pair scans, compressed cells, hot outlier frames</span></span></div>
+        </div>
+      </article>
     </div>
   </section>
 
   <!-- ranking -->
-  <section id="ranking">
-    <div class="sec-head">
-      <span class="eyebrow">Showcase</span>
-      <h2>9 个势函数在 GST225 上的排名</h2>
-      <p class="prose">5 个通用势，加上 4 个 GST 专用势。专用势与对应的通用势架构相同，只换了训练数据，所以 MACE-MPA-0 → MACE-spec-GST、NequIP-OAM-L → NequIP-spec-GST 这两对之间的差异只来自数据。</p>
-    </div>
-    <div class="toolbar">
-      <span class="note" id="rank-note"></span>
-      <div class="seg" role="group" aria-label="口径">
-        <button type="button" id="m-clean" aria-pressed="true">去污染</button>
-        <button type="button" id="m-all" aria-pressed="false">全部指标</button>
+  <section class="block" id="ranking">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span lang="zh">九个势函数，同一套考题</span><span lang="en">Nine potentials, one exam</span></h2>
+        <p>
+          <span lang="zh">5 个通用势和 4 个 GST225 专用势，在同一套 DFT/AIMD 参考上逐层打分，最好的模型记 100。总分接近的模型，失效的层级可以完全不同。</span>
+          <span lang="en">Five universal and four GST225-specialised potentials, scored level by level against one DFT/AIMD reference, with the best model at 100. Models with close totals can fail at entirely different levels.</span>
+        </p>
+      </div>
+      <div class="rank">
+        <div class="rank-scroll">
+          <table>
+            <thead><tr>
+              <th class="pos">#</th>
+              <th><span lang="zh">模型</span><span lang="en">Model</span></th>
+              <th><span lang="zh">总分</span><span lang="en">Overall</span></th>
+              <th class="lvh"><span class="kc">L0</span></th><th class="lvh"><span class="kc">L1</span></th><th class="lvh"><span class="kc">L2</span></th>
+              <th class="lvh"><span class="kc">L3</span></th><th class="lvh"><span class="kc">L4</span></th><th class="lvh"><span class="kc">L5</span></th>
+              <th><span lang="zh">L1 门控</span><span lang="en">L1 gate</span></th>
+            </tr></thead>
+            <tbody id="rank-body"></tbody>
+          </table>
+        </div>
+        <div class="rank-foot">
+          <span><i class="sw" style="background:var(--accent)"></i><span lang="zh">第一名</span><span lang="en">Leader</span></span>
+          <span class="gate-no"><span lang="zh">红色数字：该层低于 60 分</span><span lang="en">Red figure: below 60 at that level</span></span>
+        </div>
       </div>
     </div>
-    <div class="tbl-wrap"><table id="rank"></table></div>
-    <figure>
-      <div class="plate"><img src="figures/fig1_ranking.png" alt="Fig. 1: overall score bars and level-score heatmap for nine potentials" loading="lazy"></div>
-      <figcaption><b>Fig. 1｜</b>去污染口径的相对得分。<b>a</b> 总分（最佳 = 100），斜线表示 L1 门控未通过。<b>b</b> 分层得分。分数按 <span class="mono">100 × (x_best + floor) / (x_i + floor)</span> 逐指标折算，再按层级权重 L0 0.20 · L1 0.15 · L2 0.15 · L3 0.25 · L4 0.15 · L5 0.10 汇总。</figcaption>
-    </figure>
   </section>
 
   <!-- levels -->
-  <section id="levels">
-    <div class="sec-head">
-      <span class="eyebrow">Framework</span>
-      <h2>L0–L5 在测什么</h2>
-      <p class="prose">每张图的上排是物理曲线：参考数据加 4 个代表模型，虚线为通用势、实线为同架构的专用势。下排是 9 个模型的汇总，各面板共用同一条模型轴。图都由 <span class="mono">docs/notebooks/fig*.ipynb</span> 从结果文件直接生成，Nature 版式，183 mm 通栏。</p>
+  <section class="block" id="levels">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span lang="zh">六层诊断，每一层回答一个问题</span><span lang="en">Six levels, one question each</span></h2>
+        <p>
+          <span lang="zh">上排是物理曲线：参考数据，加上两对只换了训练数据的同架构模型。下排是 9 个模型的汇总。</span>
+          <span lang="en">The top row shows the physics: the reference, plus two architecture pairs that differ only in their training data. The bottom row summarises all nine models.</span>
+        </p>
+      </div>
+      <div class="tabs" role="tablist" id="ltabs"></div>
+      <div class="level-grid">
+        <figure style="margin:0">
+          <div class="plate"><img id="lfig" src="figures/fig2_L0.png" width="2161" height="1236" alt=""></div>
+          <figcaption class="cap" id="lcap"></figcaption>
+        </figure>
+        <div class="side">
+          <p class="q" id="lq"></p>
+          <div class="facts" id="lfacts"></div>
+        </div>
+      </div>
     </div>
-    <div class="tabs" role="tablist" id="ltabs"></div>
-    <div class="level-body" id="lbody"></div>
   </section>
 
   <!-- AL -->
-  <section id="al">
-    <div class="sec-head">
-      <span class="eyebrow">Active learning</span>
-      <h2>AL 阶梯回放：同一架构，只换训练数据</h2>
-      <p class="prose">一条已有的主动学习历史：gen0–gen9 是逐代扩充的数据集，prod_train 是最终部署版。每一代都用相同的 MACE 架构和超参单独训练一个模型，再完整跑一遍 L0–L5。</p>
-    </div>
-    <pre class="mermaid">
-flowchart LR
-  A[初始数据集] --> B[alflow train]
-  B --> C[alflow sample]
-  C --> D[alflow label]
-  D --> E[alflow collect]
-  E --> F[alflow merge]
-  F --> B
-  F -. 里程碑 .-> G[mlipeval run / card]
-  G -- 失败构型 --> H[mlipeval candidates]
-  H --> D
-    </pre>
-    <figure>
-      <div class="plate"><img src="figures/fig8_al_ladder.png" alt="Fig. 8: AL ladder overall score, score vs frames, level heatmap, force MAE, EOS B0 error, L1 checks" loading="lazy"></div>
-      <figcaption><b>Fig. 8｜</b><b>a</b> 总分随代数的变化（gen4 为 off-path 数据，gen8 为剪枝后的数据集）。<b>b</b> 总分 vs 训练帧数。<b>c</b> 分层得分。<b>d</b> L0 力 MAE。<b>e</b> L2 EOS B₀ 误差（这批数据没有应力标签，B₀ 是外推结果）。<b>f</b> L1 检查逐项，红色为未通过。</figcaption>
-    </figure>
-    <div class="facts">
-      <div><h3>数据量不等于质量</h3><p>总分从 gen0 的 55.7 升到 prod_train 的 85.1，但并不单调。1060 帧的 gen4 有 77.3 分，1161 帧的 gen7 只有 73.6 分，剪枝后的 gen8 跌到 58.4 分。</p></div>
-      <div><h3>不同层级的反应不同</h3><p>L3 改善最早，gen3 就到 87 分。L2 波动最大：gen0 和 gen3 的 B₀ 误差都超过 110%。L4 在 gen6、gen8 突然变差。只看力 MAE 的话，这些都看不到。</p></div>
-      <div><h3>有些问题加数据也修不好</h3><p>8 代全部卡在 L1 的二体 PEC 检查上，且不随数据增多而改善。评估把这类失败直接翻译成下一轮要算的结构：二体扫描、压缩胞、高温离群帧。</p></div>
+  <section class="block" id="al">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span lang="zh">主动学习：数据更多，不一定更好</span><span lang="en">Active learning: more data is not always better</span></h2>
+        <p>
+          <span lang="zh">回放一条真实的主动学习历史：8 代 GST225 数据集，同一个 MACE 架构、同一套超参，每一代都完整跑一遍 L0–L5。</span>
+          <span lang="en">A real active-learning history, replayed: eight generations of a GST225 dataset, one MACE architecture, one set of hyperparameters, and a full L0–L5 run for every generation.</span>
+        </p>
+      </div>
+      <div class="loop" aria-label="Workflow">
+        <span class="step"><code>alflow train</code></span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span class="step"><code>sample</code></span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span class="step"><code>label</code></span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span class="step"><code>collect</code></span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span class="step"><code>merge</code></span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span class="step eval"><code>mlipeval run</code><span class="kc">L0</span><span class="kc">L5</span></span>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <span class="step eval"><code>candidates</code><span lang="zh">回到 label</span><span lang="en">back to label</span></span>
+      </div>
+      <div class="al-grid">
+        <figure style="margin:0">
+          <div class="plate"><img src="figures/fig8_al_ladder.png" width="2161" height="1236" loading="lazy" alt="AL ladder: overall score by generation, score against training frames, level scores, force MAE, EOS bulk modulus error and L1 checks"></div>
+          <figcaption class="cap">
+            <span lang="zh"><b>a</b> 总分随代数变化，gen4 为偏离主路径的数据，gen8 为剪枝后的数据集。<b>b</b> 总分与训练帧数。<b>c</b> 分层得分。<b>d</b> L0 力 MAE。<b>e</b> L2 体模量 B₀ 误差。<b>f</b> L1 检查逐项，红色为未通过。</span>
+            <span lang="en"><b>a</b> Overall score by generation; gen4 is off-path data, gen8 a pruned set. <b>b</b> Score against training frames. <b>c</b> Level scores. <b>d</b> L0 force MAE. <b>e</b> L2 bulk-modulus error. <b>f</b> L1 checks, red for a fail.</span>
+          </figcaption>
+        </figure>
+        <div class="facts">
+          <div class="fact"><b>55.7 → 85.1</b><span lang="zh">总分从 gen0 升到部署版 prod_train，但并不单调：1060 帧的 gen4 有 77.3 分，1161 帧的 gen7 只有 73.6 分，剪枝后的 gen8 跌到 58.4 分</span><span lang="en">Overall score from gen0 to the deployed prod_train, but not monotonic: gen4 with 1060 frames scores 77.3, gen7 with 1161 frames 73.6, and the pruned gen8 falls to 58.4</span></div>
+          <div class="fact"><b>118% → 11%</b><span lang="zh">L2 体模量误差，从 gen3 到 prod_train。只看力 MAE，这个变化看不到</span><span lang="en">L2 bulk-modulus error from gen3 to prod_train, a change force MAE alone does not show</span></div>
+          <div class="fact"><b>0 / 8</b><span lang="zh">通过 L1 门控的代数。二体曲线的缺陷不随数据增多而消失，评估把它直接翻译成下一轮要算的结构</span><span lang="en">Generations that pass the L1 gate. The pair-curve defect does not go away with more data; the evaluation turns it into the structures to label next</span></div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- CLI -->
-  <section id="cli">
-    <div class="sec-head">
-      <span class="eyebrow">CLI</span>
-      <h2>两个命令，也是平台接口</h2>
-      <p class="prose">平台把本项目当作命令行工具调用，不需要 import 内部模块。重计算在 GPU 节点上执行；<span class="mono">models</span>、<span class="mono">rank</span>、<span class="mono">card</span>、<span class="mono">candidates</span>、<span class="mono">leakage</span> 是纯后处理，在登录节点上就能跑。</p>
-    </div>
-    <div class="code-box"><button class="copy" type="button" data-for="c-install">复制</button><pre class="code" id="c-install"><span class="c"># 安装</span>
-git clone https://github.com/qundaoXu/mlip_auto_flow.git && cd mlip_auto_flow
-pip install -e .            <span class="c"># mlipeval, alflow</span>
-pip install -e ".[al]"      <span class="c"># + mace-torch, scikit-learn, tqdm</span>
-<span class="c"># 结果与参考数据不在仓库中：指向完整的 eval_framework 工作副本</span>
-export MLIPEVAL_HOME=/path/to/eval_framework</pre></div>
-    <div class="two">
-      <div class="code-box"><button class="copy" type="button" data-for="c-eval">复制</button><pre class="code" id="c-eval"><span class="c"># 评估</span>
-mlipeval models
-mlipeval run l0 --model nequip_oam_l --set audit
-mlipeval run all --model mace_spec_gst
-mlipeval submit --model mace_spec_gst --chain
-mlipeval rank --models a,b,c --clean --markdown \
-              --out-stem my_set
-mlipeval card --model al_prod --clean --json
-mlipeval candidates --model al_prod --out next/
-mlipeval leakage al-ladder</pre></div>
-      <div class="code-box"><button class="copy" type="button" data-for="c-al">复制</button><pre class="code" id="c-al"><span class="c"># 主动学习：整个循环</span>
-alflow run --config examples/alflow.yaml
-<span class="c"># 或分阶段（每步输出一行 JSON）</span>
-alflow train  --train T --valid V --test S \
-              --foundation-model mace-mpa-0.model
-alflow sample --models committee/model*/*.model \
-              --init-conf init.xyz --temp 600
-alflow label  --frames comm_traj/uncertain_frames.xyz \
-              --template-dir dft_input --submit --wait
+  <!-- quick start -->
+  <section class="block" id="start">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2><span lang="zh">快速开始</span><span lang="en">Get started</span></h2>
+        <p>
+          <span lang="zh">两个命令：<code class="mono">mlipeval</code> 负责评估，<code class="mono">alflow</code> 负责主动学习。所有机器相关的设置写在一个配置文件里。</span>
+          <span lang="en">Two commands: <code class="mono">mlipeval</code> evaluates, <code class="mono">alflow</code> runs active learning. Everything machine-specific lives in one config file.</span>
+        </p>
+      </div>
+      <div class="qs">
+        <div class="card">
+          <div style="display:grid;gap:8px"><h3><span class="kc">1</span><span lang="zh">安装与配置</span><span lang="en">Install and configure</span></h3><p><span lang="zh">路径、conda 环境、LAMMPS 和作业调度写进 mlip_auto_flow.yaml，<code class="mono">--check</code> 逐项核对</span><span lang="en">Paths, conda environments, LAMMPS and the scheduler go into mlip_auto_flow.yaml; <code class="mono">--check</code> verifies each one</span></p></div>
+          <pre class="code" id="c1">git clone https://github.com/qundaoXu/mlip_auto_flow.git
+cd mlip_auto_flow
+pip install -e ".[al]"
+mlipeval config --init mlip_auto_flow.yaml
+mlipeval config --check</pre>
+        </div>
+        <div class="card">
+          <div style="display:grid;gap:8px"><h3><span class="kc">2</span><span lang="zh">评估一个势函数</span><span lang="en">Evaluate a potential</span></h3><p><span lang="zh">在配置里登记模型，提交 L0–L5 作业链，得到报告卡和排名</span><span lang="en">Register the model in the config, submit the L0–L5 chain, get a report card and a ranking</span></p></div>
+          <pre class="code" id="c2">mlipeval submit --model my_model --chain
+mlipeval card --model my_model --json
+mlipeval rank --models my_model,mace_mpa0 \
+    --markdown --out-stem mine</pre>
+        </div>
+        <div class="card">
+          <div style="display:grid;gap:8px"><h3><span class="kc">3</span><span lang="zh">补数据、再训练</span><span lang="en">Add data and retrain</span></h3><p><span lang="zh">失败构型交给 VASP 标注，合并进训练集，进入下一轮</span><span lang="en">Failing structures go to VASP, are merged into the training set, and the next round starts</span></p></div>
+          <pre class="code" id="c3">mlipeval candidates --model my_model --out next/
+alflow label --frames next/L0_diagnostic.xyz \
+    --template-dir dft_input --submit --wait
 alflow collect --root dft_cal
-alflow merge  --base train.xyz \
-              --new dft_cal/dft_merged.extxyz --out next.xyz</pre></div>
+alflow merge --base train.xyz \
+    --new dft_cal/dft_merged.extxyz --out train_r1.xyz</pre>
+        </div>
+      </div>
     </div>
-    <dl class="kv">
-      <dt>输入</dt><dd>模型以 ModelEntry 登记在 models.py；AL 输入为 extxyz（REF_energy / REF_forces / REF_stress）加 VASP 模板目录</dd>
-      <dt>输出</dt><dd>results/models/&lt;key&gt;/*.json（MetricResult）、candidates/*.extxyz + manifest、ranking_&lt;stem&gt;.json；card / models / alflow 各阶段的 stdout 都是 JSON</dd>
-      <dt>退出码</dt><dd>透传 driver 的退出码；L1 门控关闭不算失败，看报告卡里的 l1_gate</dd>
-      <dt>顺序</dt><dd class="mono">l0 → l1 → l2 → md → l3 → l3u → l4 → l5</dd>
-    </dl>
   </section>
+</main>
 
-  <footer>
-    <p class="note">代码与文档：<a href="https://github.com/qundaoXu/mlip_auto_flow">github.com/qundaoXu/mlip_auto_flow</a>。数值来自 eval_framework/results/models/&lt;model&gt;/*.json，排名由 mlipeval.ranking.build_ranking 计算（2026-11-10）。分数是同一参考下的相对分。L0–L2 缺少独立参考副本，绝对判级为 provisional；L3–L5 由 3 条 AIMD 副本判级。</p>
-  </footer>
-</div>
+<footer>
+  <div class="wrap">
+    <span class="mono">mlip_auto_flow</span>
+    <a href="https://github.com/qundaoXu/mlip_auto_flow">github.com/qundaoXu/mlip_auto_flow</a>
+  </div>
+</footer>
 
 <script>
-const D = {"clean": {"order": ["mace_spec_gst_ne", "mace_spec_gst", "nequip_oam_l", "dpa4_pro", "mace_gst_aging", "nequip_spec_gst", "mace_mpa0", "mattersim_5m", "chgnet_030"], "overall": {"mace_mpa0": 75.6, "nequip_oam_l": 87.5, "dpa4_pro": 86.9, "mattersim_5m": 70.0, "chgnet_030": 41.9, "mace_spec_gst": 88.6, "mace_spec_gst_ne": 90.2, "nequip_spec_gst": 81.8, "mace_gst_aging": 86.0}, "levels": {"mace_mpa0": [63.4, 87.3, 65.3, 76.5, 75.9, 94.5], "nequip_oam_l": [90.9, 86.3, 90.1, 90.3, 81.9, 79.6], "dpa4_pro": [91.7, 81.1, 74.7, 91.0, 87.3, 93.6], "mattersim_5m": [64.8, 75.0, 55.3, 65.2, 91.1, 75.0], "chgnet_030": [22.1, 50.0, 51.2, 42.6, 48.8, 42.7], "mace_spec_gst": [89.8, 86.3, 89.2, 96.2, 85.8, 73.9], "mace_spec_gst_ne": [92.9, 94.8, 84.1, 92.2, 84.3, 91.1], "nequip_spec_gst": [78.8, 81.6, 85.7, 83.1, 84.3, 74.8], "mace_gst_aging": [88.7, 80.4, 77.3, 87.6, 100.0, 76.6]}}, "all": {"order": ["nequip_oam_l", "mace_spec_gst_ne", "dpa4_pro", "nequip_spec_gst", "mace_spec_gst", "mace_gst_aging", "mace_mpa0", "mattersim_5m", "chgnet_030"], "overall": {"mace_mpa0": 76.8, "nequip_oam_l": 87.4, "dpa4_pro": 81.9, "mattersim_5m": 72.1, "chgnet_030": 32.9, "mace_spec_gst": 80.3, "mace_spec_gst_ne": 82.1, "nequip_spec_gst": 80.7, "mace_gst_aging": 80.1}, "levels": {"mace_mpa0": [63.4, 93.4, 67.5, 76.5, 75.9, 94.5], "nequip_oam_l": [90.9, 92.8, 83.4, 90.3, 81.9, 79.6], "dpa4_pro": [91.7, 42.5, 80.1, 91.0, 87.3, 93.6], "mattersim_5m": [64.8, 86.9, 57.9, 65.2, 91.1, 75.0], "chgnet_030": [22.1, 26.2, 15.5, 42.6, 48.8, 42.7], "mace_spec_gst": [89.8, 50.0, 70.0, 96.2, 85.8, 73.9], "mace_spec_gst_ne": [92.9, 49.6, 75.2, 92.2, 84.3, 91.1], "nequip_spec_gst": [78.8, 76.1, 84.1, 83.1, 84.3, 74.8], "mace_gst_aging": [88.7, 46.9, 71.5, 87.6, 100.0, 76.6]}}, "meta": {"mace_mpa0": {"label": "MACE-MPA-0", "group": "universal", "color": "#3C5488", "gate": true}, "nequip_oam_l": {"label": "NequIP-OAM-L", "group": "universal", "color": "#4DBBD5", "gate": true}, "dpa4_pro": {"label": "DPA-4.0.1-Pro", "group": "universal", "color": "#00A087", "gate": false}, "mattersim_5m": {"label": "MatterSim-5M", "group": "universal", "color": "#8491B4", "gate": true}, "chgnet_030": {"label": "CHGNet-0.3.0", "group": "universal", "color": "#B09C85", "gate": false}, "mace_spec_gst": {"label": "MACE-spec-GST", "group": "specialised", "color": "#E64B35", "gate": false}, "mace_spec_gst_ne": {"label": "MACE-spec-GST-NE", "group": "specialised", "color": "#F39B7F", "gate": false}, "nequip_spec_gst": {"label": "NequIP-spec-GST", "group": "specialised", "color": "#DC9100", "gate": true}, "mace_gst_aging": {"label": "MACE-GST-Aging", "group": "specialised", "color": "#7E6148", "gate": false}}};
-const LV = ["L0","L1","L2","L3","L4","L5"];
-let mode = "clean";
-
-function heat(v){
-  const p = Math.round(6 + 94 * Math.max(0, Math.min(1, (v - 20) / 80)));
-  const fg = v >= 68 ? "#ffffff" : "var(--ink)";
-  return `<span style="background:color-mix(in oklab, var(--seq) ${p}%, var(--surface));color:${fg}">${v.toFixed(0)}</span>`;
-}
-function renderRank(){
-  const R = D[mode], o = R.order, mx = Math.max(...o.map(k => R.overall[k]));
-  let h = `<thead><tr><th class="num">#</th><th>模型</th><th>类型</th><th>总分</th>${LV.map(l => `<th class="num" style="text-align:center">${l}</th>`).join("")}<th>L1 门控</th></tr></thead><tbody>`;
-  o.forEach((k, i) => {
-    const m = D.meta[k], v = R.overall[k];
-    h += `<tr><td class="num">${i + 1}</td><td><span class="sw" style="background:${m.color}"></span>${m.label}</td>
-      <td class="grp">${m.group === "universal" ? "通用" : "专用"}</td>
-      <td><div class="bar"><i style="width:${(v / mx * 120).toFixed(0)}px;background:${m.color}"></i><span class="mono">${v.toFixed(1)}</span></div></td>
-      ${R.levels[k].map(heat).map(s => `<td class="hm">${s}</td>`).join("")}
-      <td><span class="gate ${m.gate ? "ok" : "no"}">${m.gate ? "✓ 通过" : "✕ 未通过"}</span></td></tr>`;
-  });
-  document.getElementById("rank").innerHTML = h + "</tbody>";
-  document.getElementById("rank-note").textContent = mode === "clean"
-    ? "去污染：训练集见过的参考构型对应的 37 条指标，对全部模型一起剔除。"
-    : "全部指标：不剔除。专用势在自己见过的构型上占便宜，仅供对照。";
-}
-function setMode(m){ mode = m; document.getElementById("m-clean").setAttribute("aria-pressed", m === "clean"); document.getElementById("m-all").setAttribute("aria-pressed", m === "all"); renderRank(); }
-document.getElementById("m-clean").addEventListener("click", () => setMode("clean"));
-document.getElementById("m-all").addEventListener("click", () => setMode("all"));
-renderRank();
-
-const LEVELS = [
-  { k: "L0", name: "数值一致性", fig: "fig2_L0", q: "给定构型上 E/F/S 算得准不准。",
-    metrics: "能量 / 力 / 应力 MAE、RMSE、P99、max；按元素、力幅、温度段分箱", ref: "H5 审计集 120 帧（protected_audit，只打分）+ 晶体诊断集（导出补算候选）",
-    cap: "<b>a, b</b> 力分量 parity。<b>c</b> 力矢量 MAE 随参考力幅的变化。<b>d</b> 力 MAE。<b>e</b> 分元素力 MAE。<b>f</b> 能量 MAE（只扣除同组成常数偏移）。",
-    facts: [["跨度近 4 倍", "力 MAE 从 62.8 meV/Å（DPA-4）到 235 meV/Å（CHGNet）。"], ["数据的作用", "同架构下，MACE-MPA-0 → MACE-spec-GST 的力 MAE 从 98.5 降到 70.1 meV/Å。"], ["考题不进训练", "审计集从不导出候选，补算候选只来自诊断集。"]] },
-  { k: "L1", name: "势能面健全性", fig: "fig3_L1", q: "势能面是否自洽、连续、可积分。它是门控：没通过时，L4/L5 的结论需要复核。",
-    metrics: "6 条二体 PEC、平移/旋转不变性、F = −∇E、晶格扫描、2000 K 稳定性、时间步敏感性、NVE 漂移", ref: "无参考（S 档）；NVE 漂移对照 AIMD 前飞",
-    cap: "<b>a, b</b> Ge–Te、Te–Te 二体曲线，灰区为 2000 K MD 未到达的距离。<b>c</b> 2000 K 下的最近原子间距。<b>d</b> 未通过的检查（浅红 = 该元素对在训练集中）。<b>e</b> NVE 漂移。",
-    facts: [["4 / 9 通过", "其余 5 个都是 PEC 检查失败：排斥段非单调，或能量与力的导数不一致。"], ["失败区域", "DPA-4、CHGNet、MACE-spec-GST 的非单调发生在 1.1–1.4 Å，低于 2000 K 的最近接触距离（2.11–2.23 Å）。"], ["NVE", "只有 CHGNet 的漂移（0.063 meV/atom/ps）超过 AIMD 自身（0.043）。"]] },
-  { k: "L2", name: "静态平衡", fig: "fig4_L2", q: "基态结构、相序和势能面曲率。",
-    metrics: "弛豫体积与晶胞、固定体积离子弛豫 EOS 的 V₀/B₀、四级相阶梯、组成修正形成能", ref: "同协议静态 DFT；立方相 5 种空位排布逐 seed 配对",
-    cap: "<b>a</b> 六方相 EOS。<b>b</b> 立方相 EOS。<b>c</b> 立方相 V₀ vs B₀ 误差，灰框为 DFT 跨排布散布。<b>d–f</b> 立方 V₀、立方 B₀、六方 B₀ 误差（空心 = 参考被训练集污染）。",
-    facts: [["V₀ 学对了", "立方相 V₀ 误差都在 0.5% 以内，NequIP-OAM-L（−0.03%）小于 DFT 自身的跨排布散布（0.19%）。"], ["B₀ 普遍偏软", "立方相 −10% 到 −39%，六方相 −13% 到 −59%。两个相、9 个模型同号。"], ["逐 seed 配对", "把模型偏差和参考随构型的抖动分开。"]] },
-  { k: "L3", name: "无序结构", fig: "fig5_L3", q: "液态与非晶的短程序和中程序。",
-    metrics: "偏 RDF、ADF、配位数、同极键、Ge 四面体序、环分布、ALTBC、S(q)", ref: "4 个状态点，每个 3 条 AIMD 副本（A 档）",
-    cap: "非晶 300 K。<b>a</b> Ge–Te 偏 RDF。<b>b</b> Ge–Ge 偏 RDF。<b>c</b> 环尺寸分布。<b>d</b> 偏 RDF W₁（4 个状态点平均）。<b>e</b> 同极键比例误差。<b>f</b> 环分布误差。灰带为 floor。",
-    facts: [["参数冻结", "键截断、分箱、成环算法只从 AIMD 参考上定一次，两侧只有引擎不同。"], ["化学序", "同极键误差从 MACE-MPA-0 的 0.73% 降到 MACE-spec-GST 的 0.26%。"], ["三副本判级", "模型离 AIMD 不比 AIMD 副本之间更远，就判 A。"]] },
-  { k: "L4", name: "动力学", fig: "fig6_L4", q: "结构对了，原子运动是否也对。",
-    metrics: "分物种 MSD、自扩散系数 Δlog₁₀D，附拟合窗口和 log–log 斜率", ref: "950 / 1200 / 3000 K 同密度 AIMD，各 3 条副本",
-    cap: "<b>a</b> 各温度下的 log₁₀(D_MLIP/D_AIMD)，灰带为 floor 0.05 decade。<b>b</b> 1200 K 全物种 MSD。<b>c</b> Arrhenius 图。",
-    facts: [["高温都对", "3000 K 时所有模型都在 0.05 decade 以内。"], ["低温高估", "950 K 下全部高估扩散：MACE-MPA-0 +0.17，CHGNet +0.36 decade。"], ["守卫", "变温轨迹会被拒绝，不当作平衡态扩散参考。"]] },
-  { k: "L5", name: "过程与相变", fig: "fig7_L5", q: "给定温度程序下的整条路径，而不只是终态。",
-    metrics: "四面体 Ge、四元环、配位数、RDF 主峰、体积沿路径的演化；首次偏离与终态误差", ref: "1200 → 300 K 淬火与 300 → 1200 K 升温，各 3 条独立 AIMD 链",
-    cap: "<b>a–c</b> 淬火过程中的四面体 Ge、四元环和平均配位数，灰带为参考 3σ 带。<b>d</b> 路径终点误差。<b>e</b> 首次偏离位置。<b>f</b> 升温过程中的四面体 Ge。",
-    facts: [["通用势的偏离", "MACE-MPA-0 与 NequIP-OAM-L 在 600 K 以下高估四面体 Ge、低估四元环。"], ["专用数据", "同架构的专用势基本留在 AIMD 带内。"], ["容差来自参考", "如果独立 AIMD 链之间也有同样的偏离，就不归咎于模型。"]] },
+const NAMES = {
+  zh: ["数值一致性", "势能面健全性", "静态平衡", "无序结构", "动力学", "过程与相变"],
+  en: ["Reference", "PES sanity", "Static", "Structure", "Dynamics", "Pathway"],
+};
+const HERO = [92.9, 49.6, 75.2, 92.2, 84.3, 91.1];   // MACE-spec-GST-NE, all metrics
+const RANK = [
+  ["NequIP-OAM-L", "universal", 87.4, [90.9, 92.8, 83.4, 90.3, 81.9, 79.6], true],
+  ["MACE-spec-GST-NE", "specialised", 82.1, [92.9, 49.6, 75.2, 92.2, 84.3, 91.1], false],
+  ["DPA-4.0.1-Pro", "universal", 81.9, [91.7, 42.5, 80.1, 91.0, 87.3, 93.6], false],
+  ["NequIP-spec-GST", "specialised", 80.7, [78.8, 76.1, 84.1, 83.1, 84.3, 74.8], true],
+  ["MACE-spec-GST", "specialised", 80.3, [89.8, 50.0, 70.0, 96.2, 85.8, 73.9], false],
+  ["MACE-GST-Aging", "specialised", 80.1, [88.7, 46.9, 71.5, 87.6, 100.0, 76.6], false],
+  ["MACE-MPA-0", "universal", 76.8, [63.4, 93.4, 67.5, 76.5, 75.9, 94.5], true],
+  ["MatterSim-5M", "universal", 72.1, [64.8, 86.9, 57.9, 65.2, 91.1, 75.0], true],
+  ["CHGNet-0.3.0", "universal", 32.9, [22.1, 26.2, 15.5, 42.6, 48.8, 42.7], false],
 ];
-const tabs = document.getElementById("ltabs"), body = document.getElementById("lbody");
-tabs.innerHTML = LEVELS.map((l, i) => `<button type="button" role="tab" id="tab-${l.k}" aria-selected="${i === 0}" aria-controls="lbody"><b>${l.k}</b><span>${l.name}</span></button>`).join("");
-function showLevel(k){
-  const l = LEVELS.find(x => x.k === k);
-  tabs.querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", b.id === "tab-" + k));
-  body.innerHTML = `<p class="lede" style="font-size:16px">${l.q}</p>
-    <dl class="kv"><dt>指标</dt><dd>${l.metrics}</dd><dt>参考</dt><dd>${l.ref}</dd></dl>
-    <figure><div class="plate"><img src="figures/${l.fig}.png" alt="${l.k} figure"></div><figcaption><b>${l.k}｜</b>${l.cap}</figcaption></figure>
-    <div class="facts">${l.facts.map(f => `<div><h3>${f[0]}</h3><p>${f[1]}</p></div>`).join("")}</div>`;
+const LEVELS = [
+  { fig: "fig2_L0",
+    q: { zh: "在给定构型上，能量、力和应力算得准不准", en: "On given structures, are energies, forces and stresses right" },
+    cap: { zh: "<b>a, b</b> 力分量 parity。<b>c</b> 力误差随参考力幅变化。<b>d</b> 力 MAE。<b>e</b> 分元素力 MAE。<b>f</b> 能量 MAE", en: "<b>a, b</b> Force parity. <b>c</b> Force error against reference force magnitude. <b>d</b> Force MAE. <b>e</b> Force MAE by species. <b>f</b> Energy MAE" },
+    facts: [["62.8–235", { zh: "力 MAE 的跨度（meV/Å），从 DPA-4 到 CHGNet", en: "Force MAE range in meV/Å, from DPA-4 to CHGNet" }],
+            ["98.5 → 70.1", { zh: "同一个 MACE 架构，换成 GST 专用数据后的力 MAE（meV/Å）", en: "Force MAE in meV/Å for one MACE architecture, before and after GST-specific data" }]] },
+  { fig: "fig3_L1",
+    q: { zh: "势能面本身是否自洽、连续、可积分。这一层是门控", en: "Is the potential energy surface self-consistent, smooth and integrable. This level is the gate" },
+    cap: { zh: "<b>a, b</b> Ge–Te、Te–Te 二体势能曲线，灰区为 2000 K MD 未到达的距离。<b>c</b> 2000 K 下的最近原子间距。<b>d</b> 未通过的检查。<b>e</b> NVE 能量漂移", en: "<b>a, b</b> Ge–Te and Te–Te pair curves; grey marks distances 2000 K MD never reaches. <b>c</b> Closest pair distance at 2000 K. <b>d</b> Failed checks. <b>e</b> NVE energy drift" },
+    facts: [["4 / 9", { zh: "通过门控的模型。其余 5 个都卡在二体曲线检查上", en: "Models that pass the gate. The other five all fail on the pair curves" }],
+            ["1.1–1.4 Å", { zh: "DPA-4、CHGNet、MACE-spec-GST 曲线出错的位置，远低于 2000 K 下的最近接触 2.1 Å", en: "Where the DPA-4, CHGNet and MACE-spec-GST curves go wrong, far below the 2.1 Å closest contact at 2000 K" }]] },
+  { fig: "fig4_L2",
+    q: { zh: "晶相的结构、相序和体模量对不对", en: "Are crystal structures, phase order and bulk moduli right" },
+    cap: { zh: "<b>a</b> 六方相 EOS。<b>b</b> 立方相 EOS。<b>c</b> 立方相 V₀ 与 B₀ 误差，灰框为 DFT 在 5 种空位排布间的散布。<b>d–f</b> 立方 V₀、立方 B₀、六方 B₀ 误差", en: "<b>a</b> Hexagonal EOS. <b>b</b> Cubic EOS. <b>c</b> Cubic V₀ against B₀ error; the grey box is the DFT spread over five vacancy orderings. <b>d–f</b> Cubic V₀, cubic B₀ and hexagonal B₀ errors" },
+    facts: [["≤ 0.5%", { zh: "9 个模型立方相平衡体积 V₀ 的误差，平衡位置学对了", en: "Cubic equilibrium-volume error for all nine models: they sit in the right place" }],
+            ["−10% 到 −39%", { zh: "立方相体模量 B₀ 的误差，9 个模型全部偏软", en: "Cubic bulk-modulus error; all nine models are too soft" }]] },
+  { fig: "fig5_L3",
+    q: { zh: "液态和非晶的短程序与中程序对不对", en: "Is short- and medium-range order in liquid and glass right" },
+    cap: { zh: "非晶 300 K。<b>a</b> Ge–Te 偏 RDF。<b>b</b> Ge–Ge 偏 RDF。<b>c</b> 环尺寸分布。<b>d</b> 偏 RDF 距离。<b>e</b> 同极键比例误差。<b>f</b> 环分布误差", en: "Amorphous, 300 K. <b>a</b> Ge–Te partial RDF. <b>b</b> Ge–Ge partial RDF. <b>c</b> Ring sizes. <b>d</b> Partial-RDF distance. <b>e</b> Homopolar-bond error. <b>f</b> Ring-distribution error" },
+    facts: [["0.73% → 0.26%", { zh: "同极键比例误差，MACE-MPA-0 换成 GST 专用数据后", en: "Homopolar-bond error, MACE-MPA-0 against its GST-trained twin" }],
+            ["3 × AIMD", { zh: "每个状态点三条独立参考轨迹，模型离 AIMD 不比 AIMD 离自己更远，就判 A", en: "Three independent reference runs per state point; a model no further from AIMD than AIMD is from itself grades A" }]] },
+  { fig: "fig6_L4",
+    q: { zh: "结构对了，原子运动是否也对", en: "With the structure right, is the motion right too" },
+    cap: { zh: "<b>a</b> 950 / 1200 / 3000 K 下扩散系数的对数偏差。<b>b</b> 1200 K 均方位移。<b>c</b> Arrhenius 图", en: "<b>a</b> Log deviation of the diffusion coefficient at 950, 1200 and 3000 K. <b>b</b> Mean squared displacement at 1200 K. <b>c</b> Arrhenius plot" },
+    facts: [["< 0.05", { zh: "3000 K 下所有模型扩散系数的偏差（decade）", en: "Diffusion deviation in decades for every model at 3000 K" }],
+            ["+0.17 / +0.36", { zh: "950 K 下 MACE-MPA-0 和 CHGNet 的偏差。温度越低，扩散越被高估", en: "MACE-MPA-0 and CHGNet at 950 K; the colder the liquid, the more diffusion is overestimated" }]] },
+  { fig: "fig7_L5",
+    q: { zh: "沿着熔融–淬火这条路，结构演化是否和 AIMD 一致", en: "Along the melt–quench path, does the structure evolve as in AIMD" },
+    cap: { zh: "<b>a–c</b> 1200 → 300 K 淬火中的四面体 Ge、四元环和配位数，灰带为三条 AIMD 链的 3σ 带。<b>d</b> 终点误差。<b>e</b> 首次偏离位置。<b>f</b> 升温中的四面体 Ge", en: "<b>a–c</b> Tetrahedral Ge, four-rings and coordination during the 1200 → 300 K quench; grey is the 3σ band of three AIMD chains. <b>d</b> Endpoint error. <b>e</b> First divergence. <b>f</b> Tetrahedral Ge on heating" },
+    facts: [["< 600 K", { zh: "MACE-MPA-0 和 NequIP-OAM-L 从这里开始高估四面体 Ge、低估四元环", en: "Below this, MACE-MPA-0 and NequIP-OAM-L overproduce tetrahedral Ge and underproduce four-rings" }],
+            ["3σ", { zh: "容差来自三条独立 AIMD 链之间的涨落，而不是拍定的阈值", en: "The tolerance comes from the spread of three independent AIMD chains, not from a chosen threshold" }]] },
+];
+
+let lang = "zh";
+try { lang = localStorage.getItem("maf-lang") || ((navigator.language || "").toLowerCase().startsWith("zh") ? "zh" : "en"); } catch (e) {}
+let level = 0;
+
+function renderHero() {
+  document.getElementById("hero-levels").innerHTML = HERO.map((v, i) => {
+    const fail = i === 1;
+    return `<div class="lv${fail ? " fail" : ""}"><span class="kc">L${i}</span><span class="name">${NAMES[lang][i]}</span><span class="track"><i style="width:${v}%"></i></span><span class="val">${v.toFixed(1)}</span></div>`;
+  }).join("");
 }
-tabs.querySelectorAll("button").forEach(b => b.addEventListener("click", () => showLevel(b.id.slice(4))));
-tabs.addEventListener("keydown", e => {
-  if (!["ArrowRight", "ArrowLeft"].includes(e.key)) return;
-  const btns = [...tabs.querySelectorAll("button")], i = btns.findIndex(b => b.getAttribute("aria-selected") === "true");
-  const j = (i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length;
-  btns[j].focus(); showLevel(btns[j].id.slice(4));
+function renderRank() {
+  const max = RANK[0][2];
+  const t = { universal: { zh: "通用势", en: "Universal" }, specialised: { zh: "GST 专用势", en: "GST-specialised" } };
+  document.getElementById("rank-body").innerHTML = RANK.map((r, i) => {
+    const [name, group, total, lv, gate] = r;
+    return `<tr class="${i === 0 ? "lead" : ""}">
+      <td class="pos">${i + 1}</td>
+      <td class="who"><b>${name}</b><small>${t[group][lang]}</small></td>
+      <td><div class="bar"><span class="track"><i style="width:${(total / max * 100).toFixed(1)}%"></i></span><span class="num">${total.toFixed(1)}</span></div></td>
+      ${lv.map(v => `<td class="lvv${v < 60 ? " low" : ""}">${v.toFixed(0)}</td>`).join("")}
+      <td class="gate">${gate ? `<span class="gate-ok">${lang === "zh" ? "通过" : "Pass"}</span>` : `<span class="gate-no">${lang === "zh" ? "未通过" : "Closed"}</span>`}</td>
+    </tr>`;
+  }).join("");
+}
+function renderTabs() {
+  document.getElementById("ltabs").innerHTML = LEVELS.map((l, i) =>
+    `<button type="button" role="tab" id="t${i}" aria-selected="${i === level}"><span class="kc">L${i}</span>${NAMES[lang][i]}</button>`).join("");
+  document.querySelectorAll("#ltabs button").forEach((b, i) => b.addEventListener("click", () => { level = i; renderTabs(); renderLevel(); }));
+}
+function renderLevel() {
+  const l = LEVELS[level];
+  const img = document.getElementById("lfig");
+  img.src = `figures/${l.fig}.png`;
+  img.height = l.fig === "fig6_L4" ? 615 : 1236;
+  img.alt = `L${level} ${NAMES.en[level]} figure`;
+  document.getElementById("lcap").innerHTML = l.cap[lang];
+  document.getElementById("lq").textContent = l.q[lang];
+  document.getElementById("lfacts").innerHTML = l.facts.map(f => `<div class="fact"><b>${f[0]}</b><span>${f[1][lang]}</span></div>`).join("");
+}
+document.getElementById("ltabs").addEventListener("keydown", e => {
+  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+  level = (level + (e.key === "ArrowRight" ? 1 : LEVELS.length - 1)) % LEVELS.length;
+  renderTabs(); renderLevel(); document.getElementById("t" + level).focus();
 });
-showLevel("L0");
-
-document.querySelectorAll(".copy").forEach(b => b.addEventListener("click", () => {
-  const txt = document.getElementById(b.dataset.for).innerText;
-  const done = () => { b.textContent = "已复制"; setTimeout(() => b.textContent = "复制", 1400); };
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(txt).then(done).catch(() => { const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.for)); const s = getSelection(); s.removeAllRanges(); s.addRange(r); });
-  }
-}));
+function setLang(l) {
+  lang = l;
+  document.documentElement.dataset.lang = l;
+  document.documentElement.lang = l === "zh" ? "zh-CN" : "en";
+  document.getElementById("lang-zh").setAttribute("aria-pressed", l === "zh");
+  document.getElementById("lang-en").setAttribute("aria-pressed", l === "en");
+  try { localStorage.setItem("maf-lang", l); } catch (e) {}
+  renderHero(); renderRank(); renderTabs(); renderLevel();
+}
+document.getElementById("lang-zh").addEventListener("click", () => setLang("zh"));
+document.getElementById("lang-en").addEventListener("click", () => setLang("en"));
+document.querySelectorAll(".code").forEach(pre => {
+  const source = pre.textContent;
+  const b = document.createElement("button");
+  b.className = "copy"; b.type = "button"; b.textContent = "Copy";
+  b.addEventListener("click", () => {
+    navigator.clipboard?.writeText(source).then(() => { b.textContent = "✓"; setTimeout(() => b.textContent = "Copy", 1200); }).catch(() => {});
+  });
+  pre.appendChild(b);
+});
+setLang(lang);
 </script>
-
-<script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.esm.min.mjs"; mermaid.initialize({ startOnLoad: true, theme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "neutral" });</script>
 </body>
 </html>

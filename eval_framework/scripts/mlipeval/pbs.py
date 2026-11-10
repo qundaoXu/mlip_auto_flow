@@ -8,9 +8,9 @@ rather than advisory:
   login node and prints the exact ``qsub`` command that should have been used;
 * :func:`select_device` picks CUDA when a GPU is actually visible, so a job that
   did land on a GPU node uses it;
-* :func:`write_job` renders a job script from the group's established template
-  (``-P CFP05-SF-227``, 1 GPU + 10 CPU + 80 GB) and :func:`submit` hands it to
-  ``qsub``.
+* :func:`write_job` renders a job script from the template below, filled from
+  the ``scheduler`` and ``environment`` sections of the site config
+  (:mod:`mlipeval.config`), and :func:`submit` hands it to ``qsub``.
 """
 
 from __future__ import annotations
@@ -22,10 +22,12 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from .paths import EVAL, SCRIPTS
+from . import config
+from .paths import OUTPUT, SCRIPTS
 
-#: Group PBS project code, taken from the existing job scripts under /scratch.
-PROJECT = "CFP05-SF-227"
+#: PBS project code (``#PBS -P``): ``scheduler.project`` / ``$MLIPEVAL_PBS_PROJECT``.
+#: Unset -> the ``-P`` line is left out of the job script.
+PROJECT = config.get("scheduler.project")
 
 #: Default chunk: one GPU is what a MACE evaluation or MD run needs.
 #:
@@ -37,20 +39,20 @@ PROJECT = "CFP05-SF-227"
 #: the running job describing the same thing.  ``ngpus=1`` also matters for
 #: routing: every queue reachable through ``auto`` requires at least one GPU,
 #: and 1-2 GPUs is what selects ``small`` (max 3 running jobs per user).
-DEFAULT_SELECT = "1:ncpus=12:mpiprocs=1:ompthreads=12:mem=225gb:ngpus=1"
+DEFAULT_SELECT = config.get("scheduler.select")
+#: Default walltime for job scripts (``scheduler.walltime``).
+DEFAULT_WALLTIME = config.get("scheduler.walltime")
+#: Default queue (``scheduler.queue``); ``None`` lets PBS route the job.
+DEFAULT_QUEUE = config.get("scheduler.queue")
 
 JOB_TEMPLATE = """#!/bin/bash
 #PBS -N {name}
-#PBS -P {project}
-{queue_line}#PBS -l walltime={walltime}
+{project_line}{queue_line}#PBS -l walltime={walltime}
 #PBS -l select={select}
 #PBS -j oe
 #PBS -o {logfile}
 cd {workdir}
-source /etc/profile.d/modules.sh
-module load gcc/13.1.0
-module load openmpi/gcc/64/4.1.8
-source /scratch/t0937929/miniconda3/etc/profile.d/conda.sh
+{module_lines}source {conda_sh}
 conda activate {conda_env}
 {model_line}{engine_line}export TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
@@ -109,6 +111,9 @@ def require_compute_node(task: str, *, allow_login_node: bool = False) -> None:
     """
     if allow_login_node or in_pbs_job():
         return
+    flag = config.get("scheduler.require_compute_node", True)
+    if str(flag).lower() in ("false", "0", "no", "off"):
+        return  # site config: no batch system, run heavy drivers in place
     invocation = " ".join([Path(sys.argv[0]).name, *sys.argv[1:]]).strip()
     print(
         f"拒绝在登录节点上运行 MACE 任务：{task}\n"
@@ -165,7 +170,7 @@ def write_job(
     commands: list[str] | str,
     *,
     directory: Path | None = None,
-    walltime: str = "12:00:00",
+    walltime: str | None = None,
     select: str = DEFAULT_SELECT,
     queue: str | None = None,
     workdir: Path | None = None,
@@ -187,7 +192,7 @@ def write_job(
     from .models import get as get_model
 
     entry = get_model(model) if model else None
-    conda_env = entry.conda_env if entry else "/scratch/t0937929/miniconda3/envs/mace"
+    conda_env = entry.conda_env if entry else config.backend_env("mace")
     model_line = f"export MLIPEVAL_MODEL={entry.key}\n" if entry else ""
     # 引擎必须随作业一起钉住：链里的 run_mlip_md 写、L3/L4/L5 读，
     # 两边都从 MLIPEVAL_MD_ENGINE 取，不导出就会各用各的默认值。
@@ -198,14 +203,22 @@ def write_job(
     workdir = Path(workdir) if workdir else SCRIPTS
     if isinstance(commands, str):
         commands = [commands]
+    walltime = walltime or DEFAULT_WALLTIME
+    queue = queue or DEFAULT_QUEUE
+    modules = config.get("scheduler.modules") or []
+    if isinstance(modules, str):
+        modules = modules.split(",")
+    module_lines = ("source /etc/profile.d/modules.sh\n" + "".join(f"module load {m.strip()}\n" for m in modules)) if modules else ""
+    conda_sh = config.conda_root() / "etc/profile.d/conda.sh"
 
-    logfile = (EVAL / "results" / "pbs" / f"{name}.log")
+    logfile = (OUTPUT / "results" / "pbs" / f"{name}.log")
     logfile.parent.mkdir(parents=True, exist_ok=True)
     body = _render_commands(commands)
     path = directory / f"{name}.pbs"
     path.write_text(
         JOB_TEMPLATE.format(
-            name=name, project=PROJECT,
+            name=name, project_line=(f"#PBS -P {PROJECT}\n" if PROJECT else ""),
+            module_lines=module_lines, conda_sh=conda_sh,
             queue_line=(f"#PBS -q {queue}\n" if queue else ""), walltime=walltime,
             select=select, logfile=logfile, workdir=workdir, commands=body,
             conda_env=conda_env, model_line=model_line, engine_line=engine_line,

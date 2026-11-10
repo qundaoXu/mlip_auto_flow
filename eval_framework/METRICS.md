@@ -1,5 +1,7 @@
 # eval 框架指标说明（L0–L5）
 
+**中文** · [English](METRICS.en.md)
+
 本文件说明 `eval/scripts/mlipeval/` **当前已实现**的每一个指标：它由哪段代码产出、
 数学定义是什么、物理上在问什么问题、以及什么情况下它会被判为 `failed` / `skipped`。
 

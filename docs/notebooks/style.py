@@ -21,8 +21,9 @@ from matplotlib.transforms import Bbox
 HERE = Path(__file__).resolve().parent
 RELEASE = HERE.parents[1]
 FIG_ROOT = RELEASE / "docs" / "figures"
-# The figures read results/ and data/, which are not in the repository: point
-# MLIPEVAL_HOME at a full eval_framework working copy (default: the in-repo one).
+# Code: the in-repo eval_framework (or $MLIPEVAL_HOME).  Data: results/ and
+# data/ are not in the repository -- the figures read them from wherever the site
+# config puts them (paths.output / $MLIPEVAL_OUTPUT, see mlipeval.config).
 EVAL_HOME = Path(os.environ.get("MLIPEVAL_HOME", RELEASE / "eval_framework")).resolve()
 os.environ.setdefault("MLIPEVAL_MODEL", "mace_mpa0")
 if str(EVAL_HOME / "scripts") not in sys.path:
@@ -121,7 +122,8 @@ def mkr(k: str) -> str:
 # ----------------------------------------------------------------- data helpers
 def results(model: str, stem_glob: str) -> dict:
     """{metric_id: record} for one model and one result-file glob."""
-    root = EVAL_HOME / "results" / "models" / model
+    from mlipeval import paths
+    root = paths.MODEL_RESULTS_ROOT / model
     out = {}
     for p in sorted(root.glob(stem_glob)):
         for r in json.loads(p.read_text()).get("results", []):
@@ -130,7 +132,8 @@ def results(model: str, stem_glob: str) -> dict:
 
 
 def npz(model: str, name: str):
-    p = EVAL_HOME / "data" / "models" / model / name
+    from mlipeval import paths
+    p = paths.MODEL_DATA_ROOT / model / name
     if not p.exists():
         return None
     with np.load(p, allow_pickle=True) as z:

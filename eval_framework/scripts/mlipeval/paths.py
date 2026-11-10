@@ -9,9 +9,15 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-# ``eval/scripts/mlipeval/paths.py`` -> ``eval/scripts`` -> ``eval`` -> workspace
+from . import config
+
+# ``eval/scripts/mlipeval/paths.py`` -> ``eval/scripts`` -> ``eval``
 EVAL = Path(__file__).resolve().parents[2]
-WORKSPACE = EVAL.parent
+#: Root of the read-only reference tree and model runs (``paths.workspace`` in
+#: the site config / ``$MLIPEVAL_WORKSPACE``; default: the parent of ``eval/``).
+WORKSPACE = config.workspace()
+#: Where ``results/`` and ``data/`` are written (``paths.output``; default ``eval/``).
+OUTPUT = config.output_root()
 
 # --- writable -------------------------------------------------------------
 SCRIPTS = EVAL / "scripts"
@@ -22,43 +28,53 @@ NOTEBOOKS = EVAL / "notebooks"
 #: flat phase-1 one that the notebooks read.
 MODEL_KEY = os.environ.get("MLIPEVAL_MODEL", "").strip()
 
-RESULTS = (EVAL / "results" / "models" / MODEL_KEY) if MODEL_KEY else (EVAL / "results")
-DATA = (EVAL / "data" / "models" / MODEL_KEY) if MODEL_KEY else (EVAL / "data")
+RESULTS = (OUTPUT / "results" / "models" / MODEL_KEY) if MODEL_KEY else (OUTPUT / "results")
+DATA = (OUTPUT / "data" / "models" / MODEL_KEY) if MODEL_KEY else (OUTPUT / "data")
 
 #: Prediction / memo cache.  Deliberately *not* namespaced: every key already
 #: contains the checkpoint sha256 and the input fingerprint, so five models
 #: share it without collision, and reference-only memos are computed once.
-CACHE = EVAL / "data" / "cache"
+CACHE = OUTPUT / "data" / "cache"
 
 #: Reference data harvested from the read-only VASP tree into a form the
 #: framework reads quickly.  Not namespaced either: it is model-independent, and
 #: a per-model copy would let two models be scored against different harvests.
-REFERENCE = EVAL / "data" / "reference"
+REFERENCE = OUTPUT / "data" / "reference"
 H5_LABELS = REFERENCE / "phase1_h5_relabel.extxyz"
 H5_LEAKAGE = REFERENCE / "phase1_h5_relabel.leakage.json"
 DIAGNOSTIC_LABELS = REFERENCE / "phase1_static_diagnostic.extxyz"
 DIAGNOSTIC_LEAKAGE = REFERENCE / "phase1_static_diagnostic.leakage.json"
 
 #: Roots that hold one subdirectory per model, for the cross-model report.
-MODEL_RESULTS_ROOT = EVAL / "results" / "models"
-MODEL_DATA_ROOT = EVAL / "data" / "models"
+MODEL_RESULTS_ROOT = OUTPUT / "results" / "models"
+MODEL_DATA_ROOT = OUTPUT / "data" / "models"
 
 # --- read-only reference --------------------------------------------------
-GST_REF = WORKSPACE / "GST225_ref"
+GST_REF = config.path("paths.reference.gst_ref")
 AIMD_216 = GST_REF / "AIMD/216atoms"
 AIMD_306 = GST_REF / "AIMD/306atoms"
 LABELLED_615 = GST_REF / "single_point/GST225_init_noStress.xyz"
 CUBIC_SEEDS = GST_REF / "cubic_phase"
 MP_STRUCTURES = GST_REF / "mp_structures"
 
-PHASE1 = WORKSPACE / "phase1_vasp_inputs_20260828"
+PHASE1 = config.path("paths.reference.phase1")
 TASK_MANIFEST = PHASE1 / "task_manifest.csv"
 
-MODEL_ROOT = WORKSPACE / "MLIP_run/universal_MLIP"
+MODEL_ROOT = config.path("paths.models.universal")
+SPECIALISED_ROOT = config.path("paths.models.specialised")
+AL_LADDER_ROOT = config.path("paths.models.al_ladder")
+GST_AGING_ROOT = config.path("paths.models.gst_aging")
 MACE_MPA0 = MODEL_ROOT / "mace-mpa-0-medium.model"
 
-EXTERNAL_ACE = WORKSPACE / "database/ACE_potential_and_training_dataset/GST-ACE-24_training_dataset.xyz"
-EXTERNAL_NE = WORKSPACE / "database/processed_NE_dataset.xyz"
+EXTERNAL_ACE = config.path("paths.training_sets.gst_ace24")
+EXTERNAL_NE = config.path("paths.training_sets.processed_ne")
+GST_AGING_DATASET = config.path("paths.training_sets.gst_aging")
+AL_LADDER_TRAIN_SETS = config.path("paths.training_sets.al_ladder")
+
+# --- external tools ----------------------------------------------------------
+LAMMPS_EXE = config.path("lammps.executable")
+LAMMPS_COMMON = config.path("lammps.common_dir")
+AL_LADDER_EXPORT = config.path("lammps.al_ladder_export")
 
 
 def ensure_writable_dirs() -> None:
@@ -100,7 +116,7 @@ def data_path(*parts: str) -> Path:
 def assert_read_only(path: Path) -> Path:
     """Guard against accidentally writing outside ``eval/``."""
     resolved = Path(path).resolve()
-    if resolved.is_relative_to(EVAL):
+    if resolved.is_relative_to(EVAL) or resolved.is_relative_to(OUTPUT):
         raise RuntimeError(f"{resolved} is inside eval/, not a read-only reference")
     return resolved
 

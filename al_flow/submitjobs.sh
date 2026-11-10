@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "success run bash command 1"
 
-MAX_JOBS=30  # 最大并行提交任务数
+MAX_JOBS=${ALFLOW_MAX_JOBS:-30}  # 最大并行提交任务数（alflow.dft.max_jobs）
 CURRENT_JOBS=0
 TOTAL_JOBS=0
 SUBMITTED_JOBS=0

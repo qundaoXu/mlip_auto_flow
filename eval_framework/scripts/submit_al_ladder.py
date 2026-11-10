@@ -23,7 +23,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from mlipeval import models
+from mlipeval import models, paths
 from mlipeval.pbs import submit, write_job
 from mlipeval.state_points import analysis_commands, md_commands
 
@@ -33,7 +33,7 @@ LEVELS = {"l0": "run_l0.py", "l1": "run_l1.py", "l2": "run_l2.py"}
 #: the analysis drivers that read the trajectories back. ``submit_pbs.chain_for``
 #: is not reused because it also carries l0-l2 (already done) and because the
 #: export step is specific to this ladder.
-EXPORT = "/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder/export_mliap.sh"
+EXPORT = str(paths.AL_LADDER_EXPORT)  # lammps.al_ladder_export in the site config
 MD_STAGE = [*md_commands(), *analysis_commands(), "run_report.py --markdown"]
 # measured per model on an H200 (README): L0 0:39, L1 2:00, L2 0:56.
 # The ladder models are 0.75M-parameter MACE, i.e. smaller than MPA-0, so these

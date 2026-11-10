@@ -36,9 +36,9 @@ from mlipeval.neighbors import total_rdf_fingerprint
 from mlipeval.schema import DataRole
 
 DUP = 0.02
-SPECIALISED = paths.WORKSPACE / "MLIP_run/specialized"
-AGING = Path("/scratch/t0937929/myproject/1-GST225-aging/dataset")
-LADDER = SPECIALISED / "al_ladder/train_sets"
+SPECIALISED = paths.SPECIALISED_ROOT
+AGING = paths.GST_AGING_DATASET
+LADDER = paths.AL_LADDER_TRAIN_SETS
 TRAINING_SETS = {
     "GST-ACE-24": [paths.EXTERNAL_ACE],
     "processed_NE": [paths.EXTERNAL_NE],

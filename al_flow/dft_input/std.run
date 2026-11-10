@@ -1,13 +1,17 @@
 #!/bin/bash
 #SBATCH -J vasp
 #SBATCH -n 64
-#SBATCH -p hcpu64
 #SBATCH --error=%J.err
 #SBATCH --output=%J.out
-module load intel/2017u5
+# Site-specific settings come from the environment, so this template carries none:
+#   SBATCH_PARTITION / SBATCH_ACCOUNT  partition and account (sbatch reads them itself)
+#   VASP_MODULES                       modules to load, e.g. "intel/2017u5"
+#   VASP_CMD                           full VASP command line
+# `alflow` exports all of them from the alflow.dft section of mlip_auto_flow.yaml.
+if [ -n "$VASP_MODULES" ]; then module load $VASP_MODULES; fi
 echo -n "start time" > time
 date >> time
-mpirun -np 64 /data0/software/vasp/intel/vasp.5.4.4/bin/vasp_std
+${VASP_CMD:-mpirun -np ${SLURM_NTASKS:-64} vasp_std}
 scontrol show job $SLURM_JOBID
 echo -n "end time" >> time; date >> time
 cat time >> output

@@ -4,7 +4,7 @@ train_file: "data/active_train.xyz"
 valid_file: "data/sub_val.xyz"
 test_file: "data/sub_test.xyz"
 work_dir: "committee/model1"
-foundation_model: "/home/qdx/1-MACE/mace/6-AL_flow/mace-mpa-0-medium.model"
+foundation_model: "/path/to/mace-mpa-0-medium.model"   # written by the AL script from --foundation_model
 E0s: "foundation"
 energy_weight: 10.0
 forces_weight: 10.0

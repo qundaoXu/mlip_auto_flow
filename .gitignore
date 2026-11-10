@@ -14,3 +14,5 @@ POTCAR
 al_flow/data/
 al_flow/committee/
 al_flow/dft_cal/
+# site config with local paths (template: config/mlip_auto_flow.example.yaml)
+/mlip_auto_flow.yaml

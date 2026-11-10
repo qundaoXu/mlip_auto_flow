@@ -405,9 +405,8 @@ LEAKAGE: dict[str, tuple[str, tuple[LeakageFinding, ...]]] = {
 def _training_set_files() -> dict[str, list[Path]]:
     from . import paths
 
-    specialised = paths.WORKSPACE / "MLIP_run/specialized"
-    aging = Path("/scratch/t0937929/myproject/1-GST225-aging/dataset")
-    ladder = specialised / "al_ladder/train_sets"
+    aging = paths.GST_AGING_DATASET
+    ladder = paths.AL_LADDER_TRAIN_SETS
     return {
         "GST-ACE-24": [paths.EXTERNAL_ACE],
         "processed_NE": [paths.EXTERNAL_NE],

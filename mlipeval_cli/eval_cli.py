@@ -230,10 +230,57 @@ def cmd_report(ns, extra) -> int:
     return _driver("run_report.py", extra + (["--markdown"] if ns.markdown else []), model=ns.model)
 
 
+# --------------------------------------------------------------------------- config
+def cmd_config(ns, extra) -> int:
+    """Resolved site configuration; ``--check`` also verifies the paths."""
+    if ns.init:
+        src = _paths.RELEASE_ROOT / "config" / "mlip_auto_flow.example.yaml"
+        dst = Path(ns.init)
+        if dst.exists():
+            sys.exit(f"mlipeval config --init: {dst} already exists; not overwriting")
+        shutil.copy2(src, dst)
+        print(f"wrote {dst} -- edit it, then run `mlipeval config --check`")
+        return 0
+    _paths.import_mlipeval()
+    from mlipeval import config, models
+
+    summ = config.summary()
+    checks = []
+    if ns.check:
+        for k, v in summ.items():
+            if k.startswith(("paths.", "lammps.", "environment.")) and isinstance(v, str) and v.startswith("/"):
+                checks.append({"item": k, "path": v, "exists": Path(v).exists()})
+        for key in list(models.ORDER) + [k for k in models.SPECIALISED if k not in models.ORDER]:
+            e = models.get(key)
+            for field in ("checkpoint", "conda_env", "lammps_pair_in"):
+                v = getattr(e, field)
+                if v is not None:
+                    checks.append({"item": f"models.{key}.{field}", "path": str(v), "exists": Path(v).exists()})
+    if ns.json:
+        print(json.dumps({"settings": summ, "checks": checks}, ensure_ascii=False, indent=2, default=str))
+    else:
+        w = max(len(k) for k in summ)
+        for k, v in summ.items():
+            print(f"{k:<{w}}  {v}")
+        if checks:
+            missing = [c for c in checks if not c["exists"]]
+            print(f"\n{len(checks) - len(missing)}/{len(checks)} paths exist")
+            for c in missing:
+                print(f"  missing  {c['item']:<44} {c['path']}")
+    return 1 if ns.check and any(not c["exists"] for c in checks) and ns.strict else 0
+
+
 # --------------------------------------------------------------------------- parser
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="mlipeval", description="L0–L5 evaluation of machine-learning interatomic potentials")
     sub = p.add_subparsers(dest="cmd", required=True)
+
+    s = sub.add_parser("config", help="show the resolved site configuration (mlip_auto_flow.yaml + env)")
+    s.add_argument("--check", action="store_true", help="also check that every configured path exists")
+    s.add_argument("--strict", action="store_true", help="with --check: exit 1 if anything is missing")
+    s.add_argument("--json", action="store_true")
+    s.add_argument("--init", metavar="PATH", default=None, help="write a config template to PATH")
+    s.set_defaults(fn=cmd_config)
 
     s = sub.add_parser("models", help="list registered models and whether they have results")
     s.add_argument("--json", action="store_true")
@@ -285,7 +332,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     ns, extra = parser.parse_known_args(argv)
-    if extra and ns.cmd in ("models", "card", "candidates"):
+    if extra and ns.cmd in ("config", "models", "card", "candidates"):
         parser.error(f"unrecognized arguments: {' '.join(extra)}")
     if extra and extra[0] == "--":
         extra = extra[1:]

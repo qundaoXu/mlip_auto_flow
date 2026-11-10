@@ -25,9 +25,12 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from .paths import MODEL_ROOT
+from . import config
+from .paths import AL_LADDER_ROOT, GST_AGING_ROOT, MODEL_ROOT, SPECIALISED_ROOT
 
-ENVS = Path("/scratch/t0937929/miniconda3/envs")
+#: Conda environments: ``environment.conda_envs`` in the site config
+#: (``$MLIPEVAL_CONDA_ENVS``), default ``<conda_root>/envs``.
+ENVS = config.conda_envs()
 
 #: Selected by ``MLIPEVAL_MODEL``; the historical default keeps phase-1 behaviour.
 DEFAULT_MODEL = "mace_mpa0"
@@ -70,9 +73,9 @@ REGISTRY: dict[str, ModelEntry] = {
         # 与其余四个通用势的一模型一目录布局对齐。sha256 未变
         # （75428afe3a…，与历史结果和 data/cache 的键一致），所以只是路径变了。
         checkpoint=MODEL_ROOT / "mace_mpa0/mace-mpa-0-medium.model",
-        conda_env=ENVS / "mace",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/universal_MLIP/mace_mpa0/pair.in"),
+        lammps_pair_in=MODEL_ROOT / "mace_mpa0/pair.in",
         native_protocol="PBE+U (MPtrj + sAlex), no dispersion",
         dtype="float64",
         notes="phase-1 baseline; the only model this framework was originally written for",
@@ -82,9 +85,9 @@ REGISTRY: dict[str, ModelEntry] = {
         label="NequIP-OAM-L 0.1",
         backend="nequip",
         checkpoint=MODEL_ROOT / "nequip_oam_l/NequIP-OAM-L-0.1.nequip.zip",
-        conda_env=ENVS / "nequip",
+        conda_env=config.backend_env("nequip"),
         lammps_route="mliap",
-        lammps_pair_in=Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/universal_MLIP/nequip_oam_l/pair.in"),
+        lammps_pair_in=MODEL_ROOT / "nequip_oam_l/pair.in",
         native_protocol="PBE / PBE+U (OMat24 + MPtrj + sAlex), no dispersion",
         dtype="float64",
         notes="loaded eagerly from the nequip package archive; ZBL short-range core",
@@ -94,9 +97,9 @@ REGISTRY: dict[str, ModelEntry] = {
         label="DPA-4.0.1-Pro-MPtrj",
         backend="deepmd",
         checkpoint=MODEL_ROOT / "dpa4_pro/dpa4.0.1-pro-mptrj.pt",
-        conda_env=ENVS / "deepmd",
+        conda_env=config.backend_env("deepmd"),
         lammps_route="deepmd",
-        lammps_pair_in=Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/universal_MLIP/dpa4_pro/pair.in"),
+        lammps_pair_in=MODEL_ROOT / "dpa4_pro/pair.in",
         native_protocol="PBE+U (MPtrj), no dispersion",
         dtype="float64",
         notes=(
@@ -112,9 +115,9 @@ REGISTRY: dict[str, ModelEntry] = {
         label="MatterSim v1 5M",
         backend="mattersim",
         checkpoint=MODEL_ROOT / "mattersim/mattersim-v1.0.0-5M.pth",
-        conda_env=ENVS / "gnnp",
+        conda_env=config.backend_env("mattersim"),
         lammps_route="gnnp",
-        lammps_pair_in=Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/universal_MLIP/mattersim/pair.in"),
+        lammps_pair_in=MODEL_ROOT / "mattersim/pair.in",
         native_protocol="PBE (MPtrj + in-house finite-T/P set), no dispersion",
         dtype="float32",
         notes="M3GNet-style; trained on finite-temperature and finite-pressure structures",
@@ -124,9 +127,9 @@ REGISTRY: dict[str, ModelEntry] = {
         label="CHGNet 0.3.0",
         backend="chgnet",
         checkpoint=MODEL_ROOT / "chgnet/chgnet_0.3.0_e29f68s314m37.pth.tar",
-        conda_env=ENVS / "gnnp",
+        conda_env=config.backend_env("chgnet"),
         lammps_route="gnnp",
-        lammps_pair_in=Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/universal_MLIP/chgnet/pair.in"),
+        lammps_pair_in=MODEL_ROOT / "chgnet/pair.in",
         native_protocol="PBE / PBE+U (MPtrj), no dispersion, magmom head",
         dtype="float32",
         notes="0.4M parameters; energies are MP-corrected, so its zero point differs strongly",
@@ -137,12 +140,12 @@ REGISTRY: dict[str, ModelEntry] = {
         label="MACE-spec-GST (GST-ACE-24)",
         backend="mace",
         checkpoint=(
-            Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized")
+            SPECIALISED_ROOT
             / "mace_spec_gst/model/mace_spec_gst.model"
         ),
-        conda_env=ENVS / "mace",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/mace_spec_gst/pair.in"),
+        lammps_pair_in=SPECIALISED_ROOT / "mace_spec_gst/pair.in",
         native_protocol="PBE (GST-ACE-24, protocol GSTACE24-VASP-PBE), no dispersion",
         dtype="float64",
         notes=(
@@ -159,12 +162,12 @@ REGISTRY: dict[str, ModelEntry] = {
         label="MACE-spec-GST-NE (processed_NE)",
         backend="mace",
         checkpoint=(
-            Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized")
+            SPECIALISED_ROOT
             / "mace_spec_gst_ne/model/mace_spec_gst_ne.model"
         ),
-        conda_env=ENVS / "mace",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/mace_spec_gst_ne/pair.in"),
+        lammps_pair_in=SPECIALISED_ROOT / "mace_spec_gst_ne/pair.in",
         native_protocol="PBE (processed_NE, protocol PROCNE-VASP-PBE), no dispersion",
         dtype="float64",
         notes=(
@@ -184,12 +187,12 @@ REGISTRY: dict[str, ModelEntry] = {
         label="NequIP-spec-GST (GST-ACE-24)",
         backend="nequip",
         checkpoint=(
-            Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized")
+            SPECIALISED_ROOT
             / "nequip/run_gst_ace/nequip_spec_gst.nequip.zip"
         ),
-        conda_env=ENVS / "nequip",
+        conda_env=config.backend_env("nequip"),
         lammps_route="mliap",
-        lammps_pair_in=Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/nequip/mliap/pair.in"),
+        lammps_pair_in=SPECIALISED_ROOT / "nequip/mliap/pair.in",
         native_protocol="PBE (GST-ACE-24, protocol GSTACE24-VASP-PBE), no dispersion",
         dtype="float64",
         notes=(
@@ -213,12 +216,12 @@ REGISTRY: dict[str, ModelEntry] = {
         label="MACE-GST225-Aging",
         backend="mace",
         checkpoint=(
-            Path("/scratch/t0937929/myproject/1-GST225-aging/01-model")
+            (GST_AGING_ROOT / "01-model")
             / "GST225_Aging_Model.model"
         ),
-        conda_env=ENVS / "mace",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path("/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/mace_gst_aging/pair.in"),
+        lammps_pair_in=SPECIALISED_ROOT / "mace_gst_aging/pair.in",
         native_protocol="PBE (GST225-aging set), no dispersion",
         dtype="float64",
         notes=(
@@ -263,10 +266,10 @@ REGISTRY: dict[str, ModelEntry] = {
         key="al_gen0",
         label="AL gen0 (422 frames)",
         backend="mace",
-        checkpoint=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "model/al_gen0.model",
-        conda_env=ENVS / "mace",
+        checkpoint=AL_LADDER_ROOT / "model/al_gen0.model",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "pair/al_gen0.in",
+        lammps_pair_in=AL_LADDER_ROOT / "pair/al_gen0.in",
         native_protocol="PBE (GST225-aging lineage), no dispersion",
         dtype="float64",
         notes=(
@@ -280,10 +283,10 @@ REGISTRY: dict[str, ModelEntry] = {
         key="al_gen3",
         label="AL gen3 (780 frames)",
         backend="mace",
-        checkpoint=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "model/al_gen3.model",
-        conda_env=ENVS / "mace",
+        checkpoint=AL_LADDER_ROOT / "model/al_gen3.model",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "pair/al_gen3.in",
+        lammps_pair_in=AL_LADDER_ROOT / "pair/al_gen3.in",
         native_protocol="PBE (GST225-aging lineage), no dispersion",
         dtype="float64",
         notes=(
@@ -297,10 +300,10 @@ REGISTRY: dict[str, ModelEntry] = {
         key="al_gen4",
         label="AL gen4 (1060, off-path)",
         backend="mace",
-        checkpoint=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "model/al_gen4.model",
-        conda_env=ENVS / "mace",
+        checkpoint=AL_LADDER_ROOT / "model/al_gen4.model",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "pair/al_gen4.in",
+        lammps_pair_in=AL_LADDER_ROOT / "pair/al_gen4.in",
         native_protocol="PBE (GST225-aging lineage), no dispersion",
         dtype="float64",
         notes=(
@@ -314,10 +317,10 @@ REGISTRY: dict[str, ModelEntry] = {
         key="al_gen6",
         label="AL gen6 (1013 frames)",
         backend="mace",
-        checkpoint=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "model/al_gen6.model",
-        conda_env=ENVS / "mace",
+        checkpoint=AL_LADDER_ROOT / "model/al_gen6.model",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "pair/al_gen6.in",
+        lammps_pair_in=AL_LADDER_ROOT / "pair/al_gen6.in",
         native_protocol="PBE (GST225-aging lineage), no dispersion",
         dtype="float64",
         notes=(
@@ -331,10 +334,10 @@ REGISTRY: dict[str, ModelEntry] = {
         key="al_gen7",
         label="AL gen7 (1161 frames)",
         backend="mace",
-        checkpoint=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "model/al_gen7.model",
-        conda_env=ENVS / "mace",
+        checkpoint=AL_LADDER_ROOT / "model/al_gen7.model",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "pair/al_gen7.in",
+        lammps_pair_in=AL_LADDER_ROOT / "pair/al_gen7.in",
         native_protocol="PBE (GST225-aging lineage), no dispersion",
         dtype="float64",
         notes=(
@@ -348,10 +351,10 @@ REGISTRY: dict[str, ModelEntry] = {
         key="al_gen8",
         label="AL gen8 (701, pruning)",
         backend="mace",
-        checkpoint=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "model/al_gen8.model",
-        conda_env=ENVS / "mace",
+        checkpoint=AL_LADDER_ROOT / "model/al_gen8.model",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "pair/al_gen8.in",
+        lammps_pair_in=AL_LADDER_ROOT / "pair/al_gen8.in",
         native_protocol="PBE (GST225-aging lineage), no dispersion",
         dtype="float64",
         notes=(
@@ -365,10 +368,10 @@ REGISTRY: dict[str, ModelEntry] = {
         key="al_gen9",
         label="AL gen9 (1020 frames)",
         backend="mace",
-        checkpoint=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "model/al_gen9.model",
-        conda_env=ENVS / "mace",
+        checkpoint=AL_LADDER_ROOT / "model/al_gen9.model",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "pair/al_gen9.in",
+        lammps_pair_in=AL_LADDER_ROOT / "pair/al_gen9.in",
         native_protocol="PBE (GST225-aging lineage), no dispersion",
         dtype="float64",
         notes=(
@@ -382,10 +385,10 @@ REGISTRY: dict[str, ModelEntry] = {
         key="al_prod",
         label="AL prod_train (3864)",
         backend="mace",
-        checkpoint=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "model/al_prod.model",
-        conda_env=ENVS / "mace",
+        checkpoint=AL_LADDER_ROOT / "model/al_prod.model",
+        conda_env=config.backend_env("mace"),
         lammps_route="mliap",
-        lammps_pair_in=Path('/scratch/t0937929/MLIP_benchmark/MLIP_run/specialized/al_ladder') / "pair/al_prod.in",
+        lammps_pair_in=AL_LADDER_ROOT / "pair/al_prod.in",
         native_protocol="PBE (GST225-aging lineage), no dispersion",
         dtype="float64",
         notes=(
@@ -415,6 +418,48 @@ SPECIALISED = ["mace_spec_gst", "mace_spec_gst_ne", "nequip_spec_gst", "mace_gst
 AL_LADDER = ["al_gen0", "al_gen3", "al_gen6", "al_gen7", "al_gen8", "al_gen9",
              "al_prod", "al_gen4"]
 SPECIALISED = SPECIALISED + AL_LADDER
+
+
+# ---- models registered in the site config ----------------------------------
+def _resolve(value, base: Path | None = None) -> Path | None:
+    if value in (None, ""):
+        return None
+    p = Path(os.path.expandvars(str(value))).expanduser()
+    return p if p.is_absolute() else ((base or config.workspace()) / p)
+
+
+def _register_config_models() -> None:
+    """Add (or override) registry entries from the ``models:`` section.
+
+    Each entry needs ``label``, ``backend`` and ``checkpoint``; ``group``
+    (``universal`` | ``specialised``) decides which list the key joins.
+    Relative paths resolve against ``paths.workspace``.
+    """
+    for key, spec in (config.get("models", {}) or {}).items():
+        spec = dict(spec or {})
+        missing = [f for f in ("label", "backend", "checkpoint") if not spec.get(f)]
+        if missing:
+            raise ValueError(f"site config: model {key!r} is missing {', '.join(missing)}")
+        REGISTRY[key] = ModelEntry(
+            key=key,
+            label=spec["label"],
+            backend=spec["backend"],
+            checkpoint=_resolve(spec["checkpoint"]),
+            load_path=_resolve(spec.get("load_path")),
+            conda_env=(config.conda_env(spec["conda_env"]) if spec.get("conda_env")
+                       else config.backend_env(spec["backend"])),
+            native_protocol=spec.get("native_protocol", "unspecified"),
+            dtype=spec.get("dtype", "float64"),
+            lammps_route=spec.get("lammps_route"),
+            lammps_pair_in=_resolve(spec.get("lammps_pair_in")),
+            notes=spec.get("notes", ""),
+        )
+        target = ORDER if spec.get("group", "specialised") == "universal" else SPECIALISED
+        if key not in ORDER and key not in SPECIALISED:
+            target.append(key)
+
+
+_register_config_models()
 
 
 def current_key() -> str:

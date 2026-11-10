@@ -1,5 +1,7 @@
 # 第一阶段工程指南：MLIP L0–L5 分级诊断
 
+**中文** · [English](validation_methods_L0-L5.en.md)
+
 > 版本：v0.2，2026-08-28  
 > 第一阶段对象：MACE-MPA-0 + GST225  
 > 验证手段的背景、完整清单和文献案例见 `MLMD_AIMD_validation_summary.md`。

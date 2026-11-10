@@ -15,7 +15,9 @@ Assumptions:
   If that script does not produce a merged xyz file, we fallback to Python merging from OUTCAR.
 
 Usage example:
-  python activate_learning_flow_full.py --n_rounds 3 --md_temp 600 --md_steps 5000
+  python activate_learning_full_flow.py --foundation_model mace-mpa-0-medium.model \
+      --n_rounds 3 --md_temp 600 --md_steps 5000
+  # or, from a config file:  alflow run --config mlip_auto_flow.yaml
 """
 from __future__ import annotations
 
@@ -311,6 +313,7 @@ def run_ase_md(
     md_steps: int,
     traj_out: Path,
     interval: int = 10,
+    device: str = "cuda",
 ) -> None:
     from ase import units
     from ase.md.langevin import Langevin
@@ -320,7 +323,7 @@ def run_ase_md(
     if traj_out.exists():
         traj_out.unlink()
 
-    mace_calc = MACECalculator(model_paths=[p.as_posix() for p in model_paths], device="cuda", default_dtype="float64")
+    mace_calc = MACECalculator(model_paths=[p.as_posix() for p in model_paths], device=device, default_dtype="float64")
 
     init_conf = read(init_conf_path.as_posix(), index=0).copy()
     init_conf.calc = mace_calc
@@ -350,6 +353,7 @@ def select_uncertain_frames(
     uncertain_out: Path,
     threshold: float = 0.9,
     max_frames: Optional[int] = None,
+    device: str = "cuda",
 ) -> int:
     ensure_dir(traj_out_with_uncert.parent)
     ensure_dir(uncertain_out.parent)
@@ -357,8 +361,8 @@ def select_uncertain_frames(
     val_traj = read(traj_in.as_posix(), index=":")
     logger.info("Loaded %d MD frames from %s", len(val_traj), traj_in)
 
-    mace_calc = MACECalculator(model_paths=[p.as_posix() for p in model_paths], device="cuda", default_dtype="float64")
-    single_calcs = [MACECalculator(model_paths=[p.as_posix()], device="cuda", default_dtype="float64") for p in model_paths]
+    mace_calc = MACECalculator(model_paths=[p.as_posix() for p in model_paths], device=device, default_dtype="float64")
+    single_calcs = [MACECalculator(model_paths=[p.as_posix()], device=device, default_dtype="float64") for p in model_paths]
 
     glob_evar = []
     glob_fsig_rms = []
@@ -591,7 +595,8 @@ def main() -> None:
 
     # dataset / model
     parser.add_argument("--data_path", type=str, default="data", help="Dataset folder")
-    parser.add_argument("--foundation_model", type=str, default="/home/qdx/1-MACE/mace/6-AL_flow/mace-mpa-0-medium.model")
+    parser.add_argument("--foundation_model", type=str, default=os.environ.get("ALFLOW_FOUNDATION_MODEL"),
+                        help="MACE foundation model to fine-tune (default: $ALFLOW_FOUNDATION_MODEL)")
     parser.add_argument("--subset_size", type=int, default=500)
     parser.add_argument("--train_ratio", type=float, default=0.8)
     parser.add_argument("--val_ratio", type=float, default=0.1)
@@ -630,6 +635,8 @@ def main() -> None:
     parser.add_argument("--force_resample", action="store_true", help="Resample init_dataset.xyz even if sub_train exists")
 
     args = parser.parse_args([]) if "get_ipython" in globals() else parser.parse_args()
+    if not args.foundation_model:
+        parser.error("--foundation_model is required (or set ALFLOW_FOUNDATION_MODEL)")
 
     work_dir = Path(args.work_dir).resolve()
     os.chdir(work_dir)
@@ -721,6 +728,7 @@ def main() -> None:
             md_steps=args.md_steps,
             traj_out=md_traj,
             interval=args.md_write_interval,
+            device=args.device,
         )
 
         # 4) select uncertain frames
@@ -733,6 +741,7 @@ def main() -> None:
             uncertain_out=uncertain_xyz,
             threshold=args.uncert_threshold,
             max_frames=args.uncert_max_frames,
+            device=args.device,
         )
         if n_unc == 0:
             logger.warning("No uncertain frames found. Stopping early at round %d.", rnd + 1)
