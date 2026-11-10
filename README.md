@@ -469,10 +469,3 @@ The figures are generated from the evaluation results by `docs/notebooks/fig*.ip
 export MLIPEVAL_OUTPUT=/path/to/eval_framework   # working copy with results/ and data/ (or set paths.output)
 cd docs/notebooks && for nb in fig*.ipynb; do jupyter nbconvert --to notebook --execute --inplace "$nb"; done
 ```
-
-## Known limitations
-
-- **The only reference package so far is GST225, and it is not distributed with the repository.** For a new system, L1 needs no reference and works as is; L0 needs a held-out labelled set; L2 needs static DFT; L3–L5 need AIMD under the same protocol (at least two independent replicas for formal grades).
-- **Built-in model entries follow the original cluster's directory layout.** On a machine with a different layout, change `paths.models.*` or override the entry under `models.<key>`.
-- **Job submission is site-specific:** PBS for the evaluation, Slurm for DFT.
-- **The `alflow sample` threshold is relative** and cannot serve as a stopping criterion.
