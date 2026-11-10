@@ -58,11 +58,11 @@ Three concrete questions follow:
 2. Trained on system-specific data (same architecture as the universal potential, only the training data changes), which problems get fixed and which do not?
 3. How do the size and composition of each generation of an active-learning dataset affect the scores at each level?
 
-The answers are on the [project page](https://qundaoxu.github.io/mlip_auto_flow/): a ranking of nine potentials (five universal, four GST-specialised), a level-by-level walkthrough of L0–L5, and a replay of eight AL generations.
+The answers are on the [project page](https://qundaoxu.github.io/mlip_auto_flow/): a ranking of universal and GST-specialised potentials, a level-by-level walkthrough of L0–L5, and a replay of eight AL generations.
 
 ![Fig. 1](docs/figures/fig1_ranking.png)
 
-**Fig. 1 | Relative scores of nine potentials on GST225.** **a** Overall score (best = 100); hatching marks a closed L1 gate. **b** Level scores. Each specialised potential shares its architecture with a universal one and differs only in training data. From MACE-MPA-0 to MACE-spec-GST the overall score rises from 76.8 to 80.3 and L0 from 63 to 90, while L1 drops from 93 to 50: the pair curves fail in the short-range region the training set does not cover.
+**Fig. 1 | Relative scores of universal and specialised potentials on GST225.** **a** Overall score (best = 100); hatching marks a closed L1 gate. **b** Level scores. Each specialised potential shares its architecture with a universal one and differs only in training data. From MACE-MPA-0 to MACE-spec-GST the overall score rises from 76.8 to 80.3 and L0 from 63 to 90, while L1 drops from 93 to 50: the pair curves fail in the short-range region the training set does not cover.
 
 ---
 

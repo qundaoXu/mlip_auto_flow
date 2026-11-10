@@ -13,7 +13,7 @@
    Product   tells MLIP developers at which physical level a potential stops being right, and what data to add next
    Character exact, restrained, sure of itself
    World     a journal figure page and a lab notebook: ink on cool paper
-   Moments   the report card in the hero; the ranked list of nine potentials
+   Moments   the report card in the hero; the ranked list of potentials
    Signature L0–L5 always appear as small mono keycaps */
 :root {
   --bg: #f5f7fa;
@@ -250,7 +250,7 @@ footer a:hover { color: var(--text); }
           <span lang="en">From energies and forces to disordered structure, diffusion and the melt–quench pathway. Six levels, L0 to L5, locate the failure, and the failing structures go straight into the next round of active learning.</span>
         </p>
         <div class="actions">
-          <a class="btn primary" href="#ranking"><span lang="zh">看 9 个势函数的排名</span><span lang="en">See how nine potentials rank</span></a>
+          <a class="btn primary" href="#ranking"><span lang="zh">看势函数的排名</span><span lang="en">See how potentials rank</span></a>
           <a class="btn secondary" href="#start"><span lang="zh">快速开始</span><span lang="en">Get started</span></a>
         </div>
       </div>
@@ -259,7 +259,7 @@ footer a:hover { color: var(--text); }
         <div class="head">
           <div>
             <div class="model">MACE-spec-GST-NE</div>
-            <div class="meta"><span lang="zh">GST225 · 专用势 · 第 2 / 9 名</span><span lang="en">GST225 · specialised · rank 2 of 9</span></div>
+            <div class="meta"><span lang="zh">GST225 · 专用势 · 排名第 2</span><span lang="en">GST225 · specialised · ranked 2nd</span></div>
           </div>
           <div class="score"><b>82.1</b><span lang="zh">总分</span><span lang="en">overall</span></div>
         </div>
@@ -279,8 +279,8 @@ footer a:hover { color: var(--text); }
       <div class="sec-head">
         <h2><span lang="zh">MLIP 评估框架</span><span lang="en">MLIP evaluation framework</span></h2>
         <p>
-          <span lang="zh">5 个通用势和 4 个 GST225 专用势，在同一套 DFT/AIMD 参考上逐层打分，最好的模型记 100。总分接近的模型，失效的层级可以完全不同。</span>
-          <span lang="en">Five universal and four GST225-specialised potentials, scored level by level against one DFT/AIMD reference, with the best model at 100. Models with close totals can fail at entirely different levels.</span>
+          <span lang="zh">通用势和 GST225 专用势，在同一套 DFT/AIMD 参考上逐层打分，最好的模型记 100。总分接近的模型，失效的层级可以完全不同。</span>
+          <span lang="en">Universal and GST225-specialised potentials, scored level by level against one DFT/AIMD reference, with the best model at 100. Models with close totals can fail at entirely different levels.</span>
         </p>
       </div>
       <div class="rank">
@@ -311,8 +311,8 @@ footer a:hover { color: var(--text); }
       <div class="sec-head">
         <h2><span lang="zh">六层诊断，每一层回答一个问题</span><span lang="en">Six levels, one question each</span></h2>
         <p>
-          <span lang="zh">上排是物理曲线：参考数据，加上两对只换了训练数据的同架构模型。下排是 9 个模型的汇总。</span>
-          <span lang="en">The top row shows the physics: the reference, plus two architecture pairs that differ only in their training data. The bottom row summarises all nine models.</span>
+          <span lang="zh">上排是物理曲线：参考数据，加上两对只换了训练数据的同架构模型。下排是全部模型的汇总。</span>
+          <span lang="en">The top row shows the physics: the reference, plus two architecture pairs that differ only in their training data. The bottom row summarises every model.</span>
         </p>
       </div>
       <div class="tabs" role="tablist" id="ltabs"></div>
@@ -444,13 +444,13 @@ const LEVELS = [
   { fig: "fig3_L1",
     q: { zh: "势能面本身是否自洽、连续、可积分。这一层是门控", en: "Is the potential energy surface self-consistent, smooth and integrable. This level is the gate" },
     cap: { zh: "<b>a, b</b> Ge–Te、Te–Te 二体势能曲线，灰区为 2000 K MD 未到达的距离。<b>c</b> 2000 K 下的最近原子间距。<b>d</b> 未通过的检查。<b>e</b> NVE 能量漂移", en: "<b>a, b</b> Ge–Te and Te–Te pair curves; grey marks distances 2000 K MD never reaches. <b>c</b> Closest pair distance at 2000 K. <b>d</b> Failed checks. <b>e</b> NVE energy drift" },
-    facts: [["4 / 9", { zh: "通过门控的模型。其余 5 个都卡在二体曲线检查上", en: "Models that pass the gate. The other five all fail on the pair curves" }],
+    facts: [["PEC", { zh: "门控最常见的失败：二体曲线排斥段非单调，或能量与力的导数不一致", en: "The most common reason the gate closes: a pair curve that is not monotonically repulsive, or energy and force derivatives that disagree" }],
             ["1.1–1.4 Å", { zh: "DPA-4、CHGNet、MACE-spec-GST 曲线出错的位置，远低于 2000 K 下的最近接触 2.1 Å", en: "Where the DPA-4, CHGNet and MACE-spec-GST curves go wrong, far below the 2.1 Å closest contact at 2000 K" }]] },
   { fig: "fig4_L2",
     q: { zh: "晶相的结构、相序和体模量对不对", en: "Are crystal structures, phase order and bulk moduli right" },
     cap: { zh: "<b>a</b> 六方相 EOS。<b>b</b> 立方相 EOS。<b>c</b> 立方相 V₀ 与 B₀ 误差，灰框为 DFT 在 5 种空位排布间的散布。<b>d–f</b> 立方 V₀、立方 B₀、六方 B₀ 误差", en: "<b>a</b> Hexagonal EOS. <b>b</b> Cubic EOS. <b>c</b> Cubic V₀ against B₀ error; the grey box is the DFT spread over five vacancy orderings. <b>d–f</b> Cubic V₀, cubic B₀ and hexagonal B₀ errors" },
-    facts: [["≤ 0.5%", { zh: "9 个模型立方相平衡体积 V₀ 的误差，平衡位置学对了", en: "Cubic equilibrium-volume error for all nine models: they sit in the right place" }],
-            ["−10% 到 −39%", { zh: "立方相体模量 B₀ 的误差，9 个模型全部偏软", en: "Cubic bulk-modulus error; all nine models are too soft" }]] },
+    facts: [["≤ 0.5%", { zh: "所有模型立方相平衡体积 V₀ 的误差，平衡位置学对了", en: "Cubic equilibrium-volume error for every model: they sit in the right place" }],
+            ["−10% 到 −39%", { zh: "立方相体模量 B₀ 的误差，所有模型全部偏软", en: "Cubic bulk-modulus error; every model is too soft" }]] },
   { fig: "fig5_L3",
     q: { zh: "液态和非晶的短程序与中程序对不对", en: "Is short- and medium-range order in liquid and glass right" },
     cap: { zh: "非晶 300 K。<b>a</b> Ge–Te 偏 RDF。<b>b</b> Ge–Ge 偏 RDF。<b>c</b> 环尺寸分布。<b>d</b> 偏 RDF 距离。<b>e</b> 同极键比例误差。<b>f</b> 环分布误差", en: "Amorphous, 300 K. <b>a</b> Ge–Te partial RDF. <b>b</b> Ge–Ge partial RDF. <b>c</b> Ring sizes. <b>d</b> Partial-RDF distance. <b>e</b> Homopolar-bond error. <b>f</b> Ring-distribution error" },
