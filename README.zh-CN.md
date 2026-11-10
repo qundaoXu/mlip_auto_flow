@@ -469,10 +469,3 @@ mlip_auto_flow/
 export MLIPEVAL_OUTPUT=/path/to/eval_framework   # 含 results/ 与 data/ 的工作副本（或在配置文件里设 paths.output）
 cd docs/notebooks && for nb in fig*.ipynb; do jupyter nbconvert --to notebook --execute --inplace "$nb"; done
 ```
-
-## 已知限制
-
-- **参考数据包目前只有 GST225，而且没有随仓库发布。** 换体系时，L1 不需要参考可以直接用；L0 需要一份留出的标注集；L2 需要静态 DFT；L3–L5 需要同协议的 AIMD（≥ 2 条独立副本才能正式判级）。
-- **内置模型条目沿用原集群的目录布局。** 布局不同的机器，可以在配置文件里改 `paths.models.*`，或者用 `models.<key>` 覆盖对应条目。
-- **作业提交层是站点相关的**：评估端为 PBS，DFT 端为 Slurm。
-- **`alflow sample` 的阈值是相对的**，不能作为停止判据。
