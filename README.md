@@ -4,14 +4,15 @@
 
 **A tiered evaluation framework and active-learning scripts for machine-learning interatomic potentials (MLIPs).**
 
-Project page (ranking, L0–L5 walkthrough, AL ladder replay): **https://qundaoxu.github.io/mlip_auto_flow/**
+**[Open MLIP Workbench](https://qundaoxu.github.io/mlip_auto_flow/workbench/)** · [Project overview](https://qundaoxu.github.io/mlip_auto_flow/)
 
-The repository holds two pieces of code:
+The repository includes the evaluation and active-learning pipelines and their interactive web showcase:
 
 | Part | Directory | What it does |
 |---|---|---|
 | Evaluation framework (core) | [`eval_framework/`](eval_framework/) | L0–L5 tiered diagnosis, from energy/force agreement up to the melt–quench pathway. Produces traceable metrics, grades, cross-model rankings, failing structures and data-acquisition suggestions |
 | Active-learning scripts | [`al_flow/`](al_flow/) | MACE committee training → MD sampling → uncertainty-based selection → VASP labelling → OUTCAR post-processing and dataset merging, iterated |
+| MLIP Workbench | [`docs/workbench/`](docs/workbench/) | Browser-based report cards, L0–L5 charts, model comparison, trajectory inspection and sampling with embedded GST225 results |
 
 The command-line tools `mlipeval` and `alflow` ([`mlipeval_cli/`](mlipeval_cli/)) connect the two. The same two commands are the interface for integrating the project into a materials-computing platform.
 
@@ -19,6 +20,7 @@ The command-line tools `mlipeval` and `alflow` ([`mlipeval_cli/`](mlipeval_cli/)
 
 ## Contents
 
+- [Web showcase](#web-showcase)
 - [Background](#background)
 - [Research questions](#research-questions)
 - [The evaluation framework](#the-evaluation-framework)
@@ -29,9 +31,18 @@ The command-line tools `mlipeval` and `alflow` ([`mlipeval_cli/`](mlipeval_cli/)
 - [CLI reference](#cli-reference)
 - [Platform integration](#platform-integration)
 - [Repository layout](#repository-layout)
-- [Known limitations](#known-limitations)
 
 ---
+
+## Web showcase
+
+[**MLIP Workbench — launch the application**](https://qundaoxu.github.io/mlip_auto_flow/workbench/)
+
+Explore a model's report card, inspect its L0–L5 curves and metric records, overlay another model, adjust ranking weights, select a trajectory window, and collect diversity or uncertainty samples in the labelling basket. The application supports Chinese and English, light and dark themes, and desktop and mobile layouts; all typography uses Arial.
+
+The showcase runs in the browser with embedded GST225 evaluation results. Calculations, model training and HPC jobs run through `mlipeval` and `alflow`; the web showcase does not submit jobs. See the [Workbench guide](docs/workbench/README.md) for the five workspaces and local launch instructions.
+
+![MLIP Workbench: L3 structural analysis](docs/workbench/preview-levels.jpg)
 
 ## Background
 
@@ -456,6 +467,7 @@ mlip_auto_flow/
 ├── examples/alflow.yaml     a flat config with AL run options only
 ├── docs/                    project page (GitHub Pages)
 │   ├── index.html
+│   ├── workbench/           MLIP Workbench web showcase (standalone HTML + guide)
 │   ├── figures/             Fig. 1–8 (PNG + PDF)
 │   ├── notebooks/           one notebook per figure + style.py (Nature layout, 183 mm wide)
 │   └── validation_methods_L0-L5.md / .en.md

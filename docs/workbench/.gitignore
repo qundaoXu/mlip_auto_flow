@@ -1,0 +1,3 @@
+# Keep local QA captures out of Git; publish the app preview.
+*.jpg
+!preview-levels.jpg

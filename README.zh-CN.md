@@ -4,14 +4,15 @@
 
 **机器学习原子间势（MLIP）的分级评估框架与主动学习训练脚本。**
 
-项目主页（排名、L0–L5 图解、AL 阶梯回放）：**https://qundaoxu.github.io/mlip_auto_flow/**
+**[打开 MLIP Workbench 展示软件](https://qundaoxu.github.io/mlip_auto_flow/workbench/)** · [项目介绍](https://qundaoxu.github.io/mlip_auto_flow/)
 
-本仓库包含两部分代码：
+本仓库包含评估框架、主动学习脚本及对应的交互式网页展示软件：
 
 | 部分 | 目录 | 作用 |
 |---|---|---|
 | 评估框架（主体） | [`eval_framework/`](eval_framework/) | L0–L5 分层诊断：从能量/力的数值一致性一直测到熔融–淬火路径，给出可回溯的指标、判级、跨模型排名，以及失败构型与补数据建议 |
 | 主动训练配套脚本 | [`al_flow/`](al_flow/) | MACE 委员会训练 → MD 采样 → 不确定性选帧 → VASP 标注 → OUTCAR 后处理与数据集合并，循环迭代 |
+| MLIP Workbench 展示软件 | [`docs/workbench/`](docs/workbench/) | 在浏览器中交互查看报告卡、L0–L5 图表、模型对比、轨迹和采样，内置 GST225 评估结果 |
 
 两者通过命令行工具 `mlipeval` 和 `alflow`（[`mlipeval_cli/`](mlipeval_cli/)）衔接。这两个命令也是后续接入材料计算平台的接口。
 
@@ -19,6 +20,7 @@
 
 ## 目录
 
+- [网页展示软件](#网页展示软件)
 - [研究背景](#研究背景)
 - [研究问题](#研究问题)
 - [评估框架简介](#评估框架简介)
@@ -29,9 +31,18 @@
 - [CLI](#cli)
 - [平台集成](#平台集成)
 - [仓库结构](#仓库结构)
-- [已知限制](#已知限制)
 
 ---
+
+## 网页展示软件
+
+[**MLIP Workbench — 打开展示软件**](https://qundaoxu.github.io/mlip_auto_flow/workbench/)
+
+从模型报告卡进入 L0–L5 曲线和指标明细，叠加其他模型，调整排名权重，检查轨迹片段，并将多样性或不确定性采样结果加入标注篮。界面支持中英文切换、浅色与深色模式，以及桌面和移动端布局；字体统一为 Arial。
+
+展示软件使用内置 GST225 评估结果在浏览器中运行。计算、模型训练和 HPC 作业通过 `mlipeval`、`alflow` 执行，网页展示版不提交作业。五个工作区及本地启动方式见 [Workbench 使用说明](docs/workbench/README.md)。
+
+![MLIP Workbench：L3 无序结构分析](docs/workbench/preview-levels.jpg)
 
 ## 研究背景
 
@@ -456,6 +467,7 @@ mlip_auto_flow/
 ├── examples/alflow.yaml     只含 AL run 选项的扁平配置示例
 ├── docs/                    项目主页（GitHub Pages）
 │   ├── index.html
+│   ├── workbench/           MLIP Workbench 网页展示软件（独立 HTML 与使用说明）
 │   ├── figures/             Fig. 1–8（PNG + PDF）
 │   ├── notebooks/           每张图一本 notebook + style.py（Nature 版式，183 mm 通栏）
 │   └── validation_methods_L0-L5.md / .en.md
