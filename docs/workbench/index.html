@@ -241,6 +241,36 @@ const axt=(text,o)=>Object.assign({title:{text,font:{size:12}}},o||{});
 const refLine=()=>({color:css('--ref'),width:2.5,dash:'dot'});
 function cmpList(){return S.cmp&&S.cmp!==S.model?[[S.model,css('--s1')],[S.cmp,css('--s2')]]:[[S.model,css('--s1')]];}
 
+/* ---------- backend (mlipeval serve) ----------
+   Probed once on load.  On GitHub Pages or file:// the probe fails and the page
+   stays the static showcase; under `mlipeval serve` evaluation packs can be
+   uploaded, verified against the reference pack and rescored (L0–L2) on the CPU. */
+const API={on:false,ref:null,uploads:[],msg:'',busy:false};
+async function apiJSON(path,opt){const r=await fetch(path,opt);let d=null;try{d=await r.json();}catch(e){}
+  if(!r.ok)throw new Error((d&&d.detail)||(r.status+' '+r.statusText));return d;}
+function addPackModel(wb,meta,summary){const key=`${meta.model_key}@${meta.pack_id.slice(0,6)}`;
+  const m=Object.assign({backend:(meta.model&&meta.model.name)||meta.model_key,protocol:'—',gate:{pass:false,n:0,failed:[],decision:''},
+    metrics:[],l0:null,l1:{},l2:{},l3:{},l4:{},l5:{},cands:[]},wb);
+  m.label=`${wb.label} [${meta.pack_id.slice(0,6)}]`;m.group='uploaded';m.pack=meta;m.rescore=summary||null;
+  D.models[key]=m;if(!API.uploads.includes(key))API.uploads.push(key);return key;}
+async function apiInit(){if(location.protocol==='file:'||/\.github\.io$/.test(location.hostname))return;
+  try{const h=await apiJSON('/api/health',{cache:'no-store'});if(!h||!h.ok)return;
+    API.on=true;API.ref=h.reference;
+    for(const p of await apiJSON('/api/packs')){if(!p.rescored)continue;
+      try{const [wb,res]=await Promise.all([apiJSON(`/api/packs/${p.pack_id}/workbench`),apiJSON(`/api/packs/${p.pack_id}/results`)]);addPackModel(wb,p,res.summary);}catch(e){}}
+    render();}catch(e){/* static showcase */}}
+async function uploadPack(file){if(!file||API.busy)return;API.busy=true;API.msg=t('上传中…','Uploading…');render();
+  try{const fd=new FormData();fd.append('file',file);
+    const up=await apiJSON('/api/packs',{method:'POST',body:fd}),v=up.verification;
+    if(!v.ok){API.msg=t('校验未通过：','Verification failed: ')+v.checks.filter(c=>!c.ok&&c.severity==='error').map(c=>c.detail).join('；');return;}
+    API.msg=t('校验通过，正在重算 L0–L2…','Verified; rescoring L0–L2…');render();
+    const sum=await apiJSON(`/api/packs/${up.pack.pack_id}/rescore`,{method:'POST'});
+    const key=addPackModel(await apiJSON(`/api/packs/${up.pack.pack_id}/workbench`),up.pack,sum);
+    API.msg=t(`已载入 ${D.models[key].label}`,`Loaded ${D.models[key].label}`);S.model=key;S.cmp='';
+  }catch(e){API.msg=t('失败：','Failed: ')+e.message;}
+  finally{API.busy=false;render();}}
+const isUp=k=>D.models[k]&&D.models[k].group==='uploaded';
+
 /* ---------- shell ---------- */
 const VIEWS=[['card','评估报告卡','Report card'],['levels','分级详情','Level detail'],['compare','模型对比','Compare models'],['traj','轨迹分析','Trajectory lab'],['sample','采样与标注','Sampling']];
 function shell(){
@@ -249,7 +279,7 @@ function shell(){
   $('showcaseNote').textContent=t('GST225 · 交互展示','GST225 · Interactive showcase');
   $('sys').textContent='Ge₂Sb₂Te₅ · gst225_pbe_canonical_v1';
   $('lblModel').textContent=t('模型','Model');
-  $('selModel').innerHTML=['universal','specialised'].map(g=>`<optgroup label="${g==='universal'?t('通用势','Universal'):t('专用势','Specialised')}">`+D.order.filter(k=>D.models[k].group===g).map(k=>`<option value="${k}" ${k===S.model?'selected':''}>${esc(D.models[k].label)}</option>`).join('')+'</optgroup>').join('');
+  $('selModel').innerHTML=['universal','specialised','uploaded'].filter(g=>g!=='uploaded'||API.uploads.length).map(g=>`<optgroup label="${({universal:t('通用势','Universal'),specialised:t('专用势','Specialised'),uploaded:t('上传的数据包','Uploaded packs')})[g]}">`+(g==='uploaded'?API.uploads:D.order.filter(k=>D.models[k].group===g)).map(k=>`<option value="${k}" ${k===S.model?'selected':''}>${esc(D.models[k].label)}</option>`).join('')+'</optgroup>').join('');
   $('btnBasket').textContent=t('标注篮','Labelling basket')+' · '+S.basket.length;
   $('lzh').setAttribute('aria-pressed',S.lang==='zh');$('len').setAttribute('aria-pressed',S.lang==='en');
   $('rail').innerHTML=VIEWS.map(([v,zh,en])=>`<a href="#${v}" ${v===S.view?'aria-current="page"':''}>${t(zh,en)}</a>`).join('');
@@ -258,36 +288,43 @@ function shell(){
 function render(){shell();({card:vCard,levels:vLevels,compare:vCompare,traj:vTraj,sample:vSample})[S.view]();}
 
 /* ---------- report card ---------- */
-function vCard(){const m=M(),k=S.model,ord=rankOrder(),g=m.gate;
+function vCard(){const m=M(),k=S.model,ord=rankOrder(),g=m.gate,up=isUp(k);
   const weak=D.indicators.filter(i=>i.score[k]!=null).sort((a,b)=>a.score[k]-b.score[k]).slice(0,5);
   const rows=D.levels.map(l=>{const sc=D.level_scores[l][k];
-    const right=l==='L1'?`<div class="chips"><span><i class="dot ${g.pass?'gA':'gF'}"></i>${g.pass?t(`门控通过 · ${g.n} 项检查`,`Gate open · ${g.n} checks`):t(`门控关闭 · ${g.failed.length}/${g.n} 项未过`,`Gate closed · ${g.failed.length}/${g.n} failed`)}</span></div>`
+    const right=up&&!m.metrics.some(q=>lvOf(q[0])===l)?`<span class="tag">${t('数据包未包含此层级','Not in the pack')}</span>`:l==='L1'?`<div class="chips"><span><i class="dot ${g.pass?'gA':'gF'}"></i>${g.pass?t(`门控通过 · ${g.n} 项检查`,`Gate open · ${g.n} checks`):t(`门控关闭 · ${g.failed.length}/${g.n} 项未过`,`Gate closed · ${g.failed.length}/${g.n} failed`)}</span></div>`
       :((l==='L4'||l==='L5')&&!g.pass?`<div class="col" style="gap:4px">${chips(grades(k,l))}<span class="tag"><i class="dot gF"></i>${t('L1 未过：按规则不应运行','L1 failed: should not be run')}</span></div>`:chips(grades(k,l)));
     return `<button class="lrow" data-act="golevel" data-val="${l}"><span class="lcode">${l}</span><span><div class="lname">${lvName(l)}</div><div class="ldesc">${lvDesc(l)}</div></span>
       <span class="bar"><span class="track"><span class="fill" style="width:${sc||0}%;display:block"></span></span><span class="num">${sc==null?'—':sc.toFixed(1)}</span></span>${right}<span class="muted">›</span></button>`;}).join('');
   $('main').innerHTML=`
   <div class="hero">
-    <div class="col" style="gap:6px"><h3>${m.group==='universal'?t('通用势','Universal potential'):t('专用势','Specialised potential')} · ${esc(m.backend)}</h3><h1>${esc(m.label)}</h1>
+    <div class="col" style="gap:6px"><h3>${({universal:t('通用势','Universal potential'),specialised:t('专用势','Specialised potential'),uploaded:t('上传的数据包','Uploaded pack')})[m.group]} · ${esc(m.backend)}</h3><h1>${esc(m.label)}</h1>
       <p class="muted small">${t('训练协议','Training protocol')}: ${esc(m.protocol)}</p></div>
-    <div class="score"><b>${overallOf(k).toFixed(1)}</b><div><div>${t('相对总分（最佳 = 100）','Relative score (best = 100)')}</div><div class="muted small">${t('排名','Rank')} ${ord.indexOf(k)+1} / ${ord.length}</div></div></div>
+    ${up?`<div class="score"><b>—</b><div><div>${t('未参与排名','Not ranked')}</div><div class="muted small">${t('L0–L2 由数据包在本机重算','L0–L2 rescored here from the pack')}</div></div></div>`
+      :`<div class="score"><b>${overallOf(k).toFixed(1)}</b><div><div>${t('相对总分（最佳 = 100）','Relative score (best = 100)')}</div><div class="muted small">${t('排名','Rank')} ${ord.indexOf(k)+1} / ${ord.length}</div></div></div>`}
   </div>
   <div class="gate ${g.pass?'':'fail'}"><i class="dot ${g.pass?'gA':'gF'}" style="margin-top:6px"></i><div><b>${g.pass?t('L1 门控通过','L1 gate open'):t('L1 门控关闭','L1 gate closed')}</b>
     <div class="small muted">${g.pass?t('势能面未见病理，L2–L5 可以运行。','No PES pathology found; L2–L5 may run.'):t('未通过：','Failed: ')+g.failed.map(x=>`<code>${esc(x)}</code>`).join(' ')+t('。在修复前不应把算力花在 L4/L5 上。','. Do not spend compute on L4/L5 until these are fixed.')}</div></div></div>
   <div class="g2">
     <div class="panel ladder">${rows}</div>
     <div class="col">
-      <div class="panel"><h2>${t('最弱的五项指标','Five weakest indicators')}</h2><div class="list">${weak.map(i=>`<div class="li"><div><div>${i.level} · ${esc(i.key)}</div><div class="small muted num">${fmt(i.raw[k])} ${esc(i.unit==='-'?'':i.unit)}</div></div>
+      <div class="panel"><h2>${t('最弱的五项指标','Five weakest indicators')}</h2>${weak.length?'':`<p class="small muted">${t('相对指标只对参与排名的模型计算。','Relative indicators exist only for ranked models.')}</p>`}<div class="list">${weak.map(i=>`<div class="li"><div><div>${i.level} · ${esc(i.key)}</div><div class="small muted num">${fmt(i.raw[k])} ${esc(i.unit==='-'?'':i.unit)}</div></div>
         <div class="bar" style="width:120px"><span class="track"><span class="fill" style="width:${i.score[k]}%;display:block"></span></span><span class="num">${i.score[k].toFixed(0)}</span></div></div>`).join('')}</div></div>
       <div class="panel"><div class="phead"><h2>${t('下一轮标注候选','Candidates for the next labelling round')}</h2><span class="tag">${m.cands.length}</span></div>${candList(m)}</div>
     </div>
   </div>
-  <div class="panel"><div class="phead"><h2>${t('数据接入','Data in')}</h2><span class="small muted">${t('原型：已载入 GST225 演示结果，后端未接入','Prototype: GST225 demo results loaded, backend not connected')}</span></div>
+  <div class="panel"><div class="phead"><h2>${t('数据接入','Data in')}</h2><span class="small muted">${API.on?t(`已连接本地后端 · 参考包 ${API.ref.id}${API.ref.complete?'':'（不完整）'}`,`Local backend connected · reference ${API.ref.id}${API.ref.complete?'':' (incomplete)'}`):t('静态展示版：用 mlipeval serve 启动后可上传评估数据包','Static showcase: start it with mlipeval serve to upload evaluation packs')}</span></div>
     <div class="g3">
-      <div class="inp on"><b>${t('结果包','Result package')}</b><span class="small muted">${t('CLI 在 HPC 上算好的 MetricResult，纯读取','MetricResult files computed by the CLI on HPC; read-only')}</span><code>results/models/${S.model}/</code><span class="small">${m.metrics.length} ${t('条指标 · L0–L5','metrics · L0–L5')}</span></div>
-      <div class="inp"><b>${t('数据对','Data pair')}</b><span class="small muted">${t('参考数据 + MLIP 产出（带标签 extxyz、AIMD 与 MLIP-MD 轨迹）→ L0、L3–L5','Reference + MLIP output (labelled extxyz, AIMD and MLIP-MD trajectories) → L0, L3–L5')}</span><div class="row"><button class="btn sm" disabled>${t('选择参考路径','Choose reference path')}</button><button class="btn sm" disabled>${t('选择 MLIP 产出','Choose MLIP output')}</button></div></div>
-      <div class="inp"><b>${t('模型 checkpoint','Model checkpoint')}</b><span class="small muted">${t('L1、L2 和 MD 要现场调用模型：本机 GPU 运行，或复制命令到计算节点','L1, L2 and MD call the model: run on a local GPU, or copy the command to a compute node')}</span><span class="cmd">mlipeval run all --model ${S.model}</span></div>
+      <div class="inp ${up?'':'on'}"><b>${t('结果包','Result package')}</b><span class="small muted">${t('CLI 在 HPC 上算好的 MetricResult，纯读取','MetricResult files computed by the CLI on HPC; read-only')}</span><code>results/models/${up?m.pack.model_key:S.model}/</code><span class="small">${m.metrics.length} ${up?t('条指标 · L0–L2','metrics · L0–L2'):t('条指标 · L0–L5','metrics · L0–L5')}</span></div>
+      <div class="inp ${up?'on':''}"><b>${t('评估数据包 (.mlippack)','Evaluation pack (.mlippack)')}</b><span class="small muted">${t('HPC 上调用模型得到的原始输出；本机校验后用 CPU 重算 L0–L2','Raw model outputs from the HPC run; verified here and rescored on the CPU (L0–L2)')}</span>
+        ${API.on?`<div class="row"><label class="btn sm ${API.busy?'':'pri'}" style="cursor:pointer">${t('选择数据包并重算','Choose a pack and rescore')}<input type="file" id="packfile" accept=".mlippack" hidden ${API.busy?'disabled':''}></label></div>`:`<span class="cmd">mlipeval serve</span>`}
+        ${API.msg?`<span class="small" role="status">${esc(API.msg)}</span>`:''}${up?packInfo(m):''}</div>
+      <div class="inp"><b>${t('生成数据包','Build a pack')}</b><span class="small muted">${t('在集群上跑完 L0–L2 后打包；L1、L2 和 MD 要调用模型，只能在计算节点上算','Pack after L0–L2 ran on the cluster; L1, L2 and MD call the model and run on compute nodes')}</span><span class="cmd">mlipeval run all --model ${up?m.pack.model_key:S.model}
+mlipeval pack model --model ${up?m.pack.model_key:S.model}</span></div>
     </div></div>`;
 }
+function packInfo(m){const r=m.rescore,c=r&&r.comparison,v=r&&r.verification;
+  const cmp=c?Object.entries(c).filter(([,x])=>x.identical!=null).map(([st,x])=>`${st} ${x.n_agree}/${x.n_compared}`).join(' · '):'';
+  return `<span class="small muted">${t('数据包','Pack')} <code>${esc(m.pack.pack_id)}</code>${v?` · ${t('警告','warnings')} ${v.n_warnings}`:''}</span>${cmp?`<span class="small muted">${t('与包内 HPC 原结果一致：','Agreement with the HPC files in the pack: ')}${cmp}</span>`:''}`;}
 function candList(m){if(!m.cands.length)return `<p class="muted small">${t('没有导出的候选构型。','No candidates exported.')}</p>`;
   return `<div class="list">${m.cands.slice(0,6).map(c=>{const id=S.model+':'+c.id,inb=S.basket.some(b=>b.id===id);return `<div class="li"><div><div class="mono small">${esc(c.id)} <span class="muted">← ${esc(c.metric)}</span></div><div class="small muted" style="overflow-wrap:anywhere">${esc(c.reason)}</div></div>
     <button class="btn sm" data-act="addcand" data-val="${esc(c.id)}" ${inb?'disabled':''}>${inb?t('已加入','Added'):t('加入标注篮','Add')}</button></div>`;}).join('')}</div>
@@ -296,7 +333,7 @@ function candList(m){if(!m.cands.length)return `<p class="muted small">${t('没�
 /* ---------- level detail ---------- */
 function vLevels(){const l=S.level;
   $('main').innerHTML=`<div class="phead"><div class="row">${seg('level',D.levels.map(x=>[x,x]),l)}<div><h2>${lvName(l)}</h2><div class="small muted">${lvDesc(l)}</div></div></div>
-    <label class="row small"><span class="muted">${t('叠加对比','Overlay')}</span><select data-ch="cmp"><option value="">${t('无','None')}</option>${D.order.filter(k=>k!==S.model).map(k=>`<option value="${k}" ${k===S.cmp?'selected':''}>${esc(D.models[k].label)}</option>`).join('')}</select></label></div>
+    <label class="row small"><span class="muted">${t('叠加对比','Overlay')}</span><select data-ch="cmp"><option value="">${t('无','None')}</option>${D.order.concat(API.uploads).filter(k=>k!==S.model).map(k=>`<option value="${k}" ${k===S.cmp?'selected':''}>${esc(D.models[k].label)}</option>`).join('')}</select></label></div>
     <div id="lv" class="col"></div>
     <div class="panel"><div class="phead"><h2>${t('指标明细（MetricResult）','Metric records (MetricResult)')}</h2><div class="row"><input type="search" id="mq" placeholder="${t('筛选 metric_id','Filter metric_id')}" value="${esc(S.mq)}"><label class="row small"><input type="checkbox" id="bad" ${S.bad?'checked':''}> ${t('只看 C / F / failed','C / F / failed only')}</label></div></div>
     <div class="tw"><table><thead><tr><th>metric_id</th><th class="n">${t('值','value')}</th><th>${t('单位','unit')}</th><th class="n">σ_eff</th><th class="n">z_eff</th><th>${t('等级','grade')}</th><th>${t('状态','status')}</th><th>${t('证据','tier')}</th></tr></thead><tbody id="mt"></tbody></table></div>
@@ -307,7 +344,8 @@ function mtable(){const q=S.mq.toLowerCase();const rows=M().metrics.filter(m=>lv
     <td>${'ABCF'.includes(m[4])&&m[4].length===1?`<span class="tag"><i class="dot g${m[4]}"></i>${m[4]}</span>`:'<span class="muted">—</span>'}</td><td>${m[3]==='failed'?`<span class="tag"><i class="dot gF"></i>failed</span>`:esc(m[3])}</td><td>${esc(m[7])}</td></tr>`).join('')||`<tr><td colspan="8" class="muted">${t('没有匹配的指标','No matching metrics')}</td></tr>`;}
 const tile=(v,l)=>`<div class="tile"><b>${v}</b><span>${l}</span></div>`;
 
-function lv0(){const m=M();
+const missing=()=>`<div class="note">${t('当前模型的数据包不含这一层级的数据。','The pack for this model carries no data for this level.')}</div>`;
+function lv0(){const m=M();if(!m.l0){$('lv').innerHTML=missing();return;}
   $('lv').innerHTML=`<div class="tiles">${tile(fmt(mv('L0.force_mae')),t('力 MAE (eV/Å)','Force MAE (eV/Å)'))}${tile(fmt(mv('L0.energy_mae')),t('能量 MAE (meV/atom)','Energy MAE (meV/atom)'))}${tile(fmt(mv('L0.stress_rmse')),t('应力 RMSE (meV/Å³)','Stress RMSE (meV/Å³)'))}${tile(fmt(mv('L0.force_component_r2'),4),t('力分量 R²','Force component R²'))}</div>
   <div class="g2e"><div class="panel"><h2>${t('力分量：模型 vs DFT','Force components: model vs DFT')}</h2><div class="small muted">${t('H5 审计集 120 帧，随机抽 700 个分量','H5 audit set, 120 frames, 700 random components')}</div><div id="p1" class="plot"></div></div>
   <div class="panel"><h2>${t('逐帧力 RMSE','Per-frame force RMSE')}</h2><div class="small muted">${t('横轴按状态分组；悬停看帧号与状态','Grouped by state on the x axis; hover for frame and state')}</div><div id="p2" class="plot"></div></div></div>
@@ -327,7 +365,7 @@ function lv0(){const m=M();
   bar('p3',bars('L0.force_rmse.state_kind='),t('状态','State'));
   bar('p4',bars('L0.force_vector_mae.|F|=',['[0,0.5)','[0.5,1)','[1,2)','[2,4)','[4,8)','>=8']),'|F| DFT (eV/Å)');
 }
-function lv1(){const m=M(),g=m.gate,pec=m.l1.pec;
+function lv1(){const m=M(),g=m.gate,pec=m.l1&&m.l1.pec;if(!pec){$('lv').innerHTML=missing();return;}
   const checks=(pec?pec.pairs.map(p=>['L1.pec.'+p,null]):[]).concat(m.metrics.filter(q=>lvOf(q[0])==='L1').map(q=>[q[0],q[1]]));
   $('lv').innerHTML=`<div class="panel"><div class="phead"><h2>${t('门控检查清单','Gate checklist')}</h2><span class="tag"><i class="dot ${g.pass?'gA':'gF'}"></i>${g.pass?t('通过','open'):t('关闭','closed')} · ${g.n-g.failed.length}/${g.n}</span></div>
     <div class="chk">${checks.map(([id,v])=>{const bad=g.failed.includes(id);return `<div><i class="dot ${bad?'gF':'gA'}"></i><span class="mono" style="overflow-wrap:anywhere">${esc(id.slice(3))}</span><span class="v">${bad?t('未过','fail'):(v==null?t('通过','pass'):fmt(v,2))}</span></div>`;}).join('')}</div></div>
@@ -358,7 +396,7 @@ function lv2(){const m=M();
   const v=m.metrics.filter(q=>/^L2\.relax\..*\.volume_error$/.test(q[0]));
   plot('p3',[{x:v.map(q=>q[0].split('.')[2]),y:v.map(q=>q[1]),type:'bar',width:.5,marker:{color:css('--s1')},hovertemplate:'%{x}<br>%{y:.2f} %<extra></extra>'}],{showlegend:false,height:240,xaxis:axt(t('结构','Structure')),yaxis:axt('ΔV / V (%)')});
 }
-function lv3(){const R=D.ref.l3[S.st],states=Object.keys(D.ref.l3);
+function lv3(){const R=D.ref.l3[S.st],states=Object.keys(D.ref.l3);if(isUp(S.model)&&!S.cmp){$('lv').innerHTML=missing();return;}
   $('lv').innerHTML=`<div class="phead"><div class="row">${seg('st',states.map(s=>[s,stn(s)]),S.st)}</div><div class="row"><span class="small muted">${t('本状态点判级','Grades at this state')}</span>${chips(grades(S.model,'L3','@'+S.st))}</div></div>
   <div class="g2e"><div class="panel"><div class="phead"><h2>${t('偏径向分布函数','Partial radial distribution')}</h2>${seg('pair',Object.keys(R.rdf).map(p=>[p,p]),S.pair)}</div><div id="p1" class="plot"></div>
     <div class="small muted">${t('竖线：键截断，取自 AIMD 偏 RDF 第一极小值，对两侧同时冻结。','Vertical line: bond cutoff from the first minimum of the AIMD partial RDF, frozen for both sides.')}</div></div>
@@ -375,7 +413,7 @@ function lv3(){const R=D.ref.l3[S.st],states=Object.keys(D.ref.l3);
     {height:280,bargap:.25,bargroupgap:.08,xaxis:axt(t('环大小','Ring size'),{dtick:1}),yaxis:axt(t('环 / 原子','Rings per atom'))});
   plot('p4',[refT(R.q,R.sq)].concat(mods(R.q,q=>q.sq)),{height:280,xaxis:axt('q (Å⁻¹)'),yaxis:axt('S(q)')});
 }
-function lv4(){const states=Object.keys(D.ref.l4),R=D.ref.l4[S.l4],m=M().l4[S.l4];const sp=['Ge','Sb','Te'],cols=[css('--p1'),css('--p2'),css('--p3')];
+function lv4(){if(isUp(S.model)){$('lv').innerHTML=missing();return;}const states=Object.keys(D.ref.l4),R=D.ref.l4[S.l4],m=M().l4[S.l4];const sp=['Ge','Sb','Te'],cols=[css('--p1'),css('--p2'),css('--p3')];
   const rows=sp.concat(['all']).map(s=>{const d=M().metrics.find(q=>q[0]===`L4.diffusion.${s}.delta_log10D@${S.l4}`)||[],Dv=mv(`L4.diffusion.${s}.D@${S.l4}`);
     return `<tr><td>${s}</td><td class="n">${fmt(Dv)}</td><td class="n">${fmt(d[1])}</td><td class="n">${fmt(d[6])}</td><td class="n">${fmt(d[5])}</td><td>${d[4]&&d[4].length===1?`<span class="tag"><i class="dot g${d[4]}"></i>${d[4]}</span>`:'—'}</td></tr>`;}).join('');
   $('lv').innerHTML=`<div class="row">${seg('l4',states.map(s=>[s,stn(s)]),S.l4)}</div>
@@ -386,7 +424,7 @@ function lv4(){const states=Object.keys(D.ref.l4),R=D.ref.l4[S.l4],m=M().l4[S.l4
     tr.push({x:R.t,y:R.msd[s],mode:'lines',line:{color:cols[i],width:2,dash:'dot'},name:s+' AIMD',showlegend:false,hovertemplate:'%{x:.2f} ps<br>%{y:.2f} Å²<extra>'+s+' AIMD</extra>'});});
   plot('p1',tr,{height:340,xaxis:axt('t (ps)',{type:'log'}),yaxis:axt('MSD (Å²)',{type:'log'})});
 }
-function lv5(){const R=D.ref.l5[S.prog],progs=Object.keys(D.ref.l5),o=S.obs;
+function lv5(){if(isUp(S.model)){$('lv').innerHTML=missing();return;}const R=D.ref.l5[S.prog],progs=Object.keys(D.ref.l5),o=S.obs;
   $('lv').innerHTML=`<div class="row">${seg('prog',progs.map(s=>[s,stn(s)]),S.prog)}${seg('obs',Object.keys(OBS).map(k=>[k,t(OBS[k][0],OBS[k][1])]),o)}</div>
   <div class="panel"><h2>${t(OBS[o][0],OBS[o][1])} ${t('随温度程序的演化','along the temperature programme')}</h2><div id="p1" class="plot"></div>
   <div class="small muted">${t('灰带：AIMD 参考的 3σ 容差带。竖线：模型首次离开容差带的位置。','Grey band: 3σ tolerance around the AIMD reference. Vertical line: where the model first leaves the band.')}</div></div>`;
@@ -516,7 +554,8 @@ document.addEventListener('change',e=>{const el=e.target;
   else if(el.dataset.ch==='cmp'){S.cmp=el.value;render();}
   else if(el.dataset.ch==='traj'){S.traj=el.value;render();}
   else if(el.id==='bad'){S.bad=el.checked;mtable();}
-  else if(el.dataset.fst){S.fpsStates[el.dataset.fst]=el.checked;drawFps();}});
+  else if(el.dataset.fst){S.fpsStates[el.dataset.fst]=el.checked;drawFps();}
+  else if(el.id==='packfile'){uploadPack(el.files[0]);}});
 document.addEventListener('input',e=>{const el=e.target;
   if(el.id==='mq'){S.mq=el.value;mtable();}
   else if(el.dataset.w){S.w[el.dataset.w]=+el.value;$('wv'+el.dataset.w).textContent=(+el.value).toFixed(2);drawRank();}
@@ -530,6 +569,7 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
 new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 if(!window.Plotly)window.addEventListener('load',render);
 route();
+apiInit();
 </script>
 
 

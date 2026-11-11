@@ -82,6 +82,8 @@ mlipeval serve --reference data/reference/gst225_phase1_v1.mlipref     # http://
 | `GET /api/packs/{id}/workbench` | the page's per-model object (`metrics`, `gate`, `l0`, `l1`, `l2`), in the same shape as the embedded `D.models[key]` |
 | `DELETE /api/packs/{id}` | |
 
+The Workbench page served at `/workbench/` uses this API. Its *Data in* panel uploads a pack, shows the verification, rescores it, and adds the model to the selector under *Uploaded packs*. Uploaded models are not ranked, and the page shows their L0–L2 views.
+
 Interactive API docs are at `/docs`. The server has no authentication: keep the default `127.0.0.1` binding, or reach it through an SSH tunnel. Uploaded packs and results live in `--store` (default `~/.mlipeval/workbench`).
 
 ## Known issue found while building this: the L2 EOS window
