@@ -86,6 +86,8 @@ The Workbench page served at `/workbench/` uses this API. Its *Data in* panel up
 
 Interactive API docs are at `/docs`. The server has no authentication: keep the default `127.0.0.1` binding, or reach it through an SSH tunnel. Uploaded packs and results live in `--store` (default `~/.mlipeval/workbench`).
 
-## Known issue found while building this: the L2 EOS window
+## L2 EOS window (fixed 2026-11-11)
 
-The DFT tasks `H2_*_v092…v108` scale the **volume** (V/V0 = 0.92–1.08). Until 2026-11-11, `mlip_eos` applied the same factors to the **cell vectors**, so every MLIP EOS spanned V/V0 = 0.78–1.26. The Birch–Murnaghan fits on the two sides therefore cover different windows, and the reported V0/B0 errors include fit-range bias, B0 most of all. `mlip_eos` now scans in volume by default (`scale_kind="volume"`), and `run_l2.py` records `eos_scale_kind` in its context. Every existing L2 file predates the fix. Rescoring flags those files with the `L2.eos.scale_kind` warning and stores `context.eos_window`. Removing the bias requires rerunning L2 on the cluster.
+The DFT tasks `H2_*_v092…v108` scale the **volume** (V/V0 = 0.92–1.08). Until 2026-11-11, `mlip_eos` applied the same factors to the **cell vectors**, so every MLIP EOS spanned V/V0 = 0.78–1.26. The two Birch–Murnaghan fits therefore covered different windows, and the V0/B0 errors carried fit-range bias.
+
+`mlip_eos` now scans in volume (`scale_kind="volume"`), and `run_l2.py` records `eos_scale_kind` in its context. L2 was rerun for all 17 models on hopper (PBS jobs 712359/712361/712364/712366). The relaxations reproduced to ≤ 0.003 meV/atom, and every EOS now fits with an RMSE below 5 meV/atom over the DFT window. The fix changed the cubic B0 errors the most. For the nine showcase models they now range from −27% to +11%, instead of uniformly −10% to −39%. The previous files are kept in `results/models/<key>/l2_linear_eos_retired_20261111/` and `data/models/<key>/l2_linear_eos_retired_20261111/`. A pack built from a pre-fix file still gets the `L2.eos.scale_kind` warning.
