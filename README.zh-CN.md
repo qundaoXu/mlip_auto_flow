@@ -180,6 +180,7 @@ flowchart LR
 git clone https://github.com/qundaoXu/mlip_auto_flow.git && cd mlip_auto_flow
 pip install -e .            # 安装 mlipeval / alflow 两个命令（依赖 numpy、ase、pyyaml）
 pip install -e ".[al]"      # 主动学习阶段：mace-torch、scikit-learn、tqdm
+pip install -e ".[gui]"     # Workbench 后端（mlipeval serve）：fastapi、uvicorn
 ```
 
 CLI 默认使用仓库内的 `eval_framework/` 和 `al_flow/` 代码。如果想用别处的副本，可以设置 `MLIPEVAL_HOME`（含 `scripts/mlipeval/` 的目录）和 `ALFLOW_HOME`（含 `activate_learning_full_flow.py` 的目录）。
@@ -399,7 +400,14 @@ mlipeval card       --model KEY [--against a,b,..] [--clean] [--json]   单模�
 mlipeval candidates --model KEY [--out DIR]               查看 / 导出补算候选结构
 mlipeval leakage    {h5,diagnostic,al-ladder}             训练集泄漏筛查
 mlipeval report     --model KEY [--markdown]              phase-1 验收报告
+mlipeval pack       reference [--out F] [--no-diagnostic]  冻结 L0–L2 的 DFT/AIMD 参考侧（在集群上做一次）
+mlipeval pack       model --model KEY|--all [--out DIR]    把单个模型的 L0–L2 原始输出打成 .mlippack
+mlipeval pack       verify PACK [--reference R]            对照参考包校验数据包，不做计算
+mlipeval rescore    PACK [--levels L0,L1,L2] [--out DIR] [--compare]   在 CPU 上由数据包重算 L0–L2
+mlipeval serve      [--host H] [--port P] [--store DIR]    本地 Workbench 后端：上传数据包、通过 HTTP 重算
 ```
+
+`pack` / `rescore` / `serve` 把打分搬离集群：HPC 作业只负责调用模型，数据包携带模型输出，L0–L2 在打开数据包的机器上打分。格式、校验项和 API 见 [eval_framework/PACKS.md](eval_framework/PACKS.md)。
 
 `run` 会设置 `MLIPEVAL_MODEL=KEY`，再调用对应的 `run_*.py`，未识别的参数原样转发：
 

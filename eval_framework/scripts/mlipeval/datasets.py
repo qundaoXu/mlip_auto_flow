@@ -201,7 +201,12 @@ def harvest_h5_labels(dest: Path = H5_LABELS) -> dict[str, object]:
     return manifest
 
 
-def labelled_h5(*, role: DataRole = DataRole.PROTECTED_AUDIT) -> LabelledSet:
+def labelled_h5(
+    *,
+    role: DataRole = DataRole.PROTECTED_AUDIT,
+    path: Path | None = None,
+    leakage: Path | None = None,
+) -> LabelledSet:
     """The 120 H5 relabels: canonical protocol, 306 atoms at 0.0309 at/A^3.
 
     The first label set in this workspace computed under
@@ -213,20 +218,25 @@ def labelled_h5(*, role: DataRole = DataRole.PROTECTED_AUDIT) -> LabelledSet:
     against every GST training set in the workspace and found it clean.  Without
     that the call fails rather than quietly downgrading the role: once a frame
     has been used diagnostically it can never become protected again.
+
+    ``path`` / ``leakage`` read the same files from somewhere else -- a reference
+    pack extracted by :mod:`mlipeval.pack` -- with the same checks.
     """
-    if not H5_LABELS.exists():
-        raise FileNotFoundError(f"{H5_LABELS} not found -- run `python harvest_phase1.py` first")
+    labels = Path(path) if path is not None else H5_LABELS
+    screen_file = Path(leakage) if leakage is not None else H5_LEAKAGE
+    if not labels.exists():
+        raise FileNotFoundError(f"{labels} not found -- run `python harvest_phase1.py` first")
     if role is DataRole.PROTECTED_AUDIT:
-        screen = json.loads(H5_LEAKAGE.read_text()) if H5_LEAKAGE.exists() else {}
-        if screen.get("sha256") != _sha256(H5_LABELS):
+        screen = json.loads(screen_file.read_text()) if screen_file.exists() else {}
+        if screen.get("sha256") != _sha256(labels):
             raise ValueError(
                 "protected_audit needs a leakage screen of the current H5 file -- run "
                 "`python screen_h5_leakage.py`, or pass role=DataRole.DIAGNOSTIC knowingly"
             )
         if screen.get("verdict") != "clean":
-            raise ValueError(f"H5 leakage screen is '{screen.get('verdict')}', not clean: {H5_LEAKAGE}")
+            raise ValueError(f"H5 leakage screen is '{screen.get('verdict')}', not clean: {screen_file}")
     labelled = read_labelled_extxyz(
-        H5_LABELS,
+        labels,
         protocol_id=protocols.canonical_static().protocol_id,
         role=role,
         notes=(
@@ -346,7 +356,7 @@ def harvest_static_diagnostic(dest: Path = DIAGNOSTIC_LABELS) -> dict[str, objec
     return manifest
 
 
-def labelled_diagnostic() -> LabelledSet:
+def labelled_diagnostic(path: Path | None = None) -> LabelledSet:
     """The L0 diagnostic set: every ionic step of the crystalline phase-1 tasks.
 
     Role ``diagnostic`` by construction -- this is the set failure export draws
@@ -354,10 +364,11 @@ def labelled_diagnostic() -> LabelledSet:
     set in :data:`~mlipeval.paths.DIAGNOSTIC_LEAKAGE` (``screen_diagnostic_leakage.py``);
     :func:`diagnostic_training_overlap` turns that into a per-frame mask.
     """
-    if not DIAGNOSTIC_LABELS.exists():
-        raise FileNotFoundError(f"{DIAGNOSTIC_LABELS} not found -- run `python harvest_phase1.py` first")
+    labels = Path(path) if path is not None else DIAGNOSTIC_LABELS
+    if not labels.exists():
+        raise FileNotFoundError(f"{labels} not found -- run `python harvest_phase1.py` first")
     labelled = read_labelled_extxyz(
-        DIAGNOSTIC_LABELS,
+        labels,
         protocol_id=protocols.canonical_static().protocol_id,
         role=DataRole.DIAGNOSTIC,
         notes=(
@@ -373,7 +384,13 @@ def labelled_diagnostic() -> LabelledSet:
     return labelled
 
 
-def diagnostic_training_overlap(labelled: LabelledSet, model_key: str) -> np.ndarray:
+def diagnostic_training_overlap(
+    labelled: LabelledSet,
+    model_key: str,
+    *,
+    labels: Path | None = None,
+    leakage: Path | None = None,
+) -> np.ndarray:
     """Boolean mask: frames of the diagnostic set inside ``model_key``'s training set.
 
     Read from the screen record, which is bound to the sha256 of the harvested
@@ -385,10 +402,12 @@ def diagnostic_training_overlap(labelled: LabelledSet, model_key: str) -> np.nda
     mask = np.zeros(len(labelled), dtype=bool)
     if not names:
         return mask
-    if not DIAGNOSTIC_LEAKAGE.exists():
-        raise FileNotFoundError(f"{DIAGNOSTIC_LEAKAGE} not found -- run `python screen_diagnostic_leakage.py`")
-    screen = json.loads(DIAGNOSTIC_LEAKAGE.read_text())
-    if screen.get("sha256") != _sha256(DIAGNOSTIC_LABELS):
+    screen_file = Path(leakage) if leakage is not None else DIAGNOSTIC_LEAKAGE
+    label_file = Path(labels) if labels is not None else DIAGNOSTIC_LABELS
+    if not screen_file.exists():
+        raise FileNotFoundError(f"{screen_file} not found -- run `python screen_diagnostic_leakage.py`")
+    screen = json.loads(screen_file.read_text())
+    if screen.get("sha256") != _sha256(label_file):
         raise ValueError("diagnostic leakage screen is stale -- rerun `python screen_diagnostic_leakage.py`")
     by_config = {cfg: i for i, cfg in enumerate(labelled.config_types())}
     for name in names:

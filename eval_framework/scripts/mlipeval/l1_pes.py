@@ -430,12 +430,33 @@ def invariance_checks(
     positions = atoms.get_positions() - atoms.get_center_of_mass()
     net_torque = float(np.linalg.norm(np.cross(positions, f0).sum(axis=0)) / len(atoms))
 
+    return invariance_metrics(
+        d_translation=d_translation, d_rotation=d_rotation, net_force=net_force,
+        net_torque=net_torque, n_atoms=len(atoms), noise_eV=noise_eV,
+    )
+
+
+def invariance_metrics(
+    *,
+    d_translation: float,
+    d_rotation: float,
+    net_force: float,
+    net_torque: float,
+    n_atoms: int,
+    noise_eV: float | None,
+) -> list[MetricResult]:
+    """Judge the invariance measurements of :func:`invariance_checks`.
+
+    Split from the measurement so an evaluation pack can be re-judged on a
+    machine without the model: the four numbers and the noise floor are all the
+    verdict depends on.
+    """
     noise = float(noise_eV) if noise_eV is not None else 0.0
     tol_translation = max(THRESHOLDS["translation_energy_tol"], NOISE_MARGIN * noise)
     tol_rotation = max(THRESHOLDS["rotation_energy_tol"], NOISE_MARGIN * noise)
     # a force noise of sigma_E / (bond length) per atom is the same rounding seen
     # through the derivative; 1 A is the right order for a covalent solid
-    tol_net_force = max(THRESHOLDS["net_force_tol"], NOISE_MARGIN * noise / len(atoms))
+    tol_net_force = max(THRESHOLDS["net_force_tol"], NOISE_MARGIN * noise / n_atoms)
 
     return [
         _result(
@@ -498,6 +519,15 @@ def force_consistency(
             numeric[row, axis] = -(model.energy(plus) - model.energy(minus)) / (2.0 * delta)
     scale = max(np.abs(analytic).max(), 1e-8)
     rel = float(np.abs(analytic - numeric).max() / scale)
+    return force_consistency_metric(rel=rel, delta=delta, n_probed=int(len(probe)),
+                                    scale=float(scale), noise_eV=noise)
+
+
+def force_consistency_metric(
+    *, rel: float, delta: float, n_probed: int, scale: float, noise_eV: float | None
+) -> MetricResult:
+    """Judge a measured analytic-vs-finite-difference force residual."""
+    noise = float(noise_eV) if noise_eV is not None else 0.0
     tol = max(THRESHOLDS["force_consistency_rel"],
               NOISE_MARGIN * noise / (2.0 * delta) / scale)
     return _result(
@@ -505,7 +535,7 @@ def force_consistency(
         rel,
         "-",
         status=Status.FAILED if rel > tol else Status.OK,
-        extra={"delta_A": delta, "n_atoms_probed": int(len(probe)), "max_abs_force": float(scale),
+        extra={"delta_A": delta, "n_atoms_probed": int(n_probed), "max_abs_force": float(scale),
                "tolerance_rel": tol, "measured_energy_noise_eV": noise},
     )
 
@@ -556,9 +586,19 @@ def stress_consistency(
     work = model.fresh_atoms(atoms)
     analytic = np.asarray(work.get_stress(voigt=True), dtype=float)
     numeric = _numerical_stress_voigt(model, atoms, eps)
+    return stress_consistency_metric(analytic=analytic, numeric=numeric, eps=eps,
+                                     volume=float(work.get_volume()), noise_eV=noise)
+
+
+def stress_consistency_metric(
+    *, analytic, numeric, eps: float, volume: float, noise_eV: float | None
+) -> MetricResult:
+    """Judge measured analytic and finite-difference Voigt stresses."""
+    noise = float(noise_eV) if noise_eV is not None else 0.0
+    analytic = np.asarray(analytic, dtype=float)
+    numeric = np.asarray(numeric, dtype=float)
     scale = max(np.abs(analytic).max(), 1e-8)
     rel = float(np.abs(analytic - numeric).max() / scale)
-    volume = float(work.get_volume())
     tol = max(THRESHOLDS["stress_consistency_rel"],
               NOISE_MARGIN * noise / (2.0 * eps) / volume / scale)
     return _result(
@@ -618,6 +658,13 @@ def lattice_scan(
         dmin[k] = float(np.min(d)) if len(d) else np.nan
 
     scan = LatticeScan(scales, volumes, energies, pressures, dmin)
+    return scan, lattice_scan_metrics(scan)
+
+
+def lattice_scan_metrics(scan: LatticeScan) -> list[MetricResult]:
+    """Judge a stored lattice scan (see :func:`lattice_scan`)."""
+    scales = np.asarray(scan.scales, dtype=float)
+    energies = np.asarray(scan.energy_per_atom, dtype=float)
     ok = np.isfinite(energies)
     # A smooth E(scale) curve is strongly curved near full compression, so an
     # absolute second-difference threshold would flag physics.  A genuine kink
@@ -663,7 +710,7 @@ def lattice_scan(
             extra={"note": "E must fall monotonically over the most compressed third of the scan"},
         ),
     ]
-    return scan, results
+    return results
 
 
 # --------------------------------------------------------------------------
@@ -692,8 +739,13 @@ def stability_run(
         description=f"L1 stability probe at {temperature_k:g} K",
     )
     md = run_md(atoms, model, settings)
+    return md, stability_metrics(md, temperature_k=temperature_k)
+
+
+def stability_metrics(md: MDResult, *, temperature_k: float) -> list[MetricResult]:
+    """Judge a stored high-temperature stability run (see :func:`stability_run`)."""
     dmin = float(np.nanmin(md.min_distance)) if md.min_distance.size else np.nan
-    results = [
+    return [
         _result(
             f"L1.stability_{int(temperature_k)}K.completed",
             md.completed,
@@ -717,7 +769,6 @@ def stability_run(
             extra={"target_K": temperature_k},
         ),
     ]
-    return md, results
 
 
 def nve_metrics(
@@ -811,7 +862,11 @@ def timestep_sensitivity(
             description="L1 timestep sensitivity",
         )
         runs[dt] = run_md(atoms, model, settings)
+    return runs, timestep_metrics(runs, total_time_fs=total_time_fs)
 
+
+def timestep_metrics(runs: Mapping[float, MDResult], *, total_time_fs: float) -> list[MetricResult]:
+    """Judge stored NVE runs of equal duration at different timesteps."""
     drifts = {dt: r.drift_mev_per_atom_per_ps() for dt, r in runs.items()}
     finite = [d for d in drifts.values() if np.isfinite(d)]
     spread = float(max(finite) - min(finite)) if len(finite) > 1 else float("nan")
@@ -839,7 +894,87 @@ def timestep_sensitivity(
                 extra=run.summary(),
             )
         )
-    return runs, results
+    return results
+
+
+# --------------------------------------------------------------------------
+# single-frame probe measurements, for evaluation packs
+# --------------------------------------------------------------------------
+PROBE_METRICS = (
+    "L1.translation_invariance",
+    "L1.rotation_invariance",
+    "L1.net_force",
+    "L1.net_torque",
+    "L1.force_vs_dE_dx",
+    "L1.stress_vs_dE_dstrain",
+)
+
+
+def probe_record(
+    results: Sequence[MetricResult] | Sequence[Mapping],
+    *,
+    n_atoms: int,
+    volume_A3: float,
+    noise_eV: float,
+) -> dict[str, object]:
+    """The raw measurements behind the single-frame checks, without verdicts.
+
+    Accepts live :class:`MetricResult` objects (``run_l1.py`` writes this next to
+    its MD probes) or their JSON form (backfilling a pack from an existing
+    ``L1_<key>.json``); both carry the same numbers, so the record is identical.
+    :func:`probe_metrics` turns it back into judged results.
+    """
+    rows = {}
+    for r in results:
+        d = r if isinstance(r, Mapping) else r.to_dict()
+        rows[d["metric_id"]] = d
+    missing = [m for m in PROBE_METRICS if m not in rows]
+    if missing:
+        raise KeyError(f"probe metrics missing: {missing}")
+    force = rows["L1.force_vs_dE_dx"]
+    stress = rows["L1.stress_vs_dE_dstrain"]
+    return {
+        "n_atoms": int(n_atoms),
+        "volume_A3": float(volume_A3),
+        "noise_eV": float(noise_eV),
+        "d_translation_eV": float(rows["L1.translation_invariance"]["value"]),
+        "d_rotation_eV": float(rows["L1.rotation_invariance"]["value"]),
+        "net_force_eV_per_A_per_atom": float(rows["L1.net_force"]["value"]),
+        "net_torque_eV_per_atom": float(rows["L1.net_torque"]["value"]),
+        "force": {
+            "rel": float(force["value"]),
+            "delta_A": float(force["extra"]["delta_A"]),
+            "n_atoms_probed": int(force["extra"]["n_atoms_probed"]),
+            "max_abs_force": float(force["extra"]["max_abs_force"]),
+        },
+        "stress": {
+            "analytic_voigt_eV_per_A3": [float(v) for v in stress["extra"]["analytic_voigt_eV_per_A3"]],
+            "numeric_voigt_eV_per_A3": [float(v) for v in stress["extra"]["numeric_voigt_eV_per_A3"]],
+            "eps": float(stress["extra"]["eps"]),
+        },
+    }
+
+
+def probe_metrics(record: Mapping) -> list[MetricResult]:
+    """Re-judge a :func:`probe_record` with the current thresholds."""
+    noise = float(record["noise_eV"])
+    out = invariance_metrics(
+        d_translation=float(record["d_translation_eV"]),
+        d_rotation=float(record["d_rotation_eV"]),
+        net_force=float(record["net_force_eV_per_A_per_atom"]),
+        net_torque=float(record["net_torque_eV_per_atom"]),
+        n_atoms=int(record["n_atoms"]),
+        noise_eV=noise,
+    )
+    f = record["force"]
+    out.append(force_consistency_metric(rel=float(f["rel"]), delta=float(f["delta_A"]),
+                                        n_probed=int(f["n_atoms_probed"]),
+                                        scale=float(f["max_abs_force"]), noise_eV=noise))
+    s = record["stress"]
+    out.append(stress_consistency_metric(analytic=s["analytic_voigt_eV_per_A3"],
+                                         numeric=s["numeric_voigt_eV_per_A3"], eps=float(s["eps"]),
+                                         volume=float(record["volume_A3"]), noise_eV=noise))
+    return out
 
 
 # --------------------------------------------------------------------------

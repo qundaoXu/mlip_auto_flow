@@ -30,9 +30,9 @@ Open [http://127.0.0.1:8765/workbench/](http://127.0.0.1:8765/workbench/). No in
 
 ## Data and execution / 数据与执行
 
-The standalone HTML contains the demonstration data and application logic. Interactions and basket contents stay in browser memory and reset on reload. The showcase reads precomputed results; calculations, model training, data import/export and HPC submission use the repository's `mlipeval` / `alflow` workflow. Controls for unconnected operations are disabled.
+The standalone HTML contains the demonstration data and application logic. `mlipeval serve` (see [PACKS.md](../../eval_framework/PACKS.md)) serves this page at `/workbench/` together with an API that verifies uploaded evaluation packs and rescores L0–L2 on the CPU; `GET /api/packs/{id}/workbench` returns a model in the same shape as the embedded data. The page does not call the API yet. Interactions and basket contents stay in browser memory and reset on reload. The showcase reads precomputed results; calculations, model training, data import/export and HPC submission use the repository's `mlipeval` / `alflow` workflow. Controls for unconnected operations are disabled.
 
-独立 HTML 内嵌演示数据与交互逻辑，交互状态和标注篮保存在浏览器内存中，刷新后重置。展示版读取预先计算的结果；计算、训练、数据导入导出与 HPC 提交使用仓库的 `mlipeval` / `alflow` 流程，尚未连接的操作在界面中禁用。
+`mlipeval serve`（见 [PACKS.md](../../eval_framework/PACKS.md)）在 `/workbench/` 提供本页，并提供校验评估数据包、在 CPU 上重算 L0–L2 的 API；`GET /api/packs/{id}/workbench` 返回与内嵌数据同结构的模型对象。页面目前尚未调用该 API。独立 HTML 内嵌演示数据与交互逻辑，交互状态和标注篮保存在浏览器内存中，刷新后重置。展示版读取预先计算的结果；计算、训练、数据导入导出与 HPC 提交使用仓库的 `mlipeval` / `alflow` 流程，尚未连接的操作在界面中禁用。
 
 Plotly 2.35.3 loads from cdnjs, so the application needs network access for charts. All interface and chart fonts use local Arial, with the browser's fallback for unavailable glyphs. The palette follows the [project overview](https://qundaoxu.github.io/mlip_auto_flow/), with automatic light/dark themes and Chinese/English switching.
 

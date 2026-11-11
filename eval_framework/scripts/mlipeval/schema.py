@@ -382,7 +382,7 @@ class ResultSet:
             }
         )
 
-    def save(self, path: str | Path) -> Path:
+    def save(self, path: str | Path, *, model_key: str | None = None) -> Path:
         """Write the result file, stamping any known training leakage first.
 
         The leakage pass lives here rather than in each driver because this is
@@ -390,11 +390,12 @@ class ResultSet:
         workspace's reference data can then never produce a result file whose
         affected metrics are unmarked, including from drivers written later.
         For a model with nothing recorded (every universal potential) this is a
-        no-op.
+        no-op.  ``model_key`` overrides ``MLIPEVAL_MODEL``; the pack rescorer
+        passes it because one process may rescore several models.
         """
         from . import leakage, models
 
-        model_key = models.current_key()
+        model_key = model_key or models.current_key()
         counts = leakage.apply_to_results(self.results, model_key)
         context = leakage.context_for(model_key)
         if context is not None:

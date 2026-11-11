@@ -81,6 +81,11 @@ def _load(path: Path) -> Predictions:
     )
 
 
+def load_predictions(path: Path) -> Predictions:
+    """Read a prediction cache file (public name for evaluation packs)."""
+    return _load(Path(path))
+
+
 def _any_device_match(frames: Sequence[Atoms], model: Model, tag: str) -> Path | None:
     """A cache entry for the same model and frames but a different device.
 
@@ -198,7 +203,7 @@ def cached_binary_pecs(
     unless it is cached, so the cache is what keeps nb02 readable interactively
     while the numbers still come from a PBS job.
     """
-    from .l1_pes import all_binary_pecs, diagnose_pec
+    from .l1_pes import all_binary_pecs
 
     spec = _spec(model)
     # v2: PECResult gained a measured per-curve noise floor, so v1 entries would
@@ -217,22 +222,7 @@ def cached_binary_pecs(
         # judgement about the curve is recomputed by ``diagnose_pec``, so a
         # change to a continuity criterion takes effect on cached curves instead
         # of being masked by a stored verdict.
-        z = np.load(path, allow_pickle=False)
-        pairs = [str(k) for k in z["pairs"]]
-        out = {}
-        stale = False
-        for i, pair in enumerate(pairs):
-            out[pair] = diagnose_pec(
-                pair,
-                z["r"],
-                z["energy"][i],
-                z["force_analytic"][i],
-                noise_residual=float(z["noise_residual"][i]) if "noise_residual" in z else 0.0,
-                error=(str(z["error"][i]) or None) if "error" in z else None,
-            )
-            if "convergence_ratio" in z and np.isfinite(z["convergence_ratio"][i]):
-                stale |= not np.isclose(z["convergence_ratio"][i],
-                                        out[pair].convergence_ratio, rtol=1e-6)
+        out, stale = pecs_from_npz(np.load(path, allow_pickle=False))
         if stale:
             # Keep the file self-describing for readers that plot straight from
             # the npz (nb07 does) rather than leaving two answers on disk.
@@ -248,6 +238,33 @@ def cached_binary_pecs(
     pecs = all_binary_pecs(model, species, r_min=r_min, r_max=r_max, dr=dr)
     _write_pec_npz(data_path("cache", f"{key}__{spec.device}_{spec.dtype}.npz"), pecs)
     return pecs
+
+
+def pecs_from_npz(z) -> tuple[dict, bool]:
+    """Rebuild :class:`~mlipeval.l1_pes.PECResult` objects from a stored PEC file.
+
+    Only the curve and the measured noise are trusted; every verdict is
+    recomputed by ``diagnose_pec``.  Returns the curves and whether the stored
+    derived columns disagree with the recomputation (a stale file).
+    """
+    from .l1_pes import diagnose_pec
+
+    pairs = [str(k) for k in z["pairs"]]
+    out = {}
+    stale = False
+    for i, pair in enumerate(pairs):
+        out[pair] = diagnose_pec(
+            pair,
+            z["r"],
+            z["energy"][i],
+            z["force_analytic"][i],
+            noise_residual=float(z["noise_residual"][i]) if "noise_residual" in z else 0.0,
+            error=(str(z["error"][i]) or None) if "error" in z else None,
+        )
+        if "convergence_ratio" in z and np.isfinite(z["convergence_ratio"][i]):
+            stale |= not np.isclose(z["convergence_ratio"][i],
+                                    out[pair].convergence_ratio, rtol=1e-6)
+    return out, stale
 
 
 def _write_pec_npz(path, pecs: dict) -> None:

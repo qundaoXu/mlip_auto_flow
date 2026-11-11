@@ -12,6 +12,8 @@ dependencies = ["numpy", "ase", "pyyaml"]
 
 [project.optional-dependencies]
 al = ["mace-torch", "scikit-learn", "tqdm"]
+gui = ["scipy", "fastapi", "uvicorn", "python-multipart"]
+test = ["pytest", "httpx"]
 
 [project.scripts]
 mlipeval = "mlipeval_cli.eval_cli:main"

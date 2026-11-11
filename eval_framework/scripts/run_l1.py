@@ -32,6 +32,7 @@ from mlipeval.l1_pes import (
     lattice_scan,
     nve_metrics,
     pec_metrics,
+    probe_record,
     stability_run,
     stress_consistency,
     timestep_sensitivity,
@@ -95,6 +96,11 @@ def main() -> int:
     results.extend(invariance_checks(model, start, noise_eV=noise))
     results.add(force_consistency(model, start, noise_eV=noise))
     results.add(stress_consistency(model, start, noise_eV=noise))
+    # the raw numbers behind these six checks, for evaluation packs (mlipeval pack):
+    # with them the verdicts can be recomputed without loading the model
+    probes = probe_record(results.results, n_atoms=len(start), volume_A3=float(start.get_volume()),
+                          noise_eV=noise)
+    paths.data_path("l1_probes.json").write_text(json.dumps(probes, indent=2) + "\n")
 
     # -- 4. unrelaxed lattice scan -----------------------------------------
     print("[3/7] unrelaxed isotropic lattice scan 0.85-1.15")
@@ -125,6 +131,8 @@ def main() -> int:
 
         print("[6/7] NVE drift vs the AIMD preflight")
         results.extend(nve_metrics(runs[3.0], reference_drift=aimd_nve["drift_meV_per_atom_per_ps"], timestep_fs=3.0))
+        results.context["md_probes"] = {"stability_temperature_K": 2000.0, "stability_steps": n_hot,
+                                        "timestep_total_time_fs": total_fs, "timesteps_fs": sorted(runs)}
 
     # -- gate ---------------------------------------------------------------
     print("[7/7] gate decision")

@@ -52,6 +52,9 @@ from mlipeval.l2_static import (
 )
 from mlipeval.schema import ResultSet
 
+#: Volume scale factors, V/V0, as in the H2_*_v092..v108 DFT tasks.  Until
+#: 2026-11-11 mlip_eos applied them to the cell vectors instead, so result files
+#: without ``eos_scale_kind`` in their context scanned V/V0 = 0.78..1.26.
 EOS_SCALES = (0.92, 0.95, 0.98, 1.00, 1.02, 1.05, 1.08)
 
 
@@ -95,6 +98,7 @@ def main() -> int:
         dft_protocol="gst225_pbe_canonical_v1",
         fmax_eV_per_A=args.fmax,
         eos_scales=list(EOS_SCALES),
+        eos_scale_kind="volume",
         note=(
             "every comparison is provisional (validation_methods_L0-L5.md section 4). "
             "The cubic EOS now has five DFT references, but they are five vacancy "
@@ -109,6 +113,7 @@ def main() -> int:
     hex_dft = datasets.dft_relaxed("L1_mp1224375_relax")
     hex_dft_static = datasets.dft_relaxed("L1_mp1224375_static")
     hex_relax = relax_structure(model, hex_atoms, label="hex_mp1224375", relax_cell=True, fmax=args.fmax)
+    relax_records = {"hex_mp1224375": hex_relax.record()}
     results.extend(relaxation_metrics(hex_relax, dft_reference=hex_dft))
     print(f"      MLIP {json.dumps(hex_relax.summary())}")
     print(f"      DFT  V/atom={hex_dft['volume_per_atom_A3']:.4f} A^3  E/atom={hex_dft_static['energy_per_atom_eV']:.5f} eV")
@@ -120,6 +125,7 @@ def main() -> int:
     cubic_dft = datasets.dft_relaxed(f"H1_cubic_s{seed:02d}_relax")
     cubic_dft_static = datasets.dft_relaxed(f"H1_cubic_s{seed:02d}_static")
     cubic_relax = relax_structure(model, cubic_atoms, label=f"cubic_s{seed:02d}", relax_cell=True, fmax=args.fmax)
+    relax_records[f"cubic_s{seed:02d}"] = cubic_relax.record()
     results.extend(relaxation_metrics(cubic_relax, dft_reference=cubic_dft))
     print(f"      MLIP {json.dumps(cubic_relax.summary())}")
     print(f"      DFT  V/atom={cubic_dft['volume_per_atom_A3']:.4f} A^3  E/atom={cubic_dft_static['energy_per_atom_eV']:.5f} eV")
@@ -152,6 +158,7 @@ def main() -> int:
         atoms = datasets.mp_structure(source)
         dft_static = datasets.dft_relaxed(task)
         relaxed = relax_structure(model, atoms, label=f"phase_{key}", relax_cell=True, fmax=args.fmax)
+        relax_records[f"phase_{key}"] = relaxed.record()
         results.extend(relaxation_metrics(relaxed, dft_reference=datasets.dft_relaxed(task.replace("_static", "_relax"))))
         ladder_model[key] = relaxed.energy_per_atom
         ladder_dft[key] = dft_static["energy_per_atom_eV"]
@@ -168,6 +175,7 @@ def main() -> int:
         dft_static = datasets.dft_relaxed(f"L2_{tag}_static")
         relaxed = relax_structure(model, datasets.element_reference(element), label=f"element_{element}",
                                   relax_cell=True, fmax=args.fmax)
+        relax_records[f"element_{element}"] = relaxed.record()
         results.extend(relaxation_metrics(relaxed, dft_reference=datasets.dft_relaxed(f"L2_{tag}_relax")))
         model_mu[element] = relaxed.energy_per_atom
         dft_mu[element] = dft_static["energy_per_atom_eV"]
@@ -252,6 +260,15 @@ def main() -> int:
         elif eos_seeds:
             print("      no seed produced a usable paired fit")
 
+    # every relaxation L2 scores, unrounded: the evaluation pack (mlipeval pack)
+    # rescores L2 from this file and the EOS curves without the model
+    paths.data_path("l2_relax.json").write_text(json.dumps({
+        "fmax_eV_per_A": args.fmax,
+        "cubic_seed": seed,
+        "eos_scales": list(EOS_SCALES),
+        "eos_scale_kind": "volume",
+        "relaxations": relax_records,
+    }, indent=2) + "\n")
     out = results.save(paths.result_path("L2_" + models.current_key() + ".json"))
     print(f"\nwrote {out}\n")
     print(results.to_frame().to_string(index=False, max_colwidth=44))

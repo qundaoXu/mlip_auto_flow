@@ -51,20 +51,50 @@ class RelaxResult:
     cell_lengths: np.ndarray
     cell_angles: np.ndarray
 
-    def summary(self) -> dict[str, object]:
+    def record(self) -> dict[str, object]:
+        """Unrounded outcome of the relaxation: everything L2 scores it on.
+
+        ``run_l2.py`` writes these to ``l2_relax.json`` so an evaluation pack can
+        be rescored without the model; :func:`relaxation_record_metrics` reads
+        them back.
+        """
+        symbols = self.relaxed.get_chemical_symbols()
         return {
             "label": self.label,
             "n_atoms": len(self.relaxed),
+            "composition": {el: symbols.count(el) for el in sorted(set(symbols))},
+            "energy_eV": self.energy,
             "energy_per_atom_eV": self.energy_per_atom,
             "volume_A3": float(self.relaxed.get_volume()),
             "volume_per_atom_A3": float(self.relaxed.get_volume() / len(self.relaxed)),
             "volume_change_pct": self.volume_change_pct,
-            "cell_lengths_A": np.round(self.cell_lengths, 4).tolist(),
-            "cell_angles_deg": np.round(self.cell_angles, 3).tolist(),
+            "cell_lengths_A": np.asarray(self.cell_lengths, dtype=float).tolist(),
+            "cell_angles_deg": np.asarray(self.cell_angles, dtype=float).tolist(),
             "max_force_eV_per_A": self.max_force,
+            "fmax": self.fmax,
             "n_steps": self.n_steps,
             "converged": self.converged,
         }
+
+    def summary(self) -> dict[str, object]:
+        return relax_summary(self.record())
+
+
+def relax_summary(record: Mapping) -> dict[str, object]:
+    """The display form of a relaxation record (what result files carry in ``extra``)."""
+    return {
+        "label": record["label"],
+        "n_atoms": int(record["n_atoms"]),
+        "energy_per_atom_eV": record["energy_per_atom_eV"],
+        "volume_A3": record["volume_A3"],
+        "volume_per_atom_A3": record["volume_per_atom_A3"],
+        "volume_change_pct": record["volume_change_pct"],
+        "cell_lengths_A": np.round(np.asarray(record["cell_lengths_A"], dtype=float), 4).tolist(),
+        "cell_angles_deg": np.round(np.asarray(record["cell_angles_deg"], dtype=float), 3).tolist(),
+        "max_force_eV_per_A": record["max_force_eV_per_A"],
+        "n_steps": record["n_steps"],
+        "converged": record["converged"],
+    }
 
 
 def relax_structure(
@@ -118,23 +148,35 @@ def relaxation_metrics(
     dft_reference: Mapping[str, float] | None = None,
 ) -> list[MetricResult]:
     """Compare relaxed geometry against the DFT relaxation of the same seed."""
+    return relaxation_record_metrics(relax.record(), dft_reference=dft_reference)
+
+
+def relaxation_record_metrics(
+    record: Mapping,
+    *,
+    dft_reference: Mapping[str, float] | None = None,
+) -> list[MetricResult]:
+    """:func:`relaxation_metrics` on a stored :meth:`RelaxResult.record`."""
+    label = record["label"]
+    converged = bool(record["converged"])
     results = [
         _result(
-            f"L2.relax.{relax.label}.energy_per_atom",
-            relax.energy_per_atom,
+            f"L2.relax.{label}.energy_per_atom",
+            record["energy_per_atom_eV"],
             "eV/atom",
-            status=Status.OK if relax.converged else Status.FAILED,
-            failure_reason=None if relax.converged else f"fmax {relax.max_force:.4f} > {relax.fmax}",
+            status=Status.OK if converged else Status.FAILED,
+            failure_reason=None if converged else f"fmax {record['max_force_eV_per_A']:.4f} > {record['fmax']}",
             evidence_tier=EvidenceTier.S,
-            extra=relax.summary(),
+            extra=relax_summary(record),
         ),
     ]
-    v_model = relax.relaxed.get_volume() / len(relax.relaxed)
+    v_model = float(record["volume_per_atom_A3"])
+    cell_lengths = np.asarray(record["cell_lengths_A"], dtype=float)
     if dft_reference and "volume_per_atom_A3" in dft_reference:
         v_ref = float(dft_reference["volume_per_atom_A3"])
         results.append(
             _result(
-                f"L2.relax.{relax.label}.volume_error",
+                f"L2.relax.{label}.volume_error",
                 float(100.0 * (v_model - v_ref) / v_ref),
                 "%",
                 status=Status.PROVISIONAL,
@@ -143,10 +185,10 @@ def relaxation_metrics(
         )
     if dft_reference and "cell_lengths_A" in dft_reference:
         ref_len = np.asarray(dft_reference["cell_lengths_A"], dtype=float)
-        err = 100.0 * (relax.cell_lengths - ref_len) / ref_len
+        err = 100.0 * (cell_lengths - ref_len) / ref_len
         results.append(
             _result(
-                f"L2.relax.{relax.label}.cell_length_error",
+                f"L2.relax.{label}.cell_length_error",
                 float(np.abs(err).max()),
                 "%",
                 status=Status.PROVISIONAL,
@@ -247,15 +289,24 @@ def mlip_eos(
     relax_ions: bool = True,
     fmax: float = 0.01,
     max_steps: int = 200,
+    scale_kind: str = "volume",
 ) -> EOSCurve:
     """Fixed-volume, ionic-relaxed EOS -- the same construction as the H2 tasks.
 
-    ``scales`` are linear cell scale factors, matching ``H2_*_v092..v108``.
+    ``scales`` are *volume* scale factors by default, matching ``H2_*_v092..v108``
+    (their cells are the reference cell times ``s**(1/3)``: V/V0 = 0.92..1.08).
+    ``scale_kind="linear"`` reproduces the scan used before 2026-11-11, which
+    applied the factors to the cell vectors and so spanned V/V0 = 0.78..1.26 --
+    a Birch-Murnaghan fit over three times the DFT window, which biases B0 and
+    makes the V0/B0 errors partly a statement about the fit range.
     """
+    if scale_kind not in ("volume", "linear"):
+        raise ValueError(f"scale_kind must be 'volume' or 'linear', not {scale_kind!r}")
     volumes, energies = [], []
     for s in scales:
         scaled = atoms.copy()
-        scaled.set_cell(atoms.cell.array * s, scale_atoms=True)
+        factor = s ** (1.0 / 3.0) if scale_kind == "volume" else s
+        scaled.set_cell(atoms.cell.array * factor, scale_atoms=True)
         if relax_ions:
             relaxed = relax_structure(
                 model, scaled, label=f"{label}_v{s:.3f}", relax_cell=False, fmax=fmax, max_steps=max_steps
@@ -271,7 +322,8 @@ def mlip_eos(
         volumes=np.array(volumes),
         energies=np.array(energies),
         n_atoms=len(atoms),
-        source=f"{model.spec.name} fixed-volume {'ionic-relaxed' if relax_ions else 'unrelaxed'} scan",
+        source=(f"{model.spec.name} fixed-volume {'ionic-relaxed' if relax_ions else 'unrelaxed'} scan, "
+                f"{scale_kind} scale factors {list(scales)}"),
         relaxed_ions=relax_ions,
     )
 
@@ -319,6 +371,37 @@ def load_dft_eos(
     )
     curve.skipped = skipped  # type: ignore[attr-defined]
     return curve
+
+
+def eos_window(mlip: EOSCurve, dft: EOSCurve, *, rel_tol: float = 0.25) -> dict[str, object]:
+    """Do the MLIP and DFT curves sample the same relative volume window?
+
+    A Birch-Murnaghan B0 depends on the range it is fitted over, so V0/B0 errors
+    are only like-for-like when both curves span the same V/V0.  Spans are
+    compared relative to each curve's own median volume, so a model whose V0 is
+    off by a percent still matches.
+    """
+    def span(curve: EOSCurve) -> tuple[float, float, float]:
+        v = np.asarray(curve.volume_per_atom, dtype=float)
+        v = v[np.isfinite(v)]
+        if v.size < 2:
+            return float("nan"), float("nan"), float("nan")
+        mid = float(np.median(v))
+        return float(v.min() / mid), float(v.max() / mid), float((v.max() - v.min()) / mid)
+
+    m_lo, m_hi, m_span = span(mlip)
+    d_lo, d_hi, d_span = span(dft)
+    matched = bool(np.isfinite(m_span) and np.isfinite(d_span) and d_span > 0
+                   and abs(m_span - d_span) / d_span <= rel_tol)
+    return {
+        "matched": matched,
+        "mlip_V_over_Vmid": [m_lo, m_hi],
+        "dft_V_over_Vmid": [d_lo, d_hi],
+        "span_ratio_mlip_to_dft": (m_span / d_span) if d_span and np.isfinite(d_span) else None,
+        "note": None if matched else (
+            "the MLIP EOS spans a different V/V0 window from the DFT tasks; the V0/B0 "
+            "errors then mix model error with fit-range bias (B0 most of all)"),
+    }
 
 
 def eos_metrics(

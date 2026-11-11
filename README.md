@@ -180,6 +180,7 @@ Runtime: Linux server or HPC with NVIDIA GPUs and Slurm; Python 3.12, PyTorch, M
 git clone https://github.com/qundaoXu/mlip_auto_flow.git && cd mlip_auto_flow
 pip install -e .            # the mlipeval / alflow commands (numpy, ase, pyyaml)
 pip install -e ".[al]"      # active learning: mace-torch, scikit-learn, tqdm
+pip install -e ".[gui]"     # Workbench backend (mlipeval serve): fastapi, uvicorn
 ```
 
 The CLI uses the in-repo `eval_framework/` and `al_flow/` code by default. To use copies elsewhere, set `MLIPEVAL_HOME` (the directory containing `scripts/mlipeval/`) and `ALFLOW_HOME` (the directory containing `activate_learning_full_flow.py`).
@@ -399,7 +400,14 @@ mlipeval card       --model KEY [--against a,b,..] [--clean] [--json]   report c
 mlipeval candidates --model KEY [--out DIR]               show / export candidate structures
 mlipeval leakage    {h5,diagnostic,al-ladder}             training-set leakage screens
 mlipeval report     --model KEY [--markdown]              phase-1 acceptance report
+mlipeval pack       reference [--out F] [--no-diagnostic]  freeze the DFT/AIMD side of L0–L2 (once, on the cluster)
+mlipeval pack       model --model KEY|--all [--out DIR]    collect one model's L0–L2 raw outputs into a .mlippack
+mlipeval pack       verify PACK [--reference R]            check a pack against the reference, compute nothing
+mlipeval rescore    PACK [--levels L0,L1,L2] [--out DIR] [--compare]   score L0–L2 from a pack on a CPU
+mlipeval serve      [--host H] [--port P] [--store DIR]    local Workbench backend: upload packs, rescore over HTTP
 ```
+
+`pack` / `rescore` / `serve` move the scoring off the cluster: the HPC job runs the model, the pack carries its outputs, and L0–L2 are scored wherever the pack is opened. Format, checks and API: [eval_framework/PACKS.md](eval_framework/PACKS.md).
 
 `run` sets `MLIPEVAL_MODEL=KEY` and calls the matching `run_*.py`; unknown options are passed through unchanged:
 

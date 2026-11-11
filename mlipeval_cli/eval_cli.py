@@ -270,6 +270,117 @@ def cmd_config(ns, extra) -> int:
     return 1 if ns.check and any(not c["exists"] for c in checks) and ns.strict else 0
 
 
+# --------------------------------------------------------------------------- packs / rescore / serve
+def _reference(path: str | None):
+    from mlipeval import pack
+
+    return pack.open_reference(path or pack.default_reference_path())
+
+
+def cmd_pack(ns, extra) -> int:
+    """Build or verify evaluation packs (see eval_framework/PACKS.md)."""
+    _paths.import_mlipeval()
+    from mlipeval import pack, paths
+
+    if ns.what == "reference":
+        out = Path(ns.out or pack.default_reference_path())
+        path = pack.build_reference(out, include_diagnostic=not ns.no_diagnostic,
+                                    fallback_model=ns.fallback_model)
+        m = pack.read_manifest(path)
+        print(f"wrote {path}  ({path.stat().st_size / 2**20:.1f} MiB, {len(m['files'])} files, "
+              f"complete={m['complete']})")
+        for item in m["provenance"]["fallbacks"] + m["missing"]:
+            print(f"  ! {item}")
+        return 0
+
+    if ns.what == "model":
+        ref = _reference(ns.reference)
+        keys = ns.model.split(",") if ns.model else []
+        if ns.all:
+            keys = sorted(p.name for p in paths.MODEL_RESULTS_ROOT.iterdir() if p.is_dir())
+        if not keys:
+            sys.exit("mlipeval pack model: give --model KEY[,KEY...] or --all")
+        single_file = len(keys) == 1 and ns.out and ns.out.endswith(".mlippack")
+        out_dir = Path(ns.out or ".")
+        status = 0
+        for key in keys:
+            out = Path(ns.out) if single_file else out_dir / f"{key}.mlippack"
+            try:
+                path, summ = pack.build_model_pack(key, out, reference=ref, include_views=not ns.no_views)
+            except pack.PackError as exc:
+                print(f"{key}: {exc}", file=sys.stderr)
+                status = 1
+                continue
+            levels = ", ".join(f"{lv}[{'+'.join(v)}]" for lv, v in summ["levels"].items())
+            print(f"{key}: {path}  ({path.stat().st_size / 2**20:.1f} MiB)  {levels}")
+            for note in summ["backfilled"]:
+                print(f"  backfilled: {note}")
+            for note in summ["absent"]:
+                print(f"  absent: {note}")
+        return status
+
+    # verify
+    if not ns.pack:
+        sys.exit("mlipeval pack verify: give the pack path")
+    ref = _reference(ns.reference)
+    report = pack.verify_model_pack(pack.open_model_pack(ns.pack), ref)
+    if ns.json:
+        print(json.dumps(report, indent=2, ensure_ascii=False))
+    else:
+        print(f"{report['model_key']} pack {report['pack_id']} vs {report['reference_id']}: "
+              f"{'OK' if report['ok'] else 'FAILED'} ({report['n_errors']} errors, {report['n_warnings']} warnings)")
+        for c in report["checks"]:
+            if not c["ok"]:
+                print(f"  {c['severity']:<7} {c['id']:<34} {c['detail']}")
+    return 0 if report["ok"] else 1
+
+
+def cmd_rescore(ns, extra) -> int:
+    """Rescore L0/L1/L2 from a pack on this machine (no model, no GPU)."""
+    _paths.import_mlipeval()
+    from mlipeval import pack, rescore
+
+    ref = _reference(ns.reference)
+    p = pack.open_model_pack(ns.pack)
+    out = rescore.rescore(p, ref, levels=ns.levels.split(","))
+    out_dir = Path(ns.out or f"rescored_{p.model_key}_{p.pack_id}")
+    written = out.save(out_dir)
+    summary = out.summary()
+    if ns.compare:
+        summary["comparison"] = rescore.compare_with_pack(out)
+        (out_dir / "rescore_summary.json").write_text(
+            json.dumps(summary, indent=2, ensure_ascii=False, default=float) + "\n", encoding="utf-8")
+    if ns.json:
+        print(json.dumps(summary, indent=2, ensure_ascii=False, default=float))
+        return 0
+    v = out.verification
+    print(f"{p.model_key} (pack {p.pack_id}) vs {ref.reference_id}: verification "
+          f"{'ok' if v['ok'] else 'FAILED'}, {v['n_warnings']} warning(s)")
+    for c in v["checks"]:
+        if not c["ok"]:
+            print(f"  {c['severity']:<7} {c['detail']}")
+    for stem, path in written.items():
+        entry = summary["results"][stem]
+        extra_txt = ""
+        if stem == "L1" and entry.get("gate"):
+            extra_txt = f"  gate {'pass' if entry['gate']['pass'] else 'shut'}"
+        if ns.compare:
+            c = summary["comparison"][stem]
+            extra_txt += (f"  vs HPC: {c['n_agree']}/{c['n_compared']} agree" if c.get("identical") is not None
+                          else "  vs HPC: no original")
+        print(f"  {stem:<14} {entry['n_metrics']:>3} metrics  {entry['status_counts']}{extra_txt}  -> {path}")
+    for lv, why in out.skipped.items():
+        print(f"  {lv:<14} skipped: {why}")
+    return 0 if v["ok"] else 1
+
+
+def cmd_serve(ns, extra) -> int:
+    """Local Workbench backend: upload packs, rescore, read results over HTTP."""
+    from . import server
+
+    return server.run(host=ns.host, port=ns.port, store=ns.store, reference=ns.reference)
+
+
 # --------------------------------------------------------------------------- parser
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="mlipeval", description="L0–L5 evaluation of machine-learning interatomic potentials")
@@ -322,6 +433,39 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("target", choices=list(LEAKAGE_DRIVERS))
     s.set_defaults(fn=cmd_leakage)
 
+    s = sub.add_parser("pack", help="build or verify evaluation packs (reference / model / verify)")
+    s.add_argument("what", choices=["reference", "model", "verify"])
+    s.add_argument("pack", nargs="?", default=None, help="verify: the .mlippack to check")
+    s.add_argument("--model", default=None, help="model: key, or comma-separated keys")
+    s.add_argument("--all", action="store_true", help="model: every model with results")
+    s.add_argument("--out", default=None, help="output file (reference, one model) or directory")
+    s.add_argument("--reference", default=None, help="reference pack (default $MLIPEVAL_REFERENCE or "
+                   "data/reference/gst225_phase1_v1.mlipref)")
+    s.add_argument("--no-diagnostic", action="store_true", help="reference: leave out the 70 MB diagnostic set")
+    s.add_argument("--fallback-model", default=None,
+                   help="reference: fill DFT values missing from a partial phase-1 tree from this "
+                        "model's run_l2 output (marks the pack incomplete)")
+    s.add_argument("--no-views", action="store_true", help="model: leave out the original result files")
+    s.add_argument("--json", action="store_true")
+    s.set_defaults(fn=cmd_pack)
+
+    s = sub.add_parser("rescore", help="rescore L0/L1/L2 from a model pack on this machine (CPU only)")
+    s.add_argument("pack")
+    s.add_argument("--reference", default=None)
+    s.add_argument("--levels", default="L0,L1,L2")
+    s.add_argument("--out", default=None, help="directory for the result files")
+    s.add_argument("--compare", action="store_true", help="also compare with the HPC files in the pack")
+    s.add_argument("--json", action="store_true")
+    s.set_defaults(fn=cmd_rescore)
+
+    s = sub.add_parser("serve", help="run the local Workbench backend (FastAPI)")
+    s.add_argument("--host", default="127.0.0.1")
+    s.add_argument("--port", type=int, default=8765)
+    s.add_argument("--store", default=None, help="where uploaded packs and results live "
+                   "(default ~/.mlipeval/workbench)")
+    s.add_argument("--reference", default=None)
+    s.set_defaults(fn=cmd_serve)
+
     s = sub.add_parser("report", help="phase-1 acceptance report for one model (run_report.py)")
     s.add_argument("--model", required=True)
     s.add_argument("--markdown", action="store_true")
@@ -332,7 +476,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     ns, extra = parser.parse_known_args(argv)
-    if extra and ns.cmd in ("config", "models", "card", "candidates"):
+    if extra and ns.cmd in ("config", "models", "card", "candidates", "pack", "rescore", "serve"):
         parser.error(f"unrecognized arguments: {' '.join(extra)}")
     if extra and extra[0] == "--":
         extra = extra[1:]
