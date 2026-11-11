@@ -224,7 +224,18 @@ const lvOf=id=>id.slice(0,2);
 function overallOf(k){let a=0,b=0;for(const l of D.levels){const v=D.level_scores[l][k];if(v!=null){a+=S.w[l]*v;b+=S.w[l];}}return b?a/b:null;}
 const rankOrder=()=>D.order.slice().sort((a,b)=>overallOf(b)-overallOf(a));
 function grades(k,l,filter){const c={A:0,B:0,C:0,F:0};for(const m of D.models[k].metrics){if(lvOf(m[0])===l&&c[m[4]]!=null&&(!filter||m[0].includes(filter)))c[m[4]]++;}return c;}
-function chips(c){const n=c.A+c.B+c.C+c.F;if(!n)return `<span class="tag">${t('暂定：参考副本不足，未正式判级','Provisional: too few reference replicas to grade')}</span>`;
+// Why a level carries no A/B/C/F grade differs by level; the short text is the tag, the long one its tooltip.
+const UNGRADED={
+  L0:[['未判级：未定义误差尺度 σ_ref','Ungraded: no error scale σ_ref'],
+      ['L0 与参考同为规范 DFT 协议（d_protocol = 0），而 DFT 标签自身的数值误差尚未量化，判级所需的 σ_eff 不存在。这里只给误差原值；排名中的 L0 分数是模型间的相对分。',
+       'L0 and its reference share the canonical DFT protocol (d_protocol = 0), and the numerical error of the DFT labels has not been quantified, so the σ_eff that grading needs does not exist. Raw errors are reported; the L0 score in the ranking is relative between models.']],
+  L1:[['参考无关的通过/不通过检查','Reference-free pass/fail checks'],['L1 不判 A–F，结果汇总为门控。','L1 is not graded A–F; its checks feed the gate.']],
+  L2:[['暂定：单一 DFT 参考，无 σ_ref','Provisional: single DFT reference, no σ_ref'],
+      ['每个 L2 量只有一份 DFT 参考；立方相的 5 个种子是不同的空位排布，其差异是构型差异，不能当作 σ_ref。',
+       'Each L2 quantity has one DFT reference; the five cubic seeds are different vacancy orderings, so their spread is configurational and cannot serve as σ_ref.']],
+  def:[['暂定：参考副本不足，未正式判级','Provisional: too few reference replicas to grade'],
+       ['正式判级需要至少两条独立参考轨迹来估计 σ_ref。','Formal grading needs at least two independent reference trajectories to estimate σ_ref.']]};
+function chips(c,l){const n=c.A+c.B+c.C+c.F;if(!n){const [sh,lg]=UNGRADED[l]||UNGRADED.def;return `<span class="tag" title="${esc(t(lg[0],lg[1]))}">${t(sh[0],sh[1])}</span>`;}
   return '<div class="chips">'+['A','B','C','F'].map(g=>`<span><i class="dot g${g}"></i>${g} <b class="num">${c[g]}</b></span>`).join('')+'</div>';}
 function mv(id,k){const m=D.models[k||S.model].metrics.find(x=>x[0]===id);return m?m[1]:null;}
 function seg(act,opts,cur){return `<div class="seg" role="group">`+opts.map(([v,l])=>`<button data-act="${act}" data-val="${esc(v)}" aria-pressed="${v===cur}">${esc(l)}</button>`).join('')+`</div>`;}
@@ -292,7 +303,7 @@ function vCard(){const m=M(),k=S.model,ord=rankOrder(),g=m.gate,up=isUp(k);
   const weak=D.indicators.filter(i=>i.score[k]!=null).sort((a,b)=>a.score[k]-b.score[k]).slice(0,5);
   const rows=D.levels.map(l=>{const sc=D.level_scores[l][k];
     const right=up&&!m.metrics.some(q=>lvOf(q[0])===l)?`<span class="tag">${t('数据包未包含此层级','Not in the pack')}</span>`:l==='L1'?`<div class="chips"><span><i class="dot ${g.pass?'gA':'gF'}"></i>${g.pass?t(`门控通过 · ${g.n} 项检查`,`Gate open · ${g.n} checks`):t(`门控关闭 · ${g.failed.length}/${g.n} 项未过`,`Gate closed · ${g.failed.length}/${g.n} failed`)}</span></div>`
-      :((l==='L4'||l==='L5')&&!g.pass?`<div class="col" style="gap:4px">${chips(grades(k,l))}<span class="tag"><i class="dot gF"></i>${t('L1 未过：按规则不应运行','L1 failed: should not be run')}</span></div>`:chips(grades(k,l)));
+      :((l==='L4'||l==='L5')&&!g.pass?`<div class="col" style="gap:4px">${chips(grades(k,l),l)}<span class="tag"><i class="dot gF"></i>${t('L1 未过：按规则不应运行','L1 failed: should not be run')}</span></div>`:chips(grades(k,l),l));
     return `<button class="lrow" data-act="golevel" data-val="${l}"><span class="lcode">${l}</span><span><div class="lname">${lvName(l)}</div><div class="ldesc">${lvDesc(l)}</div></span>
       <span class="bar"><span class="track"><span class="fill" style="width:${sc||0}%;display:block"></span></span><span class="num">${sc==null?'—':sc.toFixed(1)}</span></span>${right}<span class="muted">›</span></button>`;}).join('');
   $('main').innerHTML=`
@@ -397,7 +408,7 @@ function lv2(){const m=M();
   plot('p3',[{x:v.map(q=>q[0].split('.')[2]),y:v.map(q=>q[1]),type:'bar',width:.5,marker:{color:css('--s1')},hovertemplate:'%{x}<br>%{y:.2f} %<extra></extra>'}],{showlegend:false,height:240,xaxis:axt(t('结构','Structure')),yaxis:axt('ΔV / V (%)')});
 }
 function lv3(){const R=D.ref.l3[S.st],states=Object.keys(D.ref.l3);if(isUp(S.model)&&!S.cmp){$('lv').innerHTML=missing();return;}
-  $('lv').innerHTML=`<div class="phead"><div class="row">${seg('st',states.map(s=>[s,stn(s)]),S.st)}</div><div class="row"><span class="small muted">${t('本状态点判级','Grades at this state')}</span>${chips(grades(S.model,'L3','@'+S.st))}</div></div>
+  $('lv').innerHTML=`<div class="phead"><div class="row">${seg('st',states.map(s=>[s,stn(s)]),S.st)}</div><div class="row"><span class="small muted">${t('本状态点判级','Grades at this state')}</span>${chips(grades(S.model,'L3','@'+S.st),'L3')}</div></div>
   <div class="g2e"><div class="panel"><div class="phead"><h2>${t('偏径向分布函数','Partial radial distribution')}</h2>${seg('pair',Object.keys(R.rdf).map(p=>[p,p]),S.pair)}</div><div id="p1" class="plot"></div>
     <div class="small muted">${t('竖线：键截断，取自 AIMD 偏 RDF 第一极小值，对两侧同时冻结。','Vertical line: bond cutoff from the first minimum of the AIMD partial RDF, frozen for both sides.')}</div></div>
   <div class="panel"><h2>${t('键角分布','Bond-angle distribution')}</h2><div id="p2" class="plot"></div></div></div>
