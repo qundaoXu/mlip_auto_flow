@@ -119,6 +119,7 @@ p{margin:0}
 .bar .num{width:38px;text-align:right}
 .chips{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;color:var(--fg2)}
 .chips span{display:inline-flex;align-items:center;gap:4px}
+.hl{font-size:12px;line-height:1.5;color:var(--fg2)}.hl b{color:var(--fg);font-weight:600}.hl .dot{margin-right:5px;vertical-align:1px}
 @media (max-width:700px){
   .lrow{grid-template-columns:32px minmax(0,1fr) 12px;gap:10px}
   .lrow>.lcode{grid-column:1;grid-row:1}
@@ -222,18 +223,23 @@ const lvOf=id=>id.slice(0,2);
 function overallOf(k){let a=0,b=0;for(const l of D.levels){const v=D.level_scores[l][k];if(v!=null){a+=S.w[l]*v;b+=S.w[l];}}return b?a/b:null;}
 const rankOrder=()=>D.order.slice().sort((a,b)=>overallOf(b)-overallOf(a));
 function grades(k,l,filter){const c={A:0,B:0,C:0,F:0};for(const m of D.models[k].metrics){if(lvOf(m[0])===l&&c[m[4]]!=null&&(!filter||m[0].includes(filter)))c[m[4]]++;}return c;}
-// Why a level carries no A/B/C/F grade differs by level; the short text is the tag, the long one its tooltip.
-const UNGRADED={
-  L0:[['未判级：未定义误差尺度 σ_ref','Ungraded: no error scale σ_ref'],
-      ['L0 与参考同为规范 DFT 协议（d_protocol = 0），而 DFT 标签自身的数值误差尚未量化，判级所需的 σ_eff 不存在。这里只给误差原值；排名中的 L0 分数是模型间的相对分。',
-       'L0 and its reference share the canonical DFT protocol (d_protocol = 0), and the numerical error of the DFT labels has not been quantified, so the σ_eff that grading needs does not exist. Raw errors are reported; the L0 score in the ranking is relative between models.']],
-  L1:[['参考无关的通过/不通过检查','Reference-free pass/fail checks'],['L1 不判 A–F，结果汇总为门控。','L1 is not graded A–F; its checks feed the gate.']],
-  L2:[['暂定：单一 DFT 参考，无 σ_ref','Provisional: single DFT reference, no σ_ref'],
-      ['每个 L2 量只有一份 DFT 参考；立方相的 5 个种子是不同的空位排布，其差异是构型差异，不能当作 σ_ref。',
-       'Each L2 quantity has one DFT reference; the five cubic seeds are different vacancy orderings, so their spread is configurational and cannot serve as σ_ref.']],
-  def:[['暂定：参考副本不足，未正式判级','Provisional: too few reference replicas to grade'],
-       ['正式判级需要至少两条独立参考轨迹来估计 σ_ref。','Formal grading needs at least two independent reference trajectories to estimate σ_ref.']]};
-function chips(c,l){const n=c.A+c.B+c.C+c.F;if(!n){const [sh,lg]=UNGRADED[l]||UNGRADED.def;return `<span class="tag" title="${esc(t(lg[0],lg[1]))}">${t(sh[0],sh[1])}</span>`;}
+// L0 and L2 compare with static DFT directly: the card shows their headline
+// measurements (as L1 shows its gate); L3-L5 grade against AIMD replicas.
+const LVNOTE={
+  L0:['在 120 帧规范 DFT 审计集上直接测量能量与力的误差；分数是同一参考集上模型之间的相对分（最佳 = 100）。',
+      'Energy and force errors measured directly on the 120-frame canonical DFT audit set; the score is relative between models on the same reference (best = 100).'],
+  L2:['与同协议 DFT 直接对比：四级相阶梯的排序、平衡体积 V₀ 与体模量 B₀（立方相，5 种空位排布的平均）；分数为模型间相对分。',
+      'Direct comparison with same-protocol DFT: order of the four-rung phase ladder, equilibrium volume V₀ and bulk modulus B₀ (cubic, mean over five vacancy orderings); the score is relative between models.']};
+const sgn=(v,d)=>v==null?'—':(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(d);
+function headline(l,k){
+  if(l==='L0'){const f=mv('L0.force_mae',k),e=mv('L0.energy_mae',k);if(f==null&&e==null)return null;
+    return `<div>${t('力 MAE','Force MAE')} <b class="num">${f==null?'—':(f*1000).toFixed(1)}</b> meV/Å</div><div>${t('能量 MAE','Energy MAE')} <b class="num">${e==null?'—':e.toFixed(1)}</b> meV/atom</div>`;}
+  if(l==='L2'){const n=mv('L2.phase_ladder.inversions',k),v=mv('L2.eos.cubic.V0_error',k),b=mv('L2.eos.cubic.B0_error',k);if(n==null&&v==null)return null;
+    const ok=n===0;return `${n==null?'':`<div><i class="dot ${ok?'gA':'gF'}"></i>${ok?t('相序正确','Phase order correct'):t(`相序颠倒 ${n} 处`,`${n} phase-order inversion${n>1?'s':''}`)}</div>`}<div>V₀ <b class="num">${sgn(v,1)}%</b> · B₀ <b class="num">${sgn(b,0)}%</b></div>`;}
+  return null;}
+function chips(c,l,k){const n=c.A+c.B+c.C+c.F;if(!n){const h=k&&headline(l,k);
+    if(h)return `<div class="hl" title="${esc(t(LVNOTE[l][0],LVNOTE[l][1]))}">${h}</div>`;
+    return `<span class="tag">${t('暂定：参考副本不足，未正式判级','Provisional: too few reference replicas to grade')}</span>`;}
   return '<div class="chips">'+['A','B','C','F'].map(g=>`<span><i class="dot g${g}"></i>${g} <b class="num">${c[g]}</b></span>`).join('')+'</div>';}
 function mv(id,k){const m=D.models[k||S.model].metrics.find(x=>x[0]===id);return m?m[1]:null;}
 function seg(act,opts,cur){return `<div class="seg" role="group">`+opts.map(([v,l])=>`<button data-act="${act}" data-val="${esc(v)}" aria-pressed="${v===cur}">${esc(l)}</button>`).join('')+`</div>`;}
@@ -300,7 +306,7 @@ function vCard(){const m=M(),k=S.model,ord=rankOrder(),g=m.gate,up=isUp(k);
   const weak=D.indicators.filter(i=>i.score[k]!=null).sort((a,b)=>a.score[k]-b.score[k]).slice(0,5);
   const rows=D.levels.map(l=>{const sc=D.level_scores[l][k];
     const right=up&&!m.metrics.some(q=>lvOf(q[0])===l)?`<span class="tag">${t('数据包未包含此层级','Not in the pack')}</span>`:l==='L1'?`<div class="chips"><span><i class="dot ${g.pass?'gA':'gF'}"></i>${g.pass?t(`门控通过 · ${g.n} 项检查`,`Gate open · ${g.n} checks`):t(`门控关闭 · ${g.failed.length}/${g.n} 项未过`,`Gate closed · ${g.failed.length}/${g.n} failed`)}</span></div>`
-      :((l==='L4'||l==='L5')&&!g.pass?`<div class="col" style="gap:4px">${chips(grades(k,l),l)}<span class="tag"><i class="dot gF"></i>${t('L1 未过：按规则不应运行','L1 failed: should not be run')}</span></div>`:chips(grades(k,l),l));
+      :((l==='L4'||l==='L5')&&!g.pass?`<div class="col" style="gap:4px">${chips(grades(k,l),l,k)}<span class="tag"><i class="dot gF"></i>${t('L1 未过：按规则不应运行','L1 failed: should not be run')}</span></div>`:chips(grades(k,l),l,k));
     return `<button class="lrow" data-act="golevel" data-val="${l}"><span class="lcode">${l}</span><span><div class="lname">${lvName(l)}</div><div class="ldesc">${lvDesc(l)}</div></span>
       <span class="bar"><span class="track"><span class="fill" style="width:${sc||0}%;display:block"></span></span><span class="num">${sc==null?'—':sc.toFixed(1)}</span></span>${right}<span class="muted">›</span></button>`;}).join('');
   $('main').innerHTML=`
