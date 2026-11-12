@@ -66,7 +66,6 @@ button{cursor:pointer}
 .top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding-block:16px}
 .brand{font-family:var(--mono);font-weight:500;font-size:15px;letter-spacing:0}
 .brand span{color:var(--accent)}
-.sys{font-family:var(--mono);font-size:12px;color:var(--accent);background:var(--accent-soft);padding:4px 8px;border-radius:6px}
 .grow{flex:1 1 0;min-width:0}
 select,.btn,input[type=search],input[type=number]{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 12px;min-height:36px}
 select{max-width:100%}
@@ -171,7 +170,7 @@ tbody tr:hover{background:color-mix(in oklab,var(--sunk) 55%,transparent)}
 @media(max-width:600px){
   .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   .top .wrap{gap:10px 12px;padding-block:12px}
-  .brand{font-size:14px}.sys{font-size:10px;overflow-wrap:anywhere}
+  .brand{font-size:14px}
   .top label{flex:1 1 100%}.top label select{flex:1;min-width:0}
   .grow{display:none}.rail a{padding:10px 12px;font-size:13px}
   main.wrap{padding-block:20px 36px;gap:16px}
@@ -186,7 +185,6 @@ tbody tr:hover{background:color-mix(in oklab,var(--sunk) 55%,transparent)}
 
 <div class="top"><div class="wrap">
   <div class="brand">mlip_auto_flow <span>/ workbench</span></div>
-  <span class="sys" id="sys"></span>
   <div class="grow"></div>
   <label class="row small"><span class="muted" id="lblModel"></span><select id="selModel" data-ch="model"></select></label>
   <button class="btn" data-act="basket" id="btnBasket"></button>
@@ -288,7 +286,6 @@ function shell(){
   document.documentElement.lang=S.lang==='zh'?'zh-CN':'en';
   $('projectLink').textContent=t('项目介绍','Project overview');
   $('showcaseNote').textContent=t('GST225 · 交互展示','GST225 · Interactive showcase');
-  $('sys').textContent='Ge₂Sb₂Te₅ · gst225_pbe_canonical_v1';
   $('lblModel').textContent=t('模型','Model');
   $('selModel').innerHTML=['universal','specialised','uploaded'].filter(g=>g!=='uploaded'||API.uploads.length).map(g=>`<optgroup label="${({universal:t('通用势','Universal'),specialised:t('专用势','Specialised'),uploaded:t('上传的数据包','Uploaded packs')})[g]}">`+(g==='uploaded'?API.uploads:D.order.filter(k=>D.models[k].group===g)).map(k=>`<option value="${k}" ${k===S.model?'selected':''}>${esc(D.models[k].label)}</option>`).join('')+'</optgroup>').join('');
   $('btnBasket').textContent=t('标注篮','Labelling basket')+' · '+S.basket.length;
