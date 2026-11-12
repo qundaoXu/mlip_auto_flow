@@ -195,6 +195,11 @@ details.guide ul{margin:8px 0 6px 18px;padding:0;font-size:12.5px;color:var(--fg
 details.guide code,.evres code{font-family:var(--mono);font-size:11.5px}
 .okc{color:var(--good)}.badc{color:var(--crit)}.warnc{color:var(--warn)}
 @media (max-width:760px){.evgrid{grid-template-columns:1fr}}
+:root{--rk-univ:var(--blue);--rk-spec:var(--accent)}
+.colgrp{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--grid);padding-top:12px}
+.colgrp h3{margin:0;font-size:13px;font-weight:600}
+.colrow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
+.colrow input[type=color]{width:46px;height:28px;border:1px solid var(--line);border-radius:6px;padding:2px;background:var(--panel);cursor:pointer}
 </style>
 </head>
 <body>
@@ -203,6 +208,7 @@ details.guide code,.evres code{font-family:var(--mono);font-size:11.5px}
   <div class="brand">mlip_auto_flow <span>/ workbench</span></div>
   <div class="grow"></div>
   <label class="row small"><span class="muted" id="lblModel"></span><select id="selModel" data-ch="model"></select></label>
+  <button class="btn" data-act="colors" id="btnColors"></button>
   <button class="btn" data-act="basket" id="btnBasket"></button>
   <div class="seg" role="group" aria-label="Language"><button data-act="lang" data-val="zh" id="lzh">中文</button><button data-act="lang" data-val="en" id="len">EN</button></div>
 </div></div>
@@ -310,6 +316,7 @@ function shell(){
   $('showcaseNote').textContent=t('GST225 · 交互展示','GST225 · Interactive showcase');
   $('lblModel').textContent=t('模型','Model');
   $('selModel').innerHTML=['universal','specialised','uploaded','evaluated'].filter(g=>g==='uploaded'?API.uploads.length:g==='evaluated'?EVALS.length:true).map(g=>`<optgroup label="${({universal:t('通用势','Universal'),specialised:t('专用势','Specialised'),uploaded:t('上传的数据包','Uploaded packs'),evaluated:t('新建评估','New evaluations')})[g]}">`+(g==='uploaded'?API.uploads:g==='evaluated'?EVALS:D.order.filter(k=>D.models[k].group===g)).map(k=>`<option value="${k}" ${k===S.model?'selected':''}>${esc(D.models[k].label)}</option>`).join('')+'</optgroup>').join('');
+  $('btnColors').textContent=t('配色','Colours');
   $('btnBasket').textContent=t('标注篮','Labelling basket')+' · '+S.basket.length;
   $('lzh').setAttribute('aria-pressed',S.lang==='zh');$('len').setAttribute('aria-pressed',S.lang==='en');
   $('rail').innerHTML=VIEWS.map(([v,zh,en])=>`<a href="#${v}" ${v===S.view?'aria-current="page"':''}>${t(zh,en)}</a>`).join('');
@@ -628,7 +635,7 @@ function vNew(){const ready=['L0','L1','L2'].some(l=>['ready','done','error'].in
 
 /* ---------- compare ---------- */
 function vCompare(){
-  $('main').innerHTML=`<div class="g2"><div class="panel"><div class="phead"><h2>${t('相对总分排名','Overall relative ranking')}</h2><div class="legend"><span><i style="background:var(--blue);height:9px"></i>${t('通用势','Universal')}</span><span><i style="background:var(--accent);height:9px"></i>${t('专用势','Specialised')}</span><span>▨ ${t('L1 门控未通过','L1 gate closed')}</span></div></div><div id="p1" class="plot"></div></div>
+  $('main').innerHTML=`<div class="g2"><div class="panel"><div class="phead"><h2>${t('相对总分排名','Overall relative ranking')}</h2><div class="legend"><span><i style="background:var(--rk-univ);height:9px"></i>${t('通用势','Universal')}</span><span><i style="background:var(--rk-spec);height:9px"></i>${t('专用势','Specialised')}</span><span>▨ ${t('L1 门控未通过','L1 gate closed')}</span></div></div><div id="p1" class="plot"></div></div>
   <div class="panel"><div class="phead"><h2>${t('层级权重','Level weights')}</h2><button class="btn sm" data-act="wreset">${t('恢复默认','Reset')}</button></div>
     ${D.levels.map(l=>`<div class="wsl"><span class="mono">${l}</span><input type="range" id="w${l}" data-w="${l}" min="0" max="0.5" step="0.01" value="${S.w[l]}" aria-label="${l}"><span class="num" id="wv${l}">${S.w[l].toFixed(2)}</span></div>`).join('')}
     <p class="small muted">${t('逐指标 100 × (x_best + floor) / (x_i + floor)，再按层级权重加权。拖动后排名即时重算。','Per indicator 100 × (x_best + floor) / (x_i + floor), then weighted by level. The ranking updates as you drag.')}</p></div></div>
@@ -640,7 +647,7 @@ function vCompare(){
   drawRank();drawAL();}
 function drawRank(){const ord=rankOrder().reverse();
   plot('p1',[{y:ord.map(k=>D.models[k].label),x:ord.map(k=>overallOf(k)),type:'bar',orientation:'h',width:.6,text:ord.map(k=>overallOf(k).toFixed(1)),textposition:'outside',cliponaxis:false,textfont:{family:css('--mono'),size:11,color:css('--fg')},
-    marker:{color:ord.map(k=>D.models[k].group==='universal'?css('--blue'):css('--accent')),pattern:{shape:ord.map(k=>D.gate_open[k]?'':'/'),fgcolor:css('--panel'),size:6,solidity:.25}},hovertemplate:'%{y}<br>%{x:.1f}<extra></extra>'}],
+    marker:{color:ord.map(k=>D.models[k].group==='universal'?css('--rk-univ'):css('--rk-spec')),pattern:{shape:ord.map(k=>D.gate_open[k]?'':'/'),fgcolor:css('--panel'),size:6,solidity:.25}},hovertemplate:'%{y}<br>%{x:.1f}<extra></extra>'}],
     {showlegend:false,height:340,margin:{l:8,r:40,t:8,b:36},xaxis:axt('',{range:[0,105]}),yaxis:{automargin:true,tickfont:{size:12,color:css('--fg'),family:css('--sans')}}});
   $('heat').innerHTML=rankOrder().map(k=>`<tr><td>${esc(D.models[k].label)}</td>${D.levels.map(l=>{const v=D.level_scores[l][k];return `<td class="n" style="background:color-mix(in srgb,var(--blue) ${Math.round((v||0)*.5)}%,transparent)">${v==null?'—':v.toFixed(0)}</td>`;}).join('')}<td class="n"><b>${overallOf(k).toFixed(1)}</b></td><td><span class="tag"><i class="dot ${D.gate_open[k]?'gA':'gF'}"></i>${D.gate_open[k]?t('通过','open'):t('关闭','closed')}</span></td></tr>`).join('');}
 function drawAL(){const a=D.al,src=S.alLv==='overall'?a.overall:a.level_scores[S.alLv];
@@ -709,9 +716,40 @@ function drawUnc(){const {sel,thr}=uncSel(),U=D.unc,isS=new Set(sel);S._unc=sel;
   if($('uthrv'))$('uthrv').textContent=S.uncThr.toFixed(2);['sE','sFrms','sFmax'].forEach(k=>{if($('absv'+k))$('absv'+k).textContent=fmt(S.abs[k],2);});
   $('uncInfo').textContent=t(`入选 ${sel.length} / ${U.sE.length} 帧`,`${sel.length} of ${U.sE.length} frames selected`);}
 
+/* ---------- plot colours (per browser) ---------- */
+// [css variable, zh, en, group]; only chart colours, never the interface
+const COLS=[['--s1','当前模型','Current model','series'],['--s2','叠加对比模型','Overlay model','series'],['--ref','参考（DFT / AIMD）','Reference (DFT / AIMD)','series'],
+  ['--p1','Ge','Ge','species'],['--p2','Sb','Sb','species'],['--p3','Te','Te','species'],
+  ['--rk-univ','通用势','Universal','rank'],['--rk-spec','专用势','Specialised','rank'],
+  ['--scale-low','低温','Low T','scale'],['--scale-mid','中间','Middle','scale'],['--scale-high','高温','High T','scale']];
+const COLGROUPS={series:['曲线与散点','Curves and points'],species:['元素（L4 均方位移）','Species (L4 MSD)'],rank:['排名柱（模型对比）','Ranking bars (compare models)'],scale:['色标（采样页，按温度着色）','Colour scale (sampling map, by temperature)']};
+// presets leave the reference colour to the theme, so it stays readable in light and dark mode
+const PRESETS={
+  okabe:{'--s1':'#0072b2','--s2':'#d55e00','--p1':'#e69f00','--p2':'#009e73','--p3':'#cc79a7','--rk-univ':'#0072b2','--rk-spec':'#d55e00','--scale-low':'#56b4e9','--scale-mid':'#009e73','--scale-high':'#e69f00'},
+  rbb:{'--s1':'#c0392b','--s2':'#1f4e9c','--p1':'#f0a6ae','--p2':'#c0392b','--p3':'#5c0f14','--rk-univ':'#1f4e9c','--rk-spec':'#c0392b','--scale-low':'#f4c7cc','--scale-mid':'#d9606f','--scale-high':'#7a1020'},
+  gray:{'--s1':'#222222','--s2':'#8c8c8c','--p1':'#bdbdbd','--p2':'#737373','--p3':'#252525','--rk-univ':'#525252','--rk-spec':'#a3a3a3','--scale-low':'#e5e5e5','--scale-mid':'#969696','--scale-high':'#252525'}};
+let COLOR={};try{COLOR=JSON.parse(localStorage.getItem('mlipwb.colors')||'{}')||{};}catch(e){COLOR={};}
+function applyColors(){const st=document.documentElement.style;COLS.forEach(([v])=>{if(COLOR[v])st.setProperty(v,COLOR[v]);else st.removeProperty(v);});}
+function saveColors(){try{localStorage.setItem('mlipwb.colors',JSON.stringify(COLOR));}catch(e){}}
+function toHex(c){c=String(c).trim();if(/^#[0-9a-f]{6}$/i.test(c))return c.toLowerCase();if(/^#[0-9a-f]{3}$/i.test(c))return '#'+[...c.slice(1)].map(x=>x+x).join('').toLowerCase();
+  const m=c.match(/[\d.]+/g);return m&&m.length>=3?'#'+m.slice(0,3).map(x=>Math.round(+x).toString(16).padStart(2,'0')).join(''):'#000000';}
+function activePreset(){const keys=Object.keys(COLOR);if(!keys.length)return 'default';
+  for(const [k,pr] of Object.entries(PRESETS))if(keys.length===Object.keys(pr).length&&keys.every(v=>pr[v]===COLOR[v]))return k;return 'custom';}
+let colFrame=0;
+function renderMain(){cancelAnimationFrame(colFrame);colFrame=requestAnimationFrame(()=>({card:vCard,new:vNew,levels:vLevels,compare:vCompare,traj:vTraj,sample:vSample})[S.view]());}
+function colorPanel(){
+  return `<div class="phead"><h2>${t('绘图配色','Plot colours')}</h2><button class="btn sm" data-act="colors">${t('关闭','Close')}</button></div>
+  <p class="small muted">${t('只改变图表的颜色，界面配色不变。设置保存在本浏览器中，下次打开仍然有效。','Changes chart colours only; the interface keeps its palette. Saved in this browser for your next visit.')}</p>
+  <div class="col small" style="gap:6px"><span class="muted">${t('预设','Presets')}</span>${seg('colpreset',[['default',t('默认','Default')],['okabe',t('色盲友好','Colour-blind safe')],['rbb',t('红黑蓝','Red–black–blue')],['gray',t('灰度（打印）','Greyscale (print)')]],activePreset())}
+    ${activePreset()==='custom'?`<span class="muted">${t('当前：自定义','Current: custom')}</span>`:''}</div>
+  ${Object.keys(COLGROUPS).map(g=>`<div class="colgrp"><h3>${t(COLGROUPS[g][0],COLGROUPS[g][1])}</h3>${COLS.filter(c=>c[3]===g).map(([v,zh,en])=>
+    `<label class="colrow"><span>${t(zh,en)}</span><input type="color" data-col="${v}" value="${toHex(css(v))}" aria-label="${esc(t(zh,en))}"></label>`).join('')}</div>`).join('')}
+  <div class="row"><button class="btn" data-act="colpreset" data-val="default">${t('恢复默认','Reset to default')}</button></div>`;}
+applyColors();
+
 /* ---------- basket ---------- */
 function add(item){if(!S.basket.some(b=>b.id===item.id))S.basket.push(item);}
-function drawer(){const d=$('drawer');d.hidden=!S.drawer;if(!S.drawer)return;const n=S.basket.reduce((a,b)=>a+b.n,0);
+function drawer(){const d=$('drawer');d.hidden=!S.drawer;if(!S.drawer)return;if(S.drawerMode==='colors'){d.innerHTML=colorPanel();return;}const n=S.basket.reduce((a,b)=>a+b.n,0);
   d.innerHTML=`<div class="phead"><h2>${t('标注篮','Labelling basket')}</h2><button class="btn sm" data-act="basket">${t('关闭','Close')}</button></div>
   <p class="small muted">${t('评估导出的失败构型和采样选出的帧汇到这里，去重后一起送去 DFT 标注。','Failing structures from evaluation and frames picked by sampling meet here, are deduplicated, and go to DFT labelling together.')}</p>
   ${S.basket.length?`<div class="list">${S.basket.map((b,i)=>`<div class="li"><div><div class="small"><b>${esc(b.src)}</b> · ${b.n} ${t('帧','frames')}</div><div class="small muted mono" style="overflow-wrap:anywhere">${esc(b.label)}</div></div><button class="btn sm" data-act="rm" data-val="${i}">${t('移除','Remove')}</button></div>`).join('')}</div>
@@ -723,7 +761,9 @@ alflow merge --base data/train.xyz --new dft_cal/dft_merged.extxyz --out data/tr
 
 /* ---------- events ---------- */
 const ACT={
-  lang:v=>{S.lang=v;render();}, basket:()=>{S.drawer=!S.drawer;drawer();},
+  lang:v=>{S.lang=v;render();}, basket:()=>{S.drawer=!(S.drawer&&S.drawerMode!=='colors');S.drawerMode='basket';drawer();},
+  colors:()=>{S.drawer=!(S.drawer&&S.drawerMode==='colors');S.drawerMode='colors';drawer();},
+  colpreset:v=>{COLOR=v==='default'?{}:Object.assign({},PRESETS[v]);applyColors();saveColors();drawer();renderMain();},
   golevel:v=>{S.level=v;location.hash='levels';if(S.view==='levels')render();},
   level:v=>{S.level=v;S.mq='';render();}, pair:v=>{S.pair=v;render();}, st:v=>{S.st=v;render();}, l4:v=>{S.l4=v;render();},
   prog:v=>{S.prog=v;render();}, obs:v=>{S.obs=v;render();}, eos:v=>{S.eos=v;render();}, allv:v=>{S.alLv=v;render();},
@@ -749,6 +789,7 @@ document.addEventListener('change',e=>{const el=e.target;
   else if(el.id==='bad'){S.bad=el.checked;mtable();}
   else if(el.dataset.fst){S.fpsStates[el.dataset.fst]=el.checked;drawFps();}
   else if(el.id==='packfile'){uploadPack(el.files[0]);}
+  else if(el.dataset.col){drawer();}
   else if(el.id==='evex'){EVS.ex=el.value;}
   else if(el.id==='evov'&&el.files[0]){const f=el.files[0];EVS.overlap={name:f.name,size:f.size,file:f,src:'upload'};EVS.res={};EVS.err={};EVS.cmp={};EVS.score=null;render();}
   else if(el.dataset.evside&&el.files){evAssign(el.dataset.evside,Array.from(el.files));}});
@@ -758,6 +799,7 @@ document.addEventListener('drop',e=>{const z=e.target.closest&&e.target.closest(
 document.addEventListener('input',e=>{const el=e.target;
   if(el.id==='mq'){S.mq=el.value;mtable();}
   else if(el.id==='evname'){EVS.name=el.value;EVS.nameAuto=false;}
+  else if(el.dataset.col){COLOR[el.dataset.col]=el.value;applyColors();saveColors();renderMain();}
   else if(el.dataset.w){S.w[el.dataset.w]=+el.value;$('wv'+el.dataset.w).textContent=(+el.value).toFixed(2);drawRank();}
   else if(el.id==='selA'||el.id==='selB'){S.sel=[+$('selA').value,+$('selB').value];drawTraj();}
   else if(el.id==='fpsN'){S.fpsN=+el.value;drawFps();}

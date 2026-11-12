@@ -45,7 +45,11 @@ L0–L2 由 `engine.js` 在浏览器中计算，它逐个移植了 `mlipeval` �
 
 `mlipeval serve`（见 [PACKS.md](../../eval_framework/PACKS.md)）在 `/workbench/` 提供本页，并提供校验评估数据包、在 CPU 上重算 L0–L2 的 API；以这种方式打开时，页面会检测到后端，报告卡的「数据接入」面板可以上传 `.mlippack`：上传、校验、重算后加入模型选择器的「上传的数据包」分组（不参与排名，可看 L0–L2）。在 GitHub Pages 或 `file://` 下仍是静态展示版。内嵌数据由 `MLIPEVAL_OUTPUT=… python docs/workbench/build_data.py --inject docs/workbench/index.html` 从评估输出重新生成。`index.html` 内嵌演示数据与界面，`engine.js` 是 L0–L2 的分析逻辑；交互状态和标注篮保存在浏览器内存中，刷新后重置。展示版读取预先计算的结果；计算、训练、数据导入导出与 HPC 提交使用仓库的 `mlipeval` / `alflow` 流程，尚未连接的操作在界面中禁用。
 
+The **Colours** button in the top bar recolours the charts: the current and overlay model, the DFT/AIMD reference, the three species, the ranking bars and the temperature scale. It offers four presets (default, colour-blind safe, red–black–blue, greyscale for print) and a colour picker per item. The interface keeps its own palette, and the choice is saved in the browser.
+
 Plotly 2.35.3 loads from cdnjs, so the application needs network access for charts. All interface and chart fonts use local Arial, with the browser's fallback for unavailable glyphs. The palette follows the [project overview](https://qundaoxu.github.io/mlip_auto_flow/), with automatic light/dark themes and Chinese/English switching.
+
+顶栏的 **配色** 按钮可以修改图表颜色，范围包括当前模型、叠加对比模型、DFT/AIMD 参考、三种元素、排名柱和温度色标。提供四个预设：默认、色盲友好、红黑蓝、灰度（打印），每一项也可以用取色器单独设置。界面本身的配色不受影响，设置保存在浏览器中。
 
 图表通过 cdnjs 加载 Plotly 2.35.3，需要联网。界面与图表统一使用本机 Arial，缺少的字形由浏览器回退。配色与项目介绍页一致，支持自动浅色/深色模式和中英文切换。
 
