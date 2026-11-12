@@ -73,7 +73,7 @@ The answers are on the [project page](https://qundaoxu.github.io/mlip_auto_flow/
 
 ![Fig. 1](docs/figures/fig1_ranking.png)
 
-**Fig. 1 | Relative scores of universal and specialised potentials on GST225.** **a** Overall score (best = 100); hatching marks a closed L1 gate. **b** Level scores. Each specialised potential shares its architecture with a universal one and differs only in training data. From MACE-MPA-0 to MACE-spec-GST the overall score rises from 76.8 to 80.3 and L0 from 63 to 90, while L1 drops from 93 to 50: the pair curves fail in the short-range region the training set does not cover.
+**Fig. 1 | Relative scores of universal and specialised potentials on GST225.** **a** Overall score (best = 100); hatching marks a closed L1 gate. **b** Level scores. Each specialised potential shares its architecture with a universal one and differs only in training data. From MACE-MPA-0 to MACE-spec-GST the overall score rises from 76.5 to 79.8 and L0 from 63 to 90, while L1 drops from 93 to 50: the pair curves fail in the short-range region the training set does not cover.
 
 ---
 
@@ -168,7 +168,7 @@ flowchart LR
 
 **How frames are selected.** σ_E, σ_F,rms and σ_F,max are min–max normalised to [0, 1] within the trajectory; a frame is selected if any of the three exceeds `--uncert_threshold` (default 0.9), and the union is taken. Above `--uncert_max_frames`, the frames with the largest sum of the three are kept. The threshold is therefore relative: it picks frames within one trajectory and is not a convergence criterion.
 
-**How it connects to the evaluation.** The inner loop, uncertainty sampling, only goes where the committee disagrees. The outer loop comes from the evaluation: failing structures from L0–L5 are deduplicated by `failure_export`, exported with a suggested DFT protocol (`mlipeval candidates`) and added to the next labelling round. The replay of eight AL generations ([project page](https://qundaoxu.github.io/mlip_auto_flow/#al)) shows the overall score rising from 55.7 to 85.1 but not monotonically with the number of frames, and every generation failing the pair-curve checks of L1. That is a gap uncertainty sampling alone does not reach and the evaluation does point to.
+**How it connects to the evaluation.** The inner loop, uncertainty sampling, only goes where the committee disagrees. The outer loop comes from the evaluation: failing structures from L0–L5 are deduplicated by `failure_export`, exported with a suggested DFT protocol (`mlipeval candidates`) and added to the next labelling round. The replay of eight AL generations ([project page](https://qundaoxu.github.io/mlip_auto_flow/#al)) shows the overall score rising from 59.9 to 81.8 but not monotonically with the number of frames, and every generation failing the pair-curve checks of L1. That is a gap uncertainty sampling alone does not reach and the evaluation does point to.
 
 Runtime: Linux server or HPC with NVIDIA GPUs and Slurm; Python 3.12, PyTorch, MACE, ASE (full environment in [`al_flow/environment.yaml`](al_flow/environment.yaml)).
 
@@ -292,10 +292,10 @@ When the jobs finish, read the report card (post-processing only, fine on a logi
 
 ```console
 $ mlipeval card --model mace_mpa0
-MACE-MPA-0 (medium)  —  overall 76.8  (rank 7/9, all scoring)
+MACE-MPA-0 (medium)  —  overall 76.5  (rank 7/9, all scoring)
   L0   63.4
   L1   93.4
-  L2   67.5
+  L2   65.9
   L3   76.5
   L4   75.9
   L5   94.5

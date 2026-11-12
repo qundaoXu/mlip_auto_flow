@@ -364,8 +364,8 @@ footer a:hover { color: var(--text); }
           </figcaption>
         </figure>
         <div class="facts">
-          <div class="fact"><b>55.7 → 85.1</b><span lang="zh">总分从 gen0 升到部署版 prod_train，但并不单调：1060 帧的 gen4 有 77.3 分，1161 帧的 gen7 只有 73.6 分，剪枝后的 gen8 跌到 58.4 分</span><span lang="en">Overall score from gen0 to the deployed prod_train, but not monotonic: gen4 with 1060 frames scores 77.3, gen7 with 1161 frames 73.6, and the pruned gen8 falls to 58.4</span></div>
-          <div class="fact"><b>118% → 11%</b><span lang="zh">L2 体模量误差，从 gen3 到 prod_train。只看力 MAE，这个变化看不到</span><span lang="en">L2 bulk-modulus error from gen3 to prod_train, a change force MAE alone does not show</span></div>
+          <div class="fact"><b>59.9 → 81.8</b><span lang="zh">总分从 gen0 升到部署版 prod_train，但并不单调：1060 帧的 gen4 有 76.8 分，1161 帧的 gen7 只有 73.6 分，剪枝后的 gen8 跌到 55.4 分</span><span lang="en">Overall score from gen0 to the deployed prod_train, but not monotonic: gen4 with 1060 frames scores 76.8, gen7 with 1161 frames 73.6, and the pruned gen8 falls to 55.4</span></div>
+          <div class="fact"><b>0.3% / 18.4%</b><span lang="zh">立方相体模量 B₀ 误差：gen0 的力 MAE 最大（122 meV/Å），B₀ 误差却最小；gen3 的力 MAE 更低（103 meV/Å），B₀ 误差最大。只看力 MAE，看不出这种差别</span><span lang="en">Cubic bulk-modulus error: gen0 has the largest force MAE (122 meV/Å) yet the smallest B₀ error, while gen3, with a lower force MAE (103 meV/Å), has the largest. Force MAE alone does not show this</span></div>
           <div class="fact"><b>0 / 8</b><span lang="zh">通过 L1 门控的代数。二体曲线的缺陷不随数据增多而消失，评估把它直接翻译成下一轮要算的结构</span><span lang="en">Generations that pass the L1 gate. The pair-curve defect does not go away with more data; the evaluation turns it into the structures to label next</span></div>
         </div>
       </div>
@@ -424,17 +424,17 @@ const NAMES = {
   zh: ["数值一致性", "势能面健全性", "静态平衡", "无序结构", "动力学", "过程与相变"],
   en: ["Reference", "PES sanity", "Static", "Structure", "Dynamics", "Pathway"],
 };
-const HERO = [92.9, 49.6, 75.2, 92.2, 84.3, 91.1];   // MACE-spec-GST-NE, all metrics
+const HERO = [92.9, 49.6, 74.1, 92.2, 84.2, 91.1];   // MACE-spec-GST-NE, all metrics
 const RANK = [
-  ["NequIP-OAM-L", "universal", 87.4, [90.9, 92.8, 83.4, 90.3, 81.9, 79.6], true],
-  ["MACE-spec-GST-NE", "specialised", 82.1, [92.9, 49.6, 75.2, 92.2, 84.3, 91.1], false],
-  ["DPA-4.0.1-Pro", "universal", 81.9, [91.7, 42.5, 80.1, 91.0, 87.3, 93.6], false],
+  ["NequIP-OAM-L", "universal", 87.2, [90.9, 92.8, 81.7, 90.3, 81.9, 79.6], true],
+  ["MACE-spec-GST-NE", "specialised", 81.9, [92.9, 49.6, 74.1, 92.2, 84.2, 91.1], false],
+  ["DPA-4.0.1-Pro", "universal", 81.6, [91.7, 42.5, 77.6, 91.0, 87.3, 93.6], false],
   ["NequIP-spec-GST", "specialised", 80.7, [78.8, 76.1, 84.1, 83.1, 84.3, 74.8], true],
-  ["MACE-spec-GST", "specialised", 80.3, [89.8, 50.0, 70.0, 96.2, 85.8, 73.9], false],
-  ["MACE-GST-Aging", "specialised", 80.1, [88.7, 46.9, 71.5, 87.6, 100.0, 76.6], false],
-  ["MACE-MPA-0", "universal", 76.8, [63.4, 93.4, 67.5, 76.5, 75.9, 94.5], true],
-  ["MatterSim-5M", "universal", 72.1, [64.8, 86.9, 57.9, 65.2, 91.1, 75.0], true],
-  ["CHGNet-0.3.0", "universal", 32.9, [22.1, 26.2, 15.5, 42.6, 48.8, 42.7], false],
+  ["MACE-spec-GST", "specialised", 79.8, [89.8, 50.0, 67.0, 96.2, 85.8, 73.9], false],
+  ["MACE-GST-Aging", "specialised", 79.7, [88.7, 46.9, 69.1, 87.6, 100.0, 76.6], false],
+  ["MACE-MPA-0", "universal", 76.5, [63.4, 93.4, 65.9, 76.5, 75.9, 94.5], true],
+  ["MatterSim-5M", "universal", 71.7, [64.8, 86.9, 55.1, 65.2, 91.1, 75.0], true],
+  ["CHGNet-0.3.0", "universal", 32.6, [22.1, 26.2, 13.6, 42.6, 48.8, 42.7], false],
 ];
 const LEVELS = [
   { fig: "fig2_L0",
@@ -450,8 +450,8 @@ const LEVELS = [
   { fig: "fig4_L2",
     q: { zh: "晶相的结构、相序和体模量对不对", en: "Are crystal structures, phase order and bulk moduli right" },
     cap: { zh: "<b>a</b> 六方相 EOS。<b>b</b> 立方相 EOS。<b>c</b> 立方相 V₀ 与 B₀ 误差，灰框为 DFT 在 5 种空位排布间的散布。<b>d–f</b> 立方 V₀、立方 B₀、六方 B₀ 误差", en: "<b>a</b> Hexagonal EOS. <b>b</b> Cubic EOS. <b>c</b> Cubic V₀ against B₀ error; the grey box is the DFT spread over five vacancy orderings. <b>d–f</b> Cubic V₀, cubic B₀ and hexagonal B₀ errors" },
-    facts: [["≤ 0.5%", { zh: "所有模型立方相平衡体积 V₀ 的误差，平衡位置学对了", en: "Cubic equilibrium-volume error for every model: they sit in the right place" }],
-            ["−10% 到 −39%", { zh: "立方相体模量 B₀ 的误差，所有模型全部偏软", en: "Cubic bulk-modulus error; every model is too soft" }]] },
+    facts: [["< 1%", { zh: "所有模型立方相平衡体积 V₀ 的误差，平衡位置学对了", en: "Cubic equilibrium-volume error for every model: they sit in the right place" }],
+            ["−69% … −5%", { zh: "六方相体模量 B₀ 的误差，所有模型都偏软；立方相则有正有负（−27% 到 +11%）", en: "Hexagonal bulk-modulus error: every model is too soft, while the cubic errors go both ways (−27% to +11%)" }]] },
   { fig: "fig5_L3",
     q: { zh: "液态和非晶的短程序与中程序对不对", en: "Is short- and medium-range order in liquid and glass right" },
     cap: { zh: "非晶 300 K。<b>a</b> Ge–Te 偏 RDF。<b>b</b> Ge–Ge 偏 RDF。<b>c</b> 环尺寸分布。<b>d</b> 偏 RDF 距离。<b>e</b> 同极键比例误差。<b>f</b> 环分布误差", en: "Amorphous, 300 K. <b>a</b> Ge–Te partial RDF. <b>b</b> Ge–Ge partial RDF. <b>c</b> Ring sizes. <b>d</b> Partial-RDF distance. <b>e</b> Homopolar-bond error. <b>f</b> Ring-distribution error" },

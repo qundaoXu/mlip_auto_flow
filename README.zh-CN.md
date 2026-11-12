@@ -73,7 +73,7 @@
 
 ![Fig. 1](docs/figures/fig1_ranking.png)
 
-**Fig. 1｜GST225 上通用势与专用势的相对得分。** **a** 总分（最佳 = 100），斜线表示 L1 门控未通过。**b** 分层得分。专用势与对应的通用势架构相同，只换了训练数据：MACE-MPA-0 → MACE-spec-GST，总分从 76.8 升到 80.3，L0 从 63 升到 90，但 L1 从 93 降到 50（二体曲线在训练集覆盖不到的短程区失效）。
+**Fig. 1｜GST225 上通用势与专用势的相对得分。** **a** 总分（最佳 = 100），斜线表示 L1 门控未通过。**b** 分层得分。专用势与对应的通用势架构相同，只换了训练数据：MACE-MPA-0 → MACE-spec-GST，总分从 76.5 升到 79.8，L0 从 63 升到 90，但 L1 从 93 降到 50（二体曲线在训练集覆盖不到的短程区失效）。
 
 ---
 
@@ -168,7 +168,7 @@ flowchart LR
 
 **选帧语义。** σ_E、σ_F,rms、σ_F,max 先在本条轨迹内做 min–max 归一化到 [0, 1]，三者中任一超过 `--uncert_threshold`（默认 0.9）的帧入选，然后取并集；超过 `--uncert_max_frames` 时，按三者之和保留最高的若干帧。因此这个阈值是相对的，只决定"这条轨迹里挑哪些帧"，不能当作收敛判据。
 
-**与评估框架的衔接。** 内环（不确定性采样）只会去模型"拿不准"的地方。外环由评估框架给出：L0–L5 的失败构型经 `failure_export` 去重后导出（`mlipeval candidates`），附带建议的 DFT 协议，再进入下一轮标注。8 代 AL 数据集的回放（[主页](https://qundaoxu.github.io/mlip_auto_flow/#al)）表明：总分从 55.7 升到 85.1，但并不随帧数单调上升，而且所有代都卡在 L1 的二体 PEC 检查上。这正是只靠不确定性采样补不到、而评估能指出的缺口。
+**与评估框架的衔接。** 内环（不确定性采样）只会去模型"拿不准"的地方。外环由评估框架给出：L0–L5 的失败构型经 `failure_export` 去重后导出（`mlipeval candidates`），附带建议的 DFT 协议，再进入下一轮标注。8 代 AL 数据集的回放（[主页](https://qundaoxu.github.io/mlip_auto_flow/#al)）表明：总分从 59.9 升到 81.8，但并不随帧数单调上升，而且所有代都卡在 L1 的二体 PEC 检查上。这正是只靠不确定性采样补不到、而评估能指出的缺口。
 
 运行环境：Linux 服务器或超算，NVIDIA GPU，Slurm；Python 3.12、PyTorch、MACE、ASE（完整环境见 [`al_flow/environment.yaml`](al_flow/environment.yaml)）。
 
@@ -292,10 +292,10 @@ mlipeval submit --model mace_mpa0 --chain        # L0 → L1 → L2 → MD → L
 
 ```console
 $ mlipeval card --model mace_mpa0
-MACE-MPA-0 (medium)  —  overall 76.8  (rank 7/9, all scoring)
+MACE-MPA-0 (medium)  —  overall 76.5  (rank 7/9, all scoring)
   L0   63.4
   L1   93.4
-  L2   67.5
+  L2   65.9
   L3   76.5
   L4   75.9
   L5   94.5
