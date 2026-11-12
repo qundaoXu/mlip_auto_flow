@@ -1,0 +1,153 @@
+{
+ "format": "mlipeval-l2-reference/1",
+ "system": "GST225 (Ge2Sb2Te5)",
+ "protocol_id": "gst225_pbe_canonical_v1",
+ "structures": [
+  {
+   "key": "mp1224375",
+   "role": "phase",
+   "relax_label": "hex_mp1224375",
+   "name": "trigonal P-3m1 (mp-1224375)",
+   "composition": {
+    "Ge": 2,
+    "Sb": 2,
+    "Te": 5
+   },
+   "energy_eV_per_atom": -3.7768930455555556,
+   "volume_A3_per_atom": 30.745892351096238,
+   "cell_lengths_A": [
+    4.305873718125483,
+    4.3058956377620925,
+    17.233275609531105
+   ],
+   "static_task": "L1_mp1224375_static",
+   "relax_task": "L1_mp1224375_relax"
+  },
+  {
+   "key": "mp3534",
+   "role": "phase",
+   "relax_label": "phase_mp3534",
+   "name": "trigonal P-3m1 (mp-3534, ICSD)",
+   "composition": {
+    "Ge": 2,
+    "Sb": 2,
+    "Te": 5
+   },
+   "energy_eV_per_atom": -3.761764316666667,
+   "volume_A3_per_atom": 31.49134007647793,
+   "cell_lengths_A": [
+    4.272237863472858,
+    4.272237850407294,
+    17.929820764865752
+   ],
+   "static_task": "L1_mp3534_static",
+   "relax_task": "L1_mp3534_relax"
+  },
+  {
+   "key": "mp1224407",
+   "role": "phase",
+   "relax_label": "phase_mp1224407",
+   "name": "monoclinic Cm (mp-1224407)",
+   "composition": {
+    "Ge": 2,
+    "Sb": 2,
+    "Te": 5
+   },
+   "energy_eV_per_atom": -3.7390827499999997,
+   "volume_A3_per_atom": 32.09809218194892,
+   "cell_lengths_A": [
+    7.5462224858957665,
+    7.54585008278888,
+    9.804916565029295
+   ],
+   "static_task": "L1_mp1224407_static",
+   "relax_task": "L1_mp1224407_relax"
+  },
+  {
+   "key": "cubic",
+   "role": "phase",
+   "relax_label": "cubic_s01",
+   "name": "cubic rocksalt+vacancies",
+   "composition": {
+    "Ge": 43,
+    "Sb": 43,
+    "Te": 108
+   },
+   "energy_eV_per_atom": -3.7222455769072167,
+   "volume_A3_per_atom": 32.200068525835015,
+   "cell_lengths_A": [
+    18.406691519527666,
+    18.409128776696143,
+    18.435451193763033
+   ],
+   "static_task": "H1_cubic_s01_static",
+   "relax_task": "H1_cubic_s01_relax"
+  },
+  {
+   "key": "Ge",
+   "role": "element",
+   "relax_label": "element_Ge",
+   "name": "Ge ground state",
+   "composition": {
+    "Ge": 2
+   },
+   "energy_eV_per_atom": -4.49374086,
+   "volume_A3_per_atom": 24.09673649077154,
+   "cell_lengths_A": [
+    4.084771273876721,
+    4.084771134323779,
+    4.08477128700002
+   ],
+   "static_task": "L2_ge_static",
+   "relax_task": "L2_ge_relax"
+  },
+  {
+   "key": "Sb",
+   "role": "element",
+   "relax_label": "element_Sb",
+   "name": "Sb ground state",
+   "composition": {
+    "Sb": 2
+   },
+   "energy_eV_per_atom": -4.14363136,
+   "volume_A3_per_atom": 31.99235903015663,
+   "cell_lengths_A": [
+    4.608931440755576,
+    4.608888951256891,
+    4.608931441028878
+   ],
+   "static_task": "L2_sb_static",
+   "relax_task": "L2_sb_relax"
+  },
+  {
+   "key": "Te",
+   "role": "element",
+   "relax_label": "element_Te",
+   "name": "Te ground state",
+   "composition": {
+    "Te": 3
+   },
+   "energy_eV_per_atom": -3.1458709366666664,
+   "volume_A3_per_atom": 34.99763807012095,
+   "cell_lengths_A": [
+    4.510617852217249,
+    4.510695958929599,
+    5.95466479751805
+   ],
+   "static_task": "L2_te_static",
+   "relax_task": "L2_te_relax"
+  }
+ ],
+ "phase_order": {
+  "phase": "cubic",
+  "base": "mp1224375",
+  "names": [
+   "cubic",
+   "hexagonal"
+  ]
+ },
+ "eos_groups": {
+  "hex": "Hexagonal",
+  "cubic": "Cubic (five vacancy orderings)"
+ }
+}

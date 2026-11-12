@@ -1,0 +1,134 @@
+{
+ "reference": {
+  "id": "gst225_phase1_v1",
+  "files": {
+   "l0_labels": "reference/l0_labels.extxyz.gz",
+   "l1_reference": "reference/l1_reference.json",
+   "l2_reference": "reference/l2_reference.json",
+   "l2_eos": "reference/l2_eos.csv"
+  }
+ },
+ "models": {
+  "mace_mpa0": {
+   "files": {
+    "l0_predictions.extxyz.gz": "models/mace_mpa0/l0_predictions.extxyz.gz",
+    "l1_pec.csv": "models/mace_mpa0/l1_pec.csv",
+    "l1_lattice_scan.csv": "models/mace_mpa0/l1_lattice_scan.csv",
+    "l1_nve_dt3.csv": "models/mace_mpa0/l1_nve_dt3.csv",
+    "l1_nve_dt1.5.csv": "models/mace_mpa0/l1_nve_dt1.5.csv",
+    "l1_stability_2000K.csv": "models/mace_mpa0/l1_stability_2000K.csv",
+    "l1_probes.json": "models/mace_mpa0/l1_probes.json",
+    "l2_relax.csv": "models/mace_mpa0/l2_relax.csv",
+    "l2_eos.csv": "models/mace_mpa0/l2_eos.csv"
+   }
+  },
+  "nequip_oam_l": {
+   "files": {
+    "l0_predictions.extxyz.gz": "models/nequip_oam_l/l0_predictions.extxyz.gz",
+    "l1_pec.csv": "models/nequip_oam_l/l1_pec.csv",
+    "l1_lattice_scan.csv": "models/nequip_oam_l/l1_lattice_scan.csv",
+    "l1_nve_dt3.csv": "models/nequip_oam_l/l1_nve_dt3.csv",
+    "l1_nve_dt1.5.csv": "models/nequip_oam_l/l1_nve_dt1.5.csv",
+    "l1_stability_2000K.csv": "models/nequip_oam_l/l1_stability_2000K.csv",
+    "l1_probes.json": "models/nequip_oam_l/l1_probes.json",
+    "l2_relax.csv": "models/nequip_oam_l/l2_relax.csv",
+    "l2_eos.csv": "models/nequip_oam_l/l2_eos.csv"
+   }
+  },
+  "dpa4_pro": {
+   "files": {
+    "l0_predictions.extxyz.gz": "models/dpa4_pro/l0_predictions.extxyz.gz",
+    "l1_pec.csv": "models/dpa4_pro/l1_pec.csv",
+    "l1_lattice_scan.csv": "models/dpa4_pro/l1_lattice_scan.csv",
+    "l1_nve_dt3.csv": "models/dpa4_pro/l1_nve_dt3.csv",
+    "l1_nve_dt1.5.csv": "models/dpa4_pro/l1_nve_dt1.5.csv",
+    "l1_stability_2000K.csv": "models/dpa4_pro/l1_stability_2000K.csv",
+    "l1_probes.json": "models/dpa4_pro/l1_probes.json",
+    "l2_relax.csv": "models/dpa4_pro/l2_relax.csv",
+    "l2_eos.csv": "models/dpa4_pro/l2_eos.csv"
+   }
+  },
+  "mattersim_5m": {
+   "files": {
+    "l0_predictions.extxyz.gz": "models/mattersim_5m/l0_predictions.extxyz.gz",
+    "l1_pec.csv": "models/mattersim_5m/l1_pec.csv",
+    "l1_lattice_scan.csv": "models/mattersim_5m/l1_lattice_scan.csv",
+    "l1_nve_dt3.csv": "models/mattersim_5m/l1_nve_dt3.csv",
+    "l1_nve_dt1.5.csv": "models/mattersim_5m/l1_nve_dt1.5.csv",
+    "l1_stability_2000K.csv": "models/mattersim_5m/l1_stability_2000K.csv",
+    "l1_probes.json": "models/mattersim_5m/l1_probes.json",
+    "l2_relax.csv": "models/mattersim_5m/l2_relax.csv",
+    "l2_eos.csv": "models/mattersim_5m/l2_eos.csv"
+   }
+  },
+  "chgnet_030": {
+   "files": {
+    "l0_predictions.extxyz.gz": "models/chgnet_030/l0_predictions.extxyz.gz",
+    "l1_pec.csv": "models/chgnet_030/l1_pec.csv",
+    "l1_lattice_scan.csv": "models/chgnet_030/l1_lattice_scan.csv",
+    "l1_nve_dt3.csv": "models/chgnet_030/l1_nve_dt3.csv",
+    "l1_nve_dt1.5.csv": "models/chgnet_030/l1_nve_dt1.5.csv",
+    "l1_stability_2000K.csv": "models/chgnet_030/l1_stability_2000K.csv",
+    "l1_probes.json": "models/chgnet_030/l1_probes.json",
+    "l2_relax.csv": "models/chgnet_030/l2_relax.csv",
+    "l2_eos.csv": "models/chgnet_030/l2_eos.csv"
+   }
+  },
+  "mace_spec_gst": {
+   "files": {
+    "l0_predictions.extxyz.gz": "models/mace_spec_gst/l0_predictions.extxyz.gz",
+    "l1_pec.csv": "models/mace_spec_gst/l1_pec.csv",
+    "l1_lattice_scan.csv": "models/mace_spec_gst/l1_lattice_scan.csv",
+    "l1_nve_dt3.csv": "models/mace_spec_gst/l1_nve_dt3.csv",
+    "l1_nve_dt1.5.csv": "models/mace_spec_gst/l1_nve_dt1.5.csv",
+    "l1_stability_2000K.csv": "models/mace_spec_gst/l1_stability_2000K.csv",
+    "l1_probes.json": "models/mace_spec_gst/l1_probes.json",
+    "l2_relax.csv": "models/mace_spec_gst/l2_relax.csv",
+    "l2_eos.csv": "models/mace_spec_gst/l2_eos.csv"
+   },
+   "training_overlap": "models/mace_spec_gst/training_overlap.json"
+  },
+  "mace_spec_gst_ne": {
+   "files": {
+    "l0_predictions.extxyz.gz": "models/mace_spec_gst_ne/l0_predictions.extxyz.gz",
+    "l1_pec.csv": "models/mace_spec_gst_ne/l1_pec.csv",
+    "l1_lattice_scan.csv": "models/mace_spec_gst_ne/l1_lattice_scan.csv",
+    "l1_nve_dt3.csv": "models/mace_spec_gst_ne/l1_nve_dt3.csv",
+    "l1_nve_dt1.5.csv": "models/mace_spec_gst_ne/l1_nve_dt1.5.csv",
+    "l1_stability_2000K.csv": "models/mace_spec_gst_ne/l1_stability_2000K.csv",
+    "l1_probes.json": "models/mace_spec_gst_ne/l1_probes.json",
+    "l2_relax.csv": "models/mace_spec_gst_ne/l2_relax.csv",
+    "l2_eos.csv": "models/mace_spec_gst_ne/l2_eos.csv"
+   },
+   "training_overlap": "models/mace_spec_gst_ne/training_overlap.json"
+  },
+  "nequip_spec_gst": {
+   "files": {
+    "l0_predictions.extxyz.gz": "models/nequip_spec_gst/l0_predictions.extxyz.gz",
+    "l1_pec.csv": "models/nequip_spec_gst/l1_pec.csv",
+    "l1_lattice_scan.csv": "models/nequip_spec_gst/l1_lattice_scan.csv",
+    "l1_nve_dt3.csv": "models/nequip_spec_gst/l1_nve_dt3.csv",
+    "l1_nve_dt1.5.csv": "models/nequip_spec_gst/l1_nve_dt1.5.csv",
+    "l1_stability_2000K.csv": "models/nequip_spec_gst/l1_stability_2000K.csv",
+    "l1_probes.json": "models/nequip_spec_gst/l1_probes.json",
+    "l2_relax.csv": "models/nequip_spec_gst/l2_relax.csv",
+    "l2_eos.csv": "models/nequip_spec_gst/l2_eos.csv"
+   },
+   "training_overlap": "models/nequip_spec_gst/training_overlap.json"
+  },
+  "mace_gst_aging": {
+   "files": {
+    "l0_predictions.extxyz.gz": "models/mace_gst_aging/l0_predictions.extxyz.gz",
+    "l1_pec.csv": "models/mace_gst_aging/l1_pec.csv",
+    "l1_lattice_scan.csv": "models/mace_gst_aging/l1_lattice_scan.csv",
+    "l1_nve_dt3.csv": "models/mace_gst_aging/l1_nve_dt3.csv",
+    "l1_nve_dt1.5.csv": "models/mace_gst_aging/l1_nve_dt1.5.csv",
+    "l1_stability_2000K.csv": "models/mace_gst_aging/l1_stability_2000K.csv",
+    "l1_probes.json": "models/mace_gst_aging/l1_probes.json",
+    "l2_relax.csv": "models/mace_gst_aging/l2_relax.csv",
+    "l2_eos.csv": "models/mace_gst_aging/l2_eos.csv"
+   },
+   "training_overlap": "models/mace_gst_aging/training_overlap.json"
+  }
+ }
+}

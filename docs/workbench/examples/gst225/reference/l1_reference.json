@@ -1,0 +1,5 @@
+{
+ "format": "mlipeval-l1-reference/1",
+ "aimd_nve_drift_meV_per_atom_per_ps": 0.04297748869479389,
+ "note": "AIMD NVE run of the same cell, density, temperature and timestep (H0_preflight_03_nve1200); optional -- with it the NVE drift check is a like-for-like comparison"
+}

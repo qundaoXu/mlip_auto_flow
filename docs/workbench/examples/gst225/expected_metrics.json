@@ -1,0 +1,5333 @@
+{
+ "note": "HPC values of the scalar L0 (audit), L1 and L2 metrics; [value, status, trained_on_this_reference]",
+ "models": {
+  "mace_mpa0": {
+   "L0.model_eval_failures": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.nonfinite_energies": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.energy_mae": [
+    8.417542693067285,
+    "provisional",
+    false
+   ],
+   "L0.energy_rmse": [
+    10.269024218047212,
+    "provisional",
+    false
+   ],
+   "L0.energy_p99": [
+    18.703353945772395,
+    "provisional",
+    false
+   ],
+   "L0.energy_max": [
+    22.08382940882433,
+    "provisional",
+    false
+   ],
+   "L0.energy_offset_spread": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L0.force_mae": [
+    0.09849646460376221,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse": [
+    0.12512858565264248,
+    "provisional",
+    false
+   ],
+   "L0.force_p99": [
+    0.336929559327775,
+    "provisional",
+    false
+   ],
+   "L0.force_max": [
+    0.6529784582204963,
+    "provisional",
+    false
+   ],
+   "L0.force_component_r2": [
+    0.9495149986040354,
+    "ok",
+    false
+   ],
+   "L0.force_mae.species=Ge": [
+    0.09402140134954107,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Sb": [
+    0.10008795618483622,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Te": [
+    0.09964989327302105,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=>=8": [
+    0.4248333785290188,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0,0.5)": [
+    0.1778008832301179,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0.5,1)": [
+    0.19448714998605052,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[1,2)": [
+    0.22179526583492304,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[2,4)": [
+    0.252219820245925,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[4,8)": [
+    0.29588771441918443,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=heat": [
+    0.11820948797965494,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=liquid1200": [
+    0.13090096379011243,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=md950": [
+    0.12402661278655391,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=melt3000": [
+    0.15383363469646635,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=prod300": [
+    0.107328815749036,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=quench": [
+    0.11814618271923419,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=heat": [
+    6.761293972259065,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=liquid1200": [
+    7.304415691175438,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=md950": [
+    3.524498209758829,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=melt3000": [
+    15.16564472779242,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=prod300": [
+    17.117182322433617,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=quench": [
+    7.181514439101002,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=amorphous_300K": [
+    0.107328815749036,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=heating_300_1200K": [
+    0.11820948797965494,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_1200K": [
+    0.13090096379011243,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_3000K": [
+    0.15383363469646635,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_950K": [
+    0.12402661278655391,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=quench_1200_300K": [
+    0.11814618271923419,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=amorphous_300K": [
+    17.117182322433617,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=heating_300_1200K": [
+    6.761293972259065,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_1200K": [
+    7.304415691175438,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_3000K": [
+    15.16564472779242,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_950K": [
+    3.524498209758829,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=quench_1200_300K": [
+    7.181514439101002,
+    "provisional",
+    false
+   ],
+   "L0.stress_mae": [
+    0.3392613194306111,
+    "provisional",
+    false
+   ],
+   "L0.stress_rmse": [
+    0.4480888868584903,
+    "provisional",
+    false
+   ],
+   "L0.stress_max": [
+    2.0744212362664056,
+    "provisional",
+    false
+   ],
+   "L0.worst_cases": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Ge": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Sb": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Te": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Sb-Sb": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Sb-Te": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Te-Te": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.translation_invariance": [
+    9.094947017729282e-13,
+    "ok",
+    false
+   ],
+   "L1.rotation_invariance": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L1.net_force": [
+    5.4701654547029646e-18,
+    "ok",
+    false
+   ],
+   "L1.net_torque": [
+    0.15899469715155348,
+    "ok",
+    false
+   ],
+   "L1.force_vs_dE_dx": [
+    2.8274531933439208e-06,
+    "ok",
+    false
+   ],
+   "L1.stress_vs_dE_dstrain": [
+    4.489802760889368e-09,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_finite": [
+    31,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_smoothness": [
+    4.374122888039013,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_compression_monotonic": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.completed": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.min_distance": [
+    2.1821665301903503,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.mean_temperature": [
+    1990.307035239606,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.drift_spread": [
+    0.0005571226548724762,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=3fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=1.5fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.nve_drift.dt=3fs": [
+    -0.0007633046488137977,
+    "ok",
+    false
+   ],
+   "L1.com_drift.dt=3fs": [
+    1.464821375527116e-14,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.energy_per_atom": [
+    -3.79334999928091,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.volume_error": [
+    0.8608415168722567,
+    "provisional",
+    false
+   ],
+   "L2.relax.hex_mp1224375.cell_length_error": [
+    1.1705287862150413,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.energy_per_atom": [
+    -3.7484003499615124,
+    "ok",
+    false
+   ],
+   "L2.relax.cubic_s01.volume_error": [
+    0.4256235974404309,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.cell_length_error": [
+    0.18897944049898352,
+    "provisional",
+    false
+   ],
+   "L2.phase_order.cubic_minus_hexagonal": [
+    44.94964931939771,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.energy_per_atom": [
+    -3.7802556108089056,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp3534.volume_error": [
+    0.6892510036254644,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.cell_length_error": [
+    0.7890158639295296,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.energy_per_atom": [
+    -3.750810203978803,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp1224407.volume_error": [
+    1.3472460966639843,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.cell_length_error": [
+    0.21701631552008285,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.mp3534": [
+    -2.034340416884106,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.mp1224407": [
+    4.729499746551014,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.cubic": [
+    -9.697819328941208,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.inversions": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L2.phase_ladder.kendall_tau": [
+    1.0,
+    "ok",
+    false
+   ],
+   "L2.phase_ladder.max_dE_error": [
+    9.697819328941208,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Ge.energy_per_atom": [
+    -4.610270585049312,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Ge.volume_error": [
+    -2.917329577294,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Ge.cell_length_error": [
+    0.9820551072354998,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Sb.energy_per_atom": [
+    -4.116895497842684,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Sb.volume_error": [
+    1.0575496308748997,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Sb.cell_length_error": [
+    2.370560388408748,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Te.energy_per_atom": [
+    -3.097881269967953,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Te.volume_error": [
+    -6.810071367920983,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Te.cell_length_error": [
+    7.05492981737344,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp1224375": [
+    -23.163687915307207,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp3534": [
+    -25.198028332191313,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp1224407": [
+    -18.434188168756194,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.cubic": [
+    -32.96790655483761,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.cubic_minus_hexagonal": [
+    43.49981911151923,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.V0": [
+    30.988879553544443,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.B0": [
+    25.72452388121918,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.V0_error": [
+    -0.12448924267306823,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.B0_error": [
+    -17.24302278683537,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0": [
+    32.39942557626789,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0": [
+    19.6936485448406,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0_error": [
+    0.3714524752411621,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0_error": [
+    -16.129058055149905,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_V0_spread": [
+    0.060330022786882834,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_B0_spread": [
+    1.247668503191394,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.V0_error_vs_seed_spread": [
+    1.987448845129421,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.B0_error_vs_seed_spread": [
+    3.0416917129484053,
+    "provisional",
+    false
+   ],
+   "L1:gate_pass": [
+    true,
+    "context",
+    false
+   ]
+  },
+  "nequip_oam_l": {
+   "L0.model_eval_failures": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.nonfinite_energies": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.energy_mae": [
+    5.34474036605946,
+    "provisional",
+    false
+   ],
+   "L0.energy_rmse": [
+    6.608267700519598,
+    "provisional",
+    false
+   ],
+   "L0.energy_p99": [
+    12.527826182698135,
+    "provisional",
+    false
+   ],
+   "L0.energy_max": [
+    12.829402811556012,
+    "provisional",
+    false
+   ],
+   "L0.energy_offset_spread": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L0.force_mae": [
+    0.0680642465633333,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse": [
+    0.08632165078642406,
+    "provisional",
+    false
+   ],
+   "L0.force_p99": [
+    0.23203627623197556,
+    "provisional",
+    false
+   ],
+   "L0.force_max": [
+    0.44106775467306564,
+    "provisional",
+    false
+   ],
+   "L0.force_component_r2": [
+    0.976886322996709,
+    "ok",
+    false
+   ],
+   "L0.force_mae.species=Ge": [
+    0.06337621936263421,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Sb": [
+    0.068948123332281,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Te": [
+    0.06958590673603385,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=>=8": [
+    0.08537832485071792,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0,0.5)": [
+    0.12375479726124898,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0.5,1)": [
+    0.1341342334477106,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[1,2)": [
+    0.15178879597767012,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[2,4)": [
+    0.17816925546176862,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[4,8)": [
+    0.2075784891676785,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=heat": [
+    0.08266202424621374,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=liquid1200": [
+    0.09007056738802678,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=md950": [
+    0.08636770147340957,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=melt3000": [
+    0.09954072799745696,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=prod300": [
+    0.07720739839556055,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=quench": [
+    0.08329183046351604,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=heat": [
+    4.139097578212542,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=liquid1200": [
+    4.2804299216532105,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=md950": [
+    2.2686590586990794,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=melt3000": [
+    9.566488689760092,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=prod300": [
+    11.458504875355512,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=quench": [
+    4.636986167883615,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=amorphous_300K": [
+    0.07720739839556055,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=heating_300_1200K": [
+    0.08266202424621374,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_1200K": [
+    0.09007056738802678,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_3000K": [
+    0.09954072799745696,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_950K": [
+    0.08636770147340957,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=quench_1200_300K": [
+    0.08329183046351604,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=amorphous_300K": [
+    11.458504875355512,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=heating_300_1200K": [
+    4.139097578212542,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_1200K": [
+    4.2804299216532105,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_3000K": [
+    9.566488689760092,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_950K": [
+    2.2686590586990794,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=quench_1200_300K": [
+    4.636986167883615,
+    "provisional",
+    false
+   ],
+   "L0.stress_mae": [
+    0.2049484025688971,
+    "provisional",
+    false
+   ],
+   "L0.stress_rmse": [
+    0.2669059210337543,
+    "provisional",
+    false
+   ],
+   "L0.stress_max": [
+    1.067795723752922,
+    "provisional",
+    false
+   ],
+   "L0.worst_cases": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Ge": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Sb": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Te": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Sb-Sb": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Sb-Te": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Te-Te": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.translation_invariance": [
+    7.92571586316626e-06,
+    "ok",
+    false
+   ],
+   "L1.rotation_invariance": [
+    6.702117048007494e-06,
+    "ok",
+    false
+   ],
+   "L1.net_force": [
+    5.502407131274993e-18,
+    "ok",
+    false
+   ],
+   "L1.net_torque": [
+    0.1884037355420002,
+    "ok",
+    false
+   ],
+   "L1.force_vs_dE_dx": [
+    0.0009436185729932596,
+    "ok",
+    false
+   ],
+   "L1.stress_vs_dE_dstrain": [
+    0.00027734847717082267,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_finite": [
+    31,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_smoothness": [
+    4.076416865216527,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_compression_monotonic": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.completed": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.min_distance": [
+    2.1862346460674167,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.mean_temperature": [
+    1951.1873882181442,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.drift_spread": [
+    0.000485300232975638,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=3fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=1.5fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.nve_drift.dt=3fs": [
+    -0.0005334489490933655,
+    "ok",
+    false
+   ],
+   "L1.com_drift.dt=3fs": [
+    1.3528330643921842e-14,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.energy_per_atom": [
+    -3.7981001835252304,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.volume_error": [
+    1.3422670258205047,
+    "provisional",
+    false
+   ],
+   "L2.relax.hex_mp1224375.cell_length_error": [
+    1.9271627579914488,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.energy_per_atom": [
+    -3.741944197507271,
+    "ok",
+    false
+   ],
+   "L2.relax.cubic_s01.volume_error": [
+    -0.5072728977009542,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.cell_length_error": [
+    0.1979097552181677,
+    "provisional",
+    false
+   ],
+   "L2.phase_order.cubic_minus_hexagonal": [
+    56.155986017959236,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.energy_per_atom": [
+    -3.7819220161628326,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp3534.volume_error": [
+    -0.10354042700725738,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.cell_length_error": [
+    0.7692727255326914,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.energy_per_atom": [
+    -3.752999658082018,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp1224407.volume_error": [
+    0.41957288814373705,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.cell_length_error": [
+    0.9544372108293172,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.mp3534": [
+    1.0494384735091344,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.mp1224407": [
+    7.290229887656267,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.cubic": [
+    1.5085173696203213,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.inversions": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L2.phase_ladder.kendall_tau": [
+    1.0,
+    "ok",
+    false
+   ],
+   "L2.phase_ladder.max_dE_error": [
+    7.290229887656267,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Ge.energy_per_atom": [
+    -4.613534600111304,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Ge.volume_error": [
+    -1.6390416450445158,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Ge.cell_length_error": [
+    0.549358532116149,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Sb.energy_per_atom": [
+    -4.127514765736673,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Sb.volume_error": [
+    1.1840459966935084,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Sb.cell_length_error": [
+    1.848944548010831,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Te.energy_per_atom": [
+    -3.133163105031285,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Te.volume_error": [
+    -0.5696819385030666,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Te.cell_length_error": [
+    4.6770688705551615,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp1224375": [
+    -5.227678689780468,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp3534": [
+    -4.178240216271334,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp1224407": [
+    2.062551197875795,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.cubic": [
+    -3.793097636951792,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.cubic_minus_hexagonal": [
+    54.73861880387831,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.V0": [
+    31.193308685157618,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.B0": [
+    23.662480271016452,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.V0_error": [
+    0.5343734327314503,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.B0_error": [
+    -23.876728919966936,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0": [
+    32.09668856089946,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0": [
+    23.56785732041204,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0_error": [
+    -0.5661231071667017,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0_error": [
+    0.321725125136928,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_V0_spread": [
+    0.060329986233280446,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_B0_spread": [
+    1.247668461949747,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.V0_error_vs_seed_spread": [
+    3.0290318989738507,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.B0_error_vs_seed_spread": [
+    0.06067240094526435,
+    "provisional",
+    false
+   ],
+   "L1:gate_pass": [
+    true,
+    "context",
+    false
+   ]
+  },
+  "dpa4_pro": {
+   "L0.model_eval_failures": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.nonfinite_energies": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.energy_mae": [
+    3.139229496499299,
+    "provisional",
+    false
+   ],
+   "L0.energy_rmse": [
+    3.9715734430463723,
+    "provisional",
+    false
+   ],
+   "L0.energy_p99": [
+    8.724773571889036,
+    "provisional",
+    false
+   ],
+   "L0.energy_max": [
+    9.410822658136034,
+    "provisional",
+    false
+   ],
+   "L0.energy_offset_spread": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L0.force_mae": [
+    0.06276230178791987,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse": [
+    0.08025277950562894,
+    "provisional",
+    false
+   ],
+   "L0.force_p99": [
+    0.2193593145610007,
+    "provisional",
+    false
+   ],
+   "L0.force_max": [
+    0.4709560048324746,
+    "provisional",
+    false
+   ],
+   "L0.force_component_r2": [
+    0.9794703489893641,
+    "ok",
+    false
+   ],
+   "L0.force_mae.species=Ge": [
+    0.06117784658826213,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Sb": [
+    0.06251227299667546,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Te": [
+    0.06349609538428073,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=>=8": [
+    0.1459568764844824,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0,0.5)": [
+    0.11378085681723056,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0.5,1)": [
+    0.12228990636228197,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[1,2)": [
+    0.14142507632055273,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[2,4)": [
+    0.17470619454829686,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[4,8)": [
+    0.23704180549454318,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=heat": [
+    0.07409229378457494,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=liquid1200": [
+    0.08661935530677373,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=md950": [
+    0.08068975919268719,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=melt3000": [
+    0.10158016008105003,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=prod300": [
+    0.06238993413672248,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=quench": [
+    0.07468580131772416,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=heat": [
+    2.533776210530714,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=liquid1200": [
+    2.3651893714946706,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=md950": [
+    1.020837393512972,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=melt3000": [
+    6.781481895886813,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=prod300": [
+    5.863292476265493,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=quench": [
+    2.9946450202600485,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=amorphous_300K": [
+    0.06238993413672248,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=heating_300_1200K": [
+    0.07409229378457494,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_1200K": [
+    0.08661935530677373,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_3000K": [
+    0.10158016008105003,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_950K": [
+    0.08068975919268719,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=quench_1200_300K": [
+    0.07468580131772416,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=amorphous_300K": [
+    5.863292476265493,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=heating_300_1200K": [
+    2.533776210530714,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_1200K": [
+    2.3651893714946706,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_3000K": [
+    6.781481895886813,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_950K": [
+    1.020837393512972,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=quench_1200_300K": [
+    2.9946450202600485,
+    "provisional",
+    false
+   ],
+   "L0.stress_mae": [
+    0.3980411058407871,
+    "provisional",
+    false
+   ],
+   "L0.stress_rmse": [
+    0.602116662057236,
+    "provisional",
+    false
+   ],
+   "L0.stress_max": [
+    1.9548209371159955,
+    "provisional",
+    false
+   ],
+   "L0.worst_cases": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Ge": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Ge-Sb": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Ge-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Sb-Sb": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Sb-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Te-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.translation_invariance": [
+    4.188623279333115e-06,
+    "ok",
+    false
+   ],
+   "L1.rotation_invariance": [
+    2.1099112927913666e-05,
+    "ok",
+    false
+   ],
+   "L1.net_force": [
+    2.6747187558201756e-09,
+    "ok",
+    false
+   ],
+   "L1.net_torque": [
+    0.17122093028564644,
+    "ok",
+    false
+   ],
+   "L1.force_vs_dE_dx": [
+    0.0011340867532039956,
+    "ok",
+    false
+   ],
+   "L1.stress_vs_dE_dstrain": [
+    0.00033862822757501623,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_finite": [
+    31,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_smoothness": [
+    3.489002694599051,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_compression_monotonic": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.completed": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.min_distance": [
+    2.113787468896687,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.mean_temperature": [
+    1979.990051281486,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.drift_spread": [
+    0.0012791744587080938,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=3fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=1.5fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.nve_drift.dt=3fs": [
+    -0.0017011486201523832,
+    "ok",
+    false
+   ],
+   "L1.com_drift.dt=3fs": [
+    8.557336083642492e-09,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.energy_per_atom": [
+    -3.7959870925790304,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.volume_error": [
+    3.450398089760737,
+    "provisional",
+    false
+   ],
+   "L2.relax.hex_mp1224375.cell_length_error": [
+    4.500741308311789,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.energy_per_atom": [
+    -3.7381300406041214,
+    "ok",
+    false
+   ],
+   "L2.relax.cubic_s01.volume_error": [
+    -0.4808543462702351,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.cell_length_error": [
+    0.20064966613177201,
+    "provisional",
+    false
+   ],
+   "L2.phase_order.cubic_minus_hexagonal": [
+    57.85705197490909,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.energy_per_atom": [
+    -3.778427913577646,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp3534.volume_error": [
+    -0.13221895224033298,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.cell_length_error": [
+    0.2565463501558898,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.energy_per_atom": [
+    -3.7550179840372238,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp1224407.volume_error": [
+    0.7165301687489115,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.cell_length_error": [
+    1.223866409368268,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.mp3534": [
+    2.4304501124956523,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.mp1224407": [
+    3.1588129862507657,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.cubic": [
+    3.2095833265701756,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.inversions": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L2.phase_ladder.kendall_tau": [
+    1.0,
+    "ok",
+    false
+   ],
+   "L2.phase_ladder.max_dE_error": [
+    3.2095833265701756,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Ge.energy_per_atom": [
+    -4.599413668998194,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Ge.volume_error": [
+    -0.7398254382802613,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Ge.cell_length_error": [
+    0.2472177541306257,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Sb.energy_per_atom": [
+    -4.139436112986363,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Sb.volume_error": [
+    0.0768406035537927,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Sb.cell_length_error": [
+    0.3586399478333099,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Te.energy_per_atom": [
+    -3.1390422179406223,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Te.volume_error": [
+    0.6650143179364351,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Te.cell_length_error": [
+    0.6626336726448414,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp1224375": [
+    -0.33721031915323607,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp3534": [
+    2.0932397933424163,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp1224407": [
+    2.8216026670975225,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.cubic": [
+    2.8064308542461447,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.cubic_minus_hexagonal": [
+    56.44767892444902,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.V0": [
+    31.839668688760653,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.B0": [
+    19.78719831931916,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.V0_error": [
+    2.617557317778202,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.B0_error": [
+    -36.34368653142025,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0": [
+    32.155922489208095,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0": [
+    21.851732424072804,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0_error": [
+    -0.38258644801105834,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0_error": [
+    -6.933665061750905,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_V0_spread": [
+    0.060329986233280446,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_B0_spread": [
+    1.247668461949747,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.V0_error_vs_seed_spread": [
+    2.047022176749543,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.B0_error_vs_seed_spread": [
+    1.307582385639534,
+    "provisional",
+    false
+   ],
+   "L1:gate_pass": [
+    false,
+    "context",
+    false
+   ]
+  },
+  "mattersim_5m": {
+   "L0.model_eval_failures": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.nonfinite_energies": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.energy_mae": [
+    4.336526938291555,
+    "provisional",
+    false
+   ],
+   "L0.energy_rmse": [
+    5.736800022499263,
+    "provisional",
+    false
+   ],
+   "L0.energy_p99": [
+    13.61253106125154,
+    "provisional",
+    false
+   ],
+   "L0.energy_max": [
+    16.23892531480195,
+    "provisional",
+    false
+   ],
+   "L0.energy_offset_spread": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L0.force_mae": [
+    0.12074331270563408,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse": [
+    0.15264413370264257,
+    "provisional",
+    false
+   ],
+   "L0.force_p99": [
+    0.40532332408666144,
+    "provisional",
+    false
+   ],
+   "L0.force_max": [
+    0.8023624730072021,
+    "provisional",
+    false
+   ],
+   "L0.force_component_r2": [
+    0.9264323844958734,
+    "ok",
+    false
+   ],
+   "L0.force_mae.species=Ge": [
+    0.10871956608800275,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Sb": [
+    0.1225119475365045,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Te": [
+    0.12484535742033842,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=>=8": [
+    0.15892082242060318,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0,0.5)": [
+    0.23369203211084974,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0.5,1)": [
+    0.2415341298544484,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[1,2)": [
+    0.251041180992528,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[2,4)": [
+    0.25884729232159925,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[4,8)": [
+    0.2665119594724776,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=heat": [
+    0.15136984564582182,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=liquid1200": [
+    0.1549128560168687,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=md950": [
+    0.1518814070624903,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=melt3000": [
+    0.16127182603093387,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=prod300": [
+    0.14611980445384448,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=quench": [
+    0.1513658915023223,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=heat": [
+    2.850403090412897,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=liquid1200": [
+    2.5075606239977604,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=md950": [
+    2.307163676453828,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=melt3000": [
+    9.737146925232173,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=prod300": [
+    8.656488153233232,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=quench": [
+    3.475886270135821,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=amorphous_300K": [
+    0.14611980445384448,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=heating_300_1200K": [
+    0.15136984564582182,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_1200K": [
+    0.1549128560168687,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_3000K": [
+    0.16127182603093387,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_950K": [
+    0.1518814070624903,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=quench_1200_300K": [
+    0.1513658915023223,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=amorphous_300K": [
+    8.656488153233232,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=heating_300_1200K": [
+    2.850403090412897,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_1200K": [
+    2.5075606239977604,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_3000K": [
+    9.737146925232173,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_950K": [
+    2.307163676453828,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=quench_1200_300K": [
+    3.475886270135821,
+    "provisional",
+    false
+   ],
+   "L0.stress_mae": [
+    0.3143840790852714,
+    "provisional",
+    false
+   ],
+   "L0.stress_rmse": [
+    0.40284137871723236,
+    "provisional",
+    false
+   ],
+   "L0.stress_max": [
+    2.223128527187246,
+    "provisional",
+    false
+   ],
+   "L0.worst_cases": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Ge": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Sb": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Te": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Sb-Sb": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Sb-Te": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Te-Te": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.translation_invariance": [
+    0.0001220703125,
+    "ok",
+    false
+   ],
+   "L1.rotation_invariance": [
+    0.000244140625,
+    "ok",
+    false
+   ],
+   "L1.net_force": [
+    5.7793250185511624e-09,
+    "ok",
+    false
+   ],
+   "L1.net_torque": [
+    0.1393664108407541,
+    "ok",
+    false
+   ],
+   "L1.force_vs_dE_dx": [
+    0.011727777309715748,
+    "ok",
+    false
+   ],
+   "L1.stress_vs_dE_dstrain": [
+    0.0030395593553693657,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_finite": [
+    31,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_smoothness": [
+    4.053775339627527,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_compression_monotonic": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.completed": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.min_distance": [
+    2.179183867949339,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.mean_temperature": [
+    1976.696945492637,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.drift_spread": [
+    0.0014444325903211971,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=3fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=1.5fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.nve_drift.dt=3fs": [
+    -0.00244402128060716,
+    "ok",
+    false
+   ],
+   "L1.com_drift.dt=3fs": [
+    9.567216418512195e-09,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.energy_per_atom": [
+    -3.7818591594696045,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.volume_error": [
+    0.7421105141097021,
+    "provisional",
+    false
+   ],
+   "L2.relax.hex_mp1224375.cell_length_error": [
+    1.5502383119832261,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.energy_per_atom": [
+    -3.749584674835205,
+    "ok",
+    false
+   ],
+   "L2.relax.cubic_s01.volume_error": [
+    -0.6850209203922744,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.cell_length_error": [
+    0.3515837390142032,
+    "provisional",
+    false
+   ],
+   "L2.phase_order.cubic_minus_hexagonal": [
+    32.274484634399414,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.energy_per_atom": [
+    -3.759566068649292,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp3534.volume_error": [
+    3.3331388036487875,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.cell_length_error": [
+    5.64170632190766,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.energy_per_atom": [
+    -3.7525618076324463,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp1224407.volume_error": [
+    -0.6320088796538422,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.cell_length_error": [
+    1.31645467683383,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.mp3534": [
+    7.16436193142389,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.mp1224407": [
+    -8.512943718397722,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.cubic": [
+    -22.3729840139395,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.inversions": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L2.phase_ladder.kendall_tau": [
+    1.0,
+    "ok",
+    false
+   ],
+   "L2.phase_ladder.max_dE_error": [
+    22.3729840139395,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Ge.energy_per_atom": [
+    -4.523266315460205,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Ge.volume_error": [
+    -0.9093309875415514,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Ge.cell_length_error": [
+    0.3040321785501777,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Sb.energy_per_atom": [
+    -4.101583480834961,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Sb.volume_error": [
+    -0.30770321014026686,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Sb.cell_length_error": [
+    0.31490477766036984,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Te.energy_per_atom": [
+    -3.073148727416992,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Te.volume_error": [
+    -6.269618840759036,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Te.cell_length_error": [
+    6.3555063550510695,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp1224375": [
+    -48.150102098275305,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp3534": [
+    -40.985740166851414,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp1224407": [
+    -56.66304581667303,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.cubic": [
+    -70.59921554795024,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.cubic_minus_hexagonal": [
+    30.85492430137471,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.V0": [
+    30.997144347948502,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.B0": [
+    27.185621398323583,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.V0_error": [
+    -0.09785378401613422,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.B0_error": [
+    -12.542624294607078,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0": [
+    31.977551851626373,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0": [
+    26.055622388021863,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0_error": [
+    -0.9352000838736888,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0_error": [
+    10.999163073907884,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_V0_spread": [
+    0.060329986233280446,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_B0_spread": [
+    1.247668461949747,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.V0_error_vs_seed_spread": [
+    5.003771883033715,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.B0_error_vs_seed_spread": [
+    2.0742726630332626,
+    "provisional",
+    false
+   ],
+   "L1:gate_pass": [
+    true,
+    "context",
+    false
+   ]
+  },
+  "chgnet_030": {
+   "L0.model_eval_failures": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.nonfinite_energies": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.energy_mae": [
+    38.22555716688688,
+    "provisional",
+    false
+   ],
+   "L0.energy_rmse": [
+    45.87975258066281,
+    "provisional",
+    false
+   ],
+   "L0.energy_p99": [
+    79.3857459617919,
+    "provisional",
+    false
+   ],
+   "L0.energy_max": [
+    83.26585813650578,
+    "provisional",
+    false
+   ],
+   "L0.energy_offset_spread": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L0.force_mae": [
+    0.2352176684518542,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse": [
+    0.2987449901396042,
+    "provisional",
+    false
+   ],
+   "L0.force_p99": [
+    0.8006087490481196,
+    "provisional",
+    false
+   ],
+   "L0.force_max": [
+    2.1243990390625003,
+    "provisional",
+    false
+   ],
+   "L0.force_component_r2": [
+    0.7123831252806332,
+    "ok",
+    false
+   ],
+   "L0.force_mae.species=Ge": [
+    0.23430640961793503,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Sb": [
+    0.22583984936648507,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Te": [
+    0.23933329961956953,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=>=8": [
+    2.028469124085673,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0,0.5)": [
+    0.3512656315135935,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0.5,1)": [
+    0.47553446620247813,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[1,2)": [
+    0.6142069876863122,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[2,4)": [
+    0.6668527638906403,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[4,8)": [
+    0.8033439662515356,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=heat": [
+    0.29268330861357483,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=liquid1200": [
+    0.31452056787795496,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=md950": [
+    0.303362277072527,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=melt3000": [
+    0.34777909062688545,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=prod300": [
+    0.2368452601002626,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=quench": [
+    0.28382800181730655,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=heat": [
+    34.13917835839009,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=liquid1200": [
+    28.689093151280137,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=md950": [
+    15.817174008680707,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=melt3000": [
+    66.6333799125138,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=prod300": [
+    77.81267944512507,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=quench": [
+    32.756600092034354,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=amorphous_300K": [
+    0.2368452601002626,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=heating_300_1200K": [
+    0.29268330861357483,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_1200K": [
+    0.31452056787795496,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_3000K": [
+    0.34777909062688545,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_950K": [
+    0.303362277072527,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=quench_1200_300K": [
+    0.28382800181730655,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=amorphous_300K": [
+    77.81267944512507,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=heating_300_1200K": [
+    34.13917835839009,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_1200K": [
+    28.689093151280137,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_3000K": [
+    66.6333799125138,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_950K": [
+    15.817174008680707,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=quench_1200_300K": [
+    32.756600092034354,
+    "provisional",
+    false
+   ],
+   "L0.stress_mae": [
+    1.742071448091928,
+    "provisional",
+    false
+   ],
+   "L0.stress_rmse": [
+    2.596660167926549,
+    "provisional",
+    false
+   ],
+   "L0.stress_max": [
+    7.155108230707289,
+    "provisional",
+    false
+   ],
+   "L0.worst_cases": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Ge": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Ge-Sb": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Ge-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Sb-Sb": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Sb-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Te-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.translation_invariance": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L1.rotation_invariance": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L1.net_force": [
+    5.207805298113044e-09,
+    "ok",
+    false
+   ],
+   "L1.net_torque": [
+    0.1523139466845596,
+    "ok",
+    false
+   ],
+   "L1.force_vs_dE_dx": [
+    0.007751065772026777,
+    "ok",
+    false
+   ],
+   "L1.stress_vs_dE_dstrain": [
+    0.0015714741270908164,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_finite": [
+    31,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_smoothness": [
+    2.0803615774312822,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_compression_monotonic": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.completed": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.min_distance": [
+    2.1533927158292454,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.mean_temperature": [
+    1960.677043914572,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.drift_spread": [
+    0.06570289620859826,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=3fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=1.5fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.nve_drift.dt=3fs": [
+    -0.0630569925973085,
+    "ok",
+    false
+   ],
+   "L1.com_drift.dt=3fs": [
+    1.8383699017046757e-08,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.energy_per_atom": [
+    -4.007842540740967,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.volume_error": [
+    5.12606966144601,
+    "provisional",
+    false
+   ],
+   "L2.relax.hex_mp1224375.cell_length_error": [
+    6.370626559740759,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.energy_per_atom": [
+    -4.008533000946045,
+    "ok",
+    false
+   ],
+   "L2.relax.cubic_s01.volume_error": [
+    -0.8341487217942741,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.cell_length_error": [
+    0.6130357583387943,
+    "provisional",
+    false
+   ],
+   "L2.phase_order.cubic_minus_hexagonal": [
+    -0.690460205078125,
+    "failed",
+    false
+   ],
+   "L2.relax.phase_mp3534.energy_per_atom": [
+    -4.005373954772949,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp3534.volume_error": [
+    2.0954995569807813,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.cell_length_error": [
+    0.7868589241580486,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.energy_per_atom": [
+    -4.013232707977295,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp1224407.volume_error": [
+    -2.463940218038371,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.cell_length_error": [
+    2.219455729098433,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.mp3534": [
+    -12.660142920871031,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.mp1224407": [
+    -43.20046279188405,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.dE_error.cubic": [
+    -55.33792885341704,
+    "provisional",
+    false
+   ],
+   "L2.phase_ladder.inversions": [
+    4.0,
+    "failed",
+    false
+   ],
+   "L2.phase_ladder.kendall_tau": [
+    -0.33333333333333326,
+    "ok",
+    false
+   ],
+   "L2.phase_ladder.max_dE_error": [
+    55.33792885341704,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Ge.energy_per_atom": [
+    -4.456680774688721,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Ge.volume_error": [
+    -0.8519000332728602,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Ge.cell_length_error": [
+    0.2847759859615525,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Sb.energy_per_atom": [
+    -4.06784725189209,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Sb.volume_error": [
+    -4.058289234787258,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Sb.cell_length_error": [
+    5.421597830206372,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Te.energy_per_atom": [
+    -3.1694324016571045,
+    "ok",
+    false
+   ],
+   "L2.relax.element_Te.volume_error": [
+    9.584843856721212,
+    "provisional",
+    false
+   ],
+   "L2.relax.element_Te.cell_length_error": [
+    9.294808404068196,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp1224375": [
+    -242.9362798394319,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp3534": [
+    -255.59642276030291,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.mp1224407": [
+    -286.13674263131594,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.dE_error.cubic": [
+    -298.18258949273434,
+    "provisional",
+    false
+   ],
+   "L2.formation_energy.cubic_minus_hexagonal": [
+    -1.9422719022528234,
+    "failed",
+    false
+   ],
+   "L2.eos.hex.V0": [
+    32.3730926002607,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.B0": [
+    9.588609492425695,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.V0_error": [
+    4.336754189708967,
+    "provisional",
+    false
+   ],
+   "L2.eos.hex.B0_error": [
+    -69.15300884300981,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0": [
+    32.01182137754354,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0": [
+    17.148750080568355,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0_error": [
+    -0.8290395240449703,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0_error": [
+    -26.937894419377365,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_V0_spread": [
+    0.060329986233280446,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_B0_spread": [
+    1.247668461949747,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.V0_error_vs_seed_spread": [
+    4.435761642746133,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.B0_error_vs_seed_spread": [
+    5.0800717853107,
+    "provisional",
+    false
+   ],
+   "L1:gate_pass": [
+    false,
+    "context",
+    false
+   ]
+  },
+  "mace_spec_gst": {
+   "L0.model_eval_failures": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.nonfinite_energies": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.energy_mae": [
+    4.860598380994038,
+    "provisional",
+    false
+   ],
+   "L0.energy_rmse": [
+    5.893071604959849,
+    "provisional",
+    false
+   ],
+   "L0.energy_p99": [
+    11.595188637175792,
+    "provisional",
+    false
+   ],
+   "L0.energy_max": [
+    12.319477038797196,
+    "provisional",
+    false
+   ],
+   "L0.energy_offset_spread": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L0.force_mae": [
+    0.07011243962195393,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse": [
+    0.08947399942575025,
+    "provisional",
+    false
+   ],
+   "L0.force_p99": [
+    0.24355846727061395,
+    "provisional",
+    false
+   ],
+   "L0.force_max": [
+    0.5034295060681766,
+    "provisional",
+    false
+   ],
+   "L0.force_component_r2": [
+    0.9742190200362346,
+    "ok",
+    false
+   ],
+   "L0.force_mae.species=Ge": [
+    0.06229734168669513,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Sb": [
+    0.0724600412324225,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Te": [
+    0.07229943815187005,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=>=8": [
+    0.33049989565831694,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0,0.5)": [
+    0.13067989313519834,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0.5,1)": [
+    0.13865437252970692,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[1,2)": [
+    0.15222889094529535,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[2,4)": [
+    0.1773382998561276,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[4,8)": [
+    0.19532394167740919,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=heat": [
+    0.08398762201060868,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=liquid1200": [
+    0.09404255228030528,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=md950": [
+    0.08758629603837813,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=melt3000": [
+    0.11050989802734276,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=prod300": [
+    0.07810982362086495,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=quench": [
+    0.08544249053970997,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=heat": [
+    3.9713099692140488,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=liquid1200": [
+    3.8936427965263483,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=md950": [
+    2.663076900385339,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=melt3000": [
+    6.919123918490926,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=prod300": [
+    10.71230647604924,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=quench": [
+    4.090940117687014,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=amorphous_300K": [
+    0.07810982362086495,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=heating_300_1200K": [
+    0.08398762201060868,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_1200K": [
+    0.09404255228030528,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_3000K": [
+    0.11050989802734276,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_950K": [
+    0.08758629603837813,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=quench_1200_300K": [
+    0.08544249053970997,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=amorphous_300K": [
+    10.71230647604924,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=heating_300_1200K": [
+    3.9713099692140488,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_1200K": [
+    3.8936427965263483,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_3000K": [
+    6.919123918490926,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_950K": [
+    2.663076900385339,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=quench_1200_300K": [
+    4.090940117687014,
+    "provisional",
+    false
+   ],
+   "L0.stress_mae": [
+    0.20009480717410033,
+    "provisional",
+    false
+   ],
+   "L0.stress_rmse": [
+    0.25652112450466774,
+    "provisional",
+    false
+   ],
+   "L0.stress_max": [
+    1.0463103531648688,
+    "provisional",
+    false
+   ],
+   "L0.worst_cases": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Ge": [
+    null,
+    "provisional",
+    true
+   ],
+   "L1.pec.Ge-Sb": [
+    null,
+    "failed",
+    true
+   ],
+   "L1.pec.Ge-Te": [
+    null,
+    "failed",
+    true
+   ],
+   "L1.pec.Sb-Sb": [
+    null,
+    "failed",
+    true
+   ],
+   "L1.pec.Sb-Te": [
+    null,
+    "provisional",
+    true
+   ],
+   "L1.pec.Te-Te": [
+    null,
+    "failed",
+    true
+   ],
+   "L1.translation_invariance": [
+    2.2737367544323206e-13,
+    "ok",
+    false
+   ],
+   "L1.rotation_invariance": [
+    1.1368683772161603e-13,
+    "ok",
+    false
+   ],
+   "L1.net_force": [
+    5.00438986696667e-18,
+    "ok",
+    false
+   ],
+   "L1.net_torque": [
+    0.1675658901822575,
+    "ok",
+    false
+   ],
+   "L1.force_vs_dE_dx": [
+    2.8155731375654784e-06,
+    "ok",
+    false
+   ],
+   "L1.stress_vs_dE_dstrain": [
+    4.044494627183008e-09,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_finite": [
+    31,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_smoothness": [
+    4.191904188904823,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_compression_monotonic": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.completed": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.min_distance": [
+    2.167402393040673,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.mean_temperature": [
+    1970.9156538468367,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.drift_spread": [
+    0.0005215876064926038,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=3fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=1.5fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.nve_drift.dt=3fs": [
+    -0.0006709475757237626,
+    "ok",
+    false
+   ],
+   "L1.com_drift.dt=3fs": [
+    1.1916163935586911e-14,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.energy_per_atom": [
+    -3.768455439462741,
+    "provisional",
+    true
+   ],
+   "L2.relax.hex_mp1224375.volume_error": [
+    1.9668813082432348,
+    "provisional",
+    true
+   ],
+   "L2.relax.hex_mp1224375.cell_length_error": [
+    2.534415555655941,
+    "provisional",
+    true
+   ],
+   "L2.relax.cubic_s01.energy_per_atom": [
+    -3.719492414737766,
+    "ok",
+    false
+   ],
+   "L2.relax.cubic_s01.volume_error": [
+    -0.49159825919717354,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.cell_length_error": [
+    0.20111404213437092,
+    "provisional",
+    false
+   ],
+   "L2.phase_order.cubic_minus_hexagonal": [
+    48.96302472497504,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp3534.energy_per_atom": [
+    -3.75467286398437,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp3534.volume_error": [
+    -0.054463438759403744,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.cell_length_error": [
+    0.09144196023457744,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.energy_per_atom": [
+    -3.7261103612811386,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp1224407.volume_error": [
+    -1.021914875788539,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp1224407.cell_length_error": [
+    1.0141926800818049,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.mp3534": [
+    -1.34615341051747,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.mp1224407": [
+    4.5347826260466775,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.cubic": [
+    -5.684443923363872,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.inversions": [
+    0.0,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.kendall_tau": [
+    1.0,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.max_dE_error": [
+    5.684443923363872,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.energy_per_atom": [
+    -4.487452525624811,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.volume_error": [
+    0.7213401272857778,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.cell_length_error": [
+    0.239873370090975,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.energy_per_atom": [
+    -4.141344859216514,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.volume_error": [
+    0.7836112463157769,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.cell_length_error": [
+    2.160569239518041,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.energy_per_atom": [
+    -3.1459295900986137,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.volume_error": [
+    0.09330126694347313,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.cell_length_error": [
+    1.5867650253091923,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp1224375": [
+    6.564672408635008,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp3534": [
+    5.218518998117538,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp1224407": [
+    11.099455034681682,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.cubic": [
+    0.8852068025810844,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.cubic_minus_hexagonal": [
+    47.62457214499571,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.V0": [
+    31.270686577303675,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.B0": [
+    24.165175133182007,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.V0_error": [
+    0.7837598079040504,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.B0_error": [
+    -22.259519473209533,
+    "provisional",
+    true
+   ],
+   "L2.eos.cubic.V0": [
+    32.060050916158545,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0": [
+    25.350941850679238,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0_error": [
+    -0.6795999208392208,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0_error": [
+    8.014676160885893,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_V0_spread": [
+    0.060330022786882834,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_B0_spread": [
+    1.247668503191394,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.V0_error_vs_seed_spread": [
+    3.6361854284186563,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.B0_error_vs_seed_spread": [
+    1.511444374319675,
+    "provisional",
+    false
+   ],
+   "L1:gate_pass": [
+    false,
+    "context",
+    false
+   ]
+  },
+  "mace_spec_gst_ne": {
+   "L0.model_eval_failures": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.nonfinite_energies": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.energy_mae": [
+    4.140714972559808,
+    "provisional",
+    false
+   ],
+   "L0.energy_rmse": [
+    5.062782002176734,
+    "provisional",
+    false
+   ],
+   "L0.energy_p99": [
+    10.86951804089346,
+    "provisional",
+    false
+   ],
+   "L0.energy_max": [
+    11.220780604864611,
+    "provisional",
+    false
+   ],
+   "L0.energy_offset_spread": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L0.force_mae": [
+    0.06756454042288514,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse": [
+    0.08614575439575786,
+    "provisional",
+    false
+   ],
+   "L0.force_p99": [
+    0.23541709245185397,
+    "provisional",
+    false
+   ],
+   "L0.force_max": [
+    0.5755720628335514,
+    "provisional",
+    false
+   ],
+   "L0.force_component_r2": [
+    0.9761148468888716,
+    "ok",
+    false
+   ],
+   "L0.force_mae.species=Ge": [
+    0.06025192582911118,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Sb": [
+    0.07040859480600964,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Te": [
+    0.06935196450714491,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=>=8": [
+    0.21748440293550347,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0,0.5)": [
+    0.12697105708026074,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0.5,1)": [
+    0.132982623113886,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[1,2)": [
+    0.1458109868716801,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[2,4)": [
+    0.1713397122851359,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[4,8)": [
+    0.21588231589692497,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=heat": [
+    0.0809677536560432,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=liquid1200": [
+    0.08959106961014564,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=md950": [
+    0.08405489974326419,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=melt3000": [
+    0.10695701831335137,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=prod300": [
+    0.0766404392208396,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=quench": [
+    0.08165345975690676,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=heat": [
+    3.336410198743052,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=liquid1200": [
+    3.3883627500577878,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=md950": [
+    2.2838808849399235,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=melt3000": [
+    5.686389499067015,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=prod300": [
+    9.250773569417012,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=quench": [
+    3.5596117945706953,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=amorphous_300K": [
+    0.0766404392208396,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=heating_300_1200K": [
+    0.0809677536560432,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_1200K": [
+    0.08959106961014564,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_3000K": [
+    0.10695701831335137,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_950K": [
+    0.08405489974326419,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=quench_1200_300K": [
+    0.08165345975690676,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=amorphous_300K": [
+    9.250773569417012,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=heating_300_1200K": [
+    3.336410198743052,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_1200K": [
+    3.3883627500577878,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_3000K": [
+    5.686389499067015,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_950K": [
+    2.2838808849399235,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=quench_1200_300K": [
+    3.5596117945706953,
+    "provisional",
+    false
+   ],
+   "L0.stress_mae": [
+    0.2054546831863245,
+    "provisional",
+    false
+   ],
+   "L0.stress_rmse": [
+    0.2658627834359294,
+    "provisional",
+    false
+   ],
+   "L0.stress_max": [
+    1.1219924157399899,
+    "provisional",
+    false
+   ],
+   "L0.worst_cases": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Ge": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Ge-Sb": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Ge-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Sb-Sb": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Sb-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Te-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.translation_invariance": [
+    2.2737367544323206e-13,
+    "ok",
+    false
+   ],
+   "L1.rotation_invariance": [
+    1.1368683772161603e-13,
+    "ok",
+    false
+   ],
+   "L1.net_force": [
+    8.257596985817641e-18,
+    "ok",
+    false
+   ],
+   "L1.net_torque": [
+    0.19808881092076894,
+    "ok",
+    false
+   ],
+   "L1.force_vs_dE_dx": [
+    3.3365600795212163e-06,
+    "ok",
+    false
+   ],
+   "L1.stress_vs_dE_dstrain": [
+    4.456550738311071e-09,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_finite": [
+    31,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_smoothness": [
+    3.7328149233995638,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_compression_monotonic": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.completed": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.min_distance": [
+    2.226927372804285,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.mean_temperature": [
+    1975.9733420079226,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.drift_spread": [
+    0.001999929660921931,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=3fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=1.5fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.nve_drift.dt=3fs": [
+    -0.0027110139391725227,
+    "ok",
+    false
+   ],
+   "L1.com_drift.dt=3fs": [
+    1.2560739669470201e-14,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.energy_per_atom": [
+    -3.7713111864253324,
+    "provisional",
+    true
+   ],
+   "L2.relax.hex_mp1224375.volume_error": [
+    1.8305919389035472,
+    "provisional",
+    true
+   ],
+   "L2.relax.hex_mp1224375.cell_length_error": [
+    2.5671839872791016,
+    "provisional",
+    true
+   ],
+   "L2.relax.cubic_s01.energy_per_atom": [
+    -3.721182943235647,
+    "ok",
+    false
+   ],
+   "L2.relax.cubic_s01.volume_error": [
+    -0.264996093834047,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.cell_length_error": [
+    0.15648422713481414,
+    "provisional",
+    false
+   ],
+   "L2.phase_order.cubic_minus_hexagonal": [
+    50.12824318968523,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp3534.energy_per_atom": [
+    -3.7590903026176385,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp3534.volume_error": [
+    -0.14574548446569893,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.cell_length_error": [
+    0.2584750928560254,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.energy_per_atom": [
+    -3.7314376524082586,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp1224407.volume_error": [
+    -0.41015088331824195,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp1224407.cell_length_error": [
+    0.29424660021026144,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.mp3534": [
+    -2.907845081194793,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.mp1224407": [
+    2.0632384615177983,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.cubic": [
+    -4.519225458653686,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.inversions": [
+    0.0,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.kendall_tau": [
+    1.0,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.max_dE_error": [
+    4.519225458653686,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.energy_per_atom": [
+    -4.492040232937844,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.volume_error": [
+    0.6387145963713705,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.cell_length_error": [
+    0.21245571962113474,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.energy_per_atom": [
+    -4.139521576617334,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.volume_error": [
+    -0.5117603450108537,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.cell_length_error": [
+    0.1930973662568918,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.energy_per_atom": [
+    -3.142334689814619,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.volume_error": [
+    -0.5660226572178596,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.cell_length_error": [
+    0.29450491191060274,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp1224375": [
+    2.326075224681201,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp3534": [
+    -0.581769856513592,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp1224407": [
+    4.389313686198992,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.cubic": [
+    -2.1938730766177805,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.cubic_minus_hexagonal": [
+    48.78408944975065,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.V0": [
+    31.30976738440376,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.B0": [
+    24.167334385683045,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.V0_error": [
+    0.9097151708007736,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.B0_error": [
+    -22.252573058541145,
+    "provisional",
+    true
+   ],
+   "L2.eos.cubic.V0": [
+    32.14927133468281,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0": [
+    24.57909032677021,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0_error": [
+    -0.40327094595632085,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0_error": [
+    4.711984259125745,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_V0_spread": [
+    0.060330022786882834,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_B0_spread": [
+    1.247668503191394,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.V0_error_vs_seed_spread": [
+    2.1576929196521983,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.B0_error_vs_seed_spread": [
+    0.8886075940404881,
+    "provisional",
+    false
+   ],
+   "L1:gate_pass": [
+    false,
+    "context",
+    false
+   ]
+  },
+  "nequip_spec_gst": {
+   "L0.model_eval_failures": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.nonfinite_energies": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.energy_mae": [
+    4.937774843477384,
+    "provisional",
+    false
+   ],
+   "L0.energy_rmse": [
+    5.99748894740864,
+    "provisional",
+    false
+   ],
+   "L0.energy_p99": [
+    12.69319648176158,
+    "provisional",
+    false
+   ],
+   "L0.energy_max": [
+    12.86481875100209,
+    "provisional",
+    false
+   ],
+   "L0.energy_offset_spread": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L0.force_mae": [
+    0.0792308419081578,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse": [
+    0.1009541482799785,
+    "provisional",
+    false
+   ],
+   "L0.force_p99": [
+    0.2741558720170991,
+    "provisional",
+    false
+   ],
+   "L0.force_max": [
+    0.5578108110222719,
+    "provisional",
+    false
+   ],
+   "L0.force_component_r2": [
+    0.9673221195929476,
+    "ok",
+    false
+   ],
+   "L0.force_mae.species=Ge": [
+    0.0708591308561694,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Sb": [
+    0.08116641042517399,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Te": [
+    0.08180529892214666,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=>=8": [
+    0.4153443608636326,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0,0.5)": [
+    0.14791718662999964,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0.5,1)": [
+    0.15679196015207847,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[1,2)": [
+    0.17210057701413273,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[2,4)": [
+    0.19386750240727282,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[4,8)": [
+    0.20694117400862652,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=heat": [
+    0.09532850411599395,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=liquid1200": [
+    0.10507488729108676,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=md950": [
+    0.09986094214658688,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=melt3000": [
+    0.12322122957221208,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=prod300": [
+    0.0872806041731459,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=quench": [
+    0.09680036242829711,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=heat": [
+    4.048027430852484,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=liquid1200": [
+    3.8057736518394862,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=md950": [
+    2.835872138263865,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=melt3000": [
+    6.9559796351481875,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=prod300": [
+    10.739844278414626,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=quench": [
+    4.232802044184075,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=amorphous_300K": [
+    0.0872806041731459,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=heating_300_1200K": [
+    0.09532850411599395,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_1200K": [
+    0.10507488729108676,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_3000K": [
+    0.12322122957221208,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_950K": [
+    0.09986094214658688,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=quench_1200_300K": [
+    0.09680036242829711,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=amorphous_300K": [
+    10.739844278414626,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=heating_300_1200K": [
+    4.048027430852484,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_1200K": [
+    3.8057736518394862,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_3000K": [
+    6.9559796351481875,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_950K": [
+    2.835872138263865,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=quench_1200_300K": [
+    4.232802044184075,
+    "provisional",
+    false
+   ],
+   "L0.stress_mae": [
+    0.3120158759871318,
+    "provisional",
+    false
+   ],
+   "L0.stress_rmse": [
+    0.4088144781311188,
+    "provisional",
+    false
+   ],
+   "L0.stress_max": [
+    1.6940239087911944,
+    "provisional",
+    false
+   ],
+   "L0.worst_cases": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Ge": [
+    null,
+    "provisional",
+    true
+   ],
+   "L1.pec.Ge-Sb": [
+    null,
+    "provisional",
+    true
+   ],
+   "L1.pec.Ge-Te": [
+    null,
+    "provisional",
+    true
+   ],
+   "L1.pec.Sb-Sb": [
+    null,
+    "provisional",
+    true
+   ],
+   "L1.pec.Sb-Te": [
+    null,
+    "provisional",
+    true
+   ],
+   "L1.pec.Te-Te": [
+    null,
+    "provisional",
+    true
+   ],
+   "L1.translation_invariance": [
+    2.507114231775631e-06,
+    "ok",
+    false
+   ],
+   "L1.rotation_invariance": [
+    4.0780082599667367e-07,
+    "ok",
+    false
+   ],
+   "L1.net_force": [
+    4.564157920672157e-18,
+    "ok",
+    false
+   ],
+   "L1.net_torque": [
+    0.17678627908776556,
+    "ok",
+    false
+   ],
+   "L1.force_vs_dE_dx": [
+    0.0010811641028337883,
+    "ok",
+    false
+   ],
+   "L1.stress_vs_dE_dstrain": [
+    0.00013591418025120152,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_finite": [
+    31,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_smoothness": [
+    4.018514287128724,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_compression_monotonic": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.completed": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.min_distance": [
+    2.1411230685096374,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.mean_temperature": [
+    1942.9996530375088,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.drift_spread": [
+    0.0015731687168530285,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=3fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=1.5fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.nve_drift.dt=3fs": [
+    -0.0020649966070559215,
+    "ok",
+    false
+   ],
+   "L1.com_drift.dt=3fs": [
+    1.1783018260144473e-14,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.energy_per_atom": [
+    -3.773213490636806,
+    "provisional",
+    true
+   ],
+   "L2.relax.hex_mp1224375.volume_error": [
+    0.7581412207256337,
+    "provisional",
+    true
+   ],
+   "L2.relax.hex_mp1224375.cell_length_error": [
+    0.9571835817273019,
+    "provisional",
+    true
+   ],
+   "L2.relax.cubic_s01.energy_per_atom": [
+    -3.7191763624387235,
+    "ok",
+    false
+   ],
+   "L2.relax.cubic_s01.volume_error": [
+    -0.0754580836195691,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.cell_length_error": [
+    0.04907088170893866,
+    "provisional",
+    false
+   ],
+   "L2.phase_order.cubic_minus_hexagonal": [
+    54.037128198082485,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp3534.energy_per_atom": [
+    -3.7592557870024916,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp3534.volume_error": [
+    -0.4837102372686744,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.cell_length_error": [
+    0.35665915172800655,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.energy_per_atom": [
+    -3.7272347471795277,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp1224407.volume_error": [
+    0.013482457422889992,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp1224407.cell_length_error": [
+    0.4783059384224087,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.mp3534": [
+    -1.1710252545742428,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.mp1224407": [
+    8.168447901722331,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.cubic": [
+    -0.6103404502564302,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.inversions": [
+    0.0,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.kendall_tau": [
+    1.0,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.max_dE_error": [
+    8.168447901722331,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.energy_per_atom": [
+    -4.489537397012171,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.volume_error": [
+    0.3933869849436305,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.cell_length_error": [
+    0.13095981092239042,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.energy_per_atom": [
+    -4.140644234614758,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.volume_error": [
+    0.6661773125201387,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.cell_length_error": [
+    2.124860632422079,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.energy_per_atom": [
+    -3.1456210418573396,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.volume_error": [
+    1.0160933695717558,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.cell_length_error": [
+    1.6412684697862883,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp1224375": [
+    1.9428159417747004,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp3534": [
+    0.7717906872004576,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp1224407": [
+    10.111263843497031,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.cubic": [
+    1.336307564115291,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.cubic_minus_hexagonal": [
+    52.697529373390225,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.V0": [
+    30.99177683973641,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.B0": [
+    29.425600254502104,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.V0_error": [
+    -0.11515297726441327,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.B0_error": [
+    -5.336510830192334,
+    "provisional",
+    true
+   ],
+   "L2.eos.cubic.V0": [
+    32.18959140523462,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0": [
+    24.884872997662836,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0_error": [
+    -0.2783011707241929,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0_error": [
+    5.970481337602999,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_V0_spread": [
+    0.060329986233280446,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_B0_spread": [
+    1.247668461949747,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.V0_error_vs_seed_spread": [
+    1.4890456032862858,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.B0_error_vs_seed_spread": [
+    1.1259407775413701,
+    "provisional",
+    false
+   ],
+   "L1:gate_pass": [
+    true,
+    "context",
+    false
+   ]
+  },
+  "mace_gst_aging": {
+   "L0.model_eval_failures": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.nonfinite_energies": [
+    0,
+    "ok",
+    false
+   ],
+   "L0.energy_mae": [
+    3.242765812388451,
+    "provisional",
+    false
+   ],
+   "L0.energy_rmse": [
+    3.978876928615585,
+    "provisional",
+    false
+   ],
+   "L0.energy_p99": [
+    8.06751564479983,
+    "provisional",
+    false
+   ],
+   "L0.energy_max": [
+    9.500675176251605,
+    "provisional",
+    false
+   ],
+   "L0.energy_offset_spread": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L0.force_mae": [
+    0.06901631517149641,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse": [
+    0.08815093530830553,
+    "provisional",
+    false
+   ],
+   "L0.force_p99": [
+    0.24201387300705587,
+    "provisional",
+    false
+   ],
+   "L0.force_max": [
+    0.5356189824262382,
+    "provisional",
+    false
+   ],
+   "L0.force_component_r2": [
+    0.9750148846300749,
+    "ok",
+    false
+   ],
+   "L0.force_mae.species=Ge": [
+    0.06144529904260999,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Sb": [
+    0.07161859268194021,
+    "provisional",
+    false
+   ],
+   "L0.force_mae.species=Te": [
+    0.07100381061887345,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=>=8": [
+    0.0870595407087475,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0,0.5)": [
+    0.12851851670362835,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[0.5,1)": [
+    0.13622596714071092,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[1,2)": [
+    0.14980651924333171,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[2,4)": [
+    0.1786423644939369,
+    "provisional",
+    false
+   ],
+   "L0.force_vector_mae.|F|=[4,8)": [
+    0.22523095479293687,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=heat": [
+    0.08236234287120597,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=liquid1200": [
+    0.09299147511320394,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=md950": [
+    0.08638660224511942,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=melt3000": [
+    0.11002996667072469,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=prod300": [
+    0.07569265327450163,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.pool=quench": [
+    0.0837392569518172,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=heat": [
+    2.5570366875501027,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=liquid1200": [
+    2.209555863003542,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=md950": [
+    2.102254320287162,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=melt3000": [
+    4.0931289576912775,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=prod300": [
+    7.434880019983124,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.pool=quench": [
+    2.885979642755133,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=amorphous_300K": [
+    0.07569265327450163,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=heating_300_1200K": [
+    0.08236234287120597,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_1200K": [
+    0.09299147511320394,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_3000K": [
+    0.11002996667072469,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=liquid_950K": [
+    0.08638660224511942,
+    "provisional",
+    false
+   ],
+   "L0.force_rmse.state_kind=quench_1200_300K": [
+    0.0837392569518172,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=amorphous_300K": [
+    7.434880019983124,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=heating_300_1200K": [
+    2.5570366875501027,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_1200K": [
+    2.209555863003542,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_3000K": [
+    4.0931289576912775,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=liquid_950K": [
+    2.102254320287162,
+    "provisional",
+    false
+   ],
+   "L0.energy_mae.state_kind=quench_1200_300K": [
+    2.885979642755133,
+    "provisional",
+    false
+   ],
+   "L0.stress_mae": [
+    0.3256890747918715,
+    "provisional",
+    false
+   ],
+   "L0.stress_rmse": [
+    0.4478439043449706,
+    "provisional",
+    false
+   ],
+   "L0.stress_max": [
+    1.775177468191237,
+    "provisional",
+    false
+   ],
+   "L0.worst_cases": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.pec.Ge-Ge": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Ge-Sb": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Ge-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Sb-Sb": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Sb-Te": [
+    null,
+    "failed",
+    false
+   ],
+   "L1.pec.Te-Te": [
+    null,
+    "ok",
+    false
+   ],
+   "L1.translation_invariance": [
+    0.0,
+    "ok",
+    false
+   ],
+   "L1.rotation_invariance": [
+    5.684341886080801e-13,
+    "ok",
+    false
+   ],
+   "L1.net_force": [
+    2.1335424970656892e-17,
+    "ok",
+    false
+   ],
+   "L1.net_torque": [
+    0.19750192503098937,
+    "ok",
+    false
+   ],
+   "L1.force_vs_dE_dx": [
+    2.8894544254091324e-06,
+    "ok",
+    false
+   ],
+   "L1.stress_vs_dE_dstrain": [
+    4.00474075761559e-09,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_finite": [
+    31,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_smoothness": [
+    23.92810307953256,
+    "ok",
+    false
+   ],
+   "L1.lattice_scan_compression_monotonic": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.completed": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.min_distance": [
+    2.139728849034091,
+    "ok",
+    false
+   ],
+   "L1.stability_2000K.mean_temperature": [
+    1969.9999220941372,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.drift_spread": [
+    0.00043711648003923794,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=3fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.timestep_sensitivity.completed.dt=1.5fs": [
+    true,
+    "ok",
+    false
+   ],
+   "L1.nve_drift.dt=3fs": [
+    0.0005949180757698571,
+    "ok",
+    false
+   ],
+   "L1.com_drift.dt=3fs": [
+    1.3053503572900977e-14,
+    "ok",
+    false
+   ],
+   "L2.relax.hex_mp1224375.energy_per_atom": [
+    -3.771824618047175,
+    "provisional",
+    true
+   ],
+   "L2.relax.hex_mp1224375.volume_error": [
+    2.068710759013481,
+    "provisional",
+    true
+   ],
+   "L2.relax.hex_mp1224375.cell_length_error": [
+    2.1580680835518353,
+    "provisional",
+    true
+   ],
+   "L2.relax.cubic_s01.energy_per_atom": [
+    -3.7201255619821922,
+    "ok",
+    false
+   ],
+   "L2.relax.cubic_s01.volume_error": [
+    -0.0427373999933548,
+    "provisional",
+    false
+   ],
+   "L2.relax.cubic_s01.cell_length_error": [
+    0.1016261836142161,
+    "provisional",
+    false
+   ],
+   "L2.phase_order.cubic_minus_hexagonal": [
+    51.6990560649826,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp3534.energy_per_atom": [
+    -3.759964857271411,
+    "ok",
+    false
+   ],
+   "L2.relax.phase_mp3534.volume_error": [
+    -0.6476478142829746,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp3534.cell_length_error": [
+    0.5684573850209155,
+    "provisional",
+    false
+   ],
+   "L2.relax.phase_mp1224407.energy_per_atom": [
+    -3.728338685518322,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp1224407.volume_error": [
+    -0.6413521915874091,
+    "provisional",
+    true
+   ],
+   "L2.relax.phase_mp1224407.cell_length_error": [
+    0.9624395436647356,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.mp3534": [
+    -3.268968113124604,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.mp1224407": [
+    5.675636973296875,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.dE_error.cubic": [
+    -2.9484125833563155,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.inversions": [
+    0.0,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.kendall_tau": [
+    1.0,
+    "provisional",
+    true
+   ],
+   "L2.phase_ladder.max_dE_error": [
+    5.675636973296875,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.energy_per_atom": [
+    -4.491257223117844,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.volume_error": [
+    0.4546477439477027,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Ge.cell_length_error": [
+    0.15132270282229177,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.energy_per_atom": [
+    -4.142642242143405,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.volume_error": [
+    0.2893280431596152,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Sb.cell_length_error": [
+    1.7207694697631775,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.energy_per_atom": [
+    -3.142446768620053,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.volume_error": [
+    -0.2668248407900802,
+    "provisional",
+    true
+   ],
+   "L2.relax.element_Te.cell_length_error": [
+    0.19097474944259746,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp1224375": [
+    2.3943886516510915,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp3534": [
+    -0.8745794614735125,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.mp1224407": [
+    8.070025624947963,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.dE_error.cubic": [
+    -0.5559572543591962,
+    "provisional",
+    true
+   ],
+   "L2.formation_energy.cubic_minus_hexagonal": [
+    50.35369184503935,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.V0": [
+    31.334577022042417,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.B0": [
+    23.359048707671068,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.V0_error": [
+    0.9896753134894991,
+    "provisional",
+    true
+   ],
+   "L2.eos.hex.B0_error": [
+    -24.852865283416882,
+    "provisional",
+    true
+   ],
+   "L2.eos.cubic.V0": [
+    32.1961462311386,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0": [
+    24.5720909749675,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.V0_error": [
+    -0.2579240184489698,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.B0_error": [
+    4.667586875292064,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_V0_spread": [
+    0.060330022786882834,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.dft_B0_spread": [
+    1.247668503191394,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.V0_error_vs_seed_spread": [
+    1.38001716710795,
+    "provisional",
+    false
+   ],
+   "L2.eos.cubic.seed_ensemble.B0_error_vs_seed_spread": [
+    0.8802349318539087,
+    "provisional",
+    false
+   ],
+   "L1:gate_pass": [
+    false,
+    "context",
+    false
+   ]
+  }
+ }
+}
